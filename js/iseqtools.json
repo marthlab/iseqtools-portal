@@ -1,0 +1,194 @@
+{
+	"data_types": {
+		"reads": {
+			"name":"Reads",
+			"data_formats": {
+				"f01": {
+					"name":"Format 1"
+				},
+				"f02": {
+					"name":"Format 2"
+				}
+			}
+		},
+		"alignments": {
+			"name":"Alignments",
+			"data_formats": {
+				"f03": {
+					"name":"Format 3"
+				},
+				"f04": {
+					"name":"Format 4"
+				}
+			}
+		},
+		"gene_models": {
+			"name":"Gene Models",
+			"data_formats": {
+				"f05": {
+					"name":"Format 5"
+				},
+				"f06": {
+					"name":"Format 6"
+				}
+			}
+		},
+		"de_genes": {
+			"name":"DE Genes",
+			"data_formats": {
+				"f07": {
+					"name":"Format 7"
+				},
+				"f08": {
+					"name":"Format 8"
+				}
+			}
+		},
+		"variants": {
+			"name":"Variants",
+			"data_formats": {
+				"f09": {
+					"name":"Format 9"
+				},
+				"f10": {
+					"name":"Format 10"
+				}
+			}
+		},
+		"functional_features": {
+			"name":"Functional Features",
+			"data_formats": {
+				"f11": {
+					"name":"Format 11"
+				},
+				"f12": {
+					"name":"Format 12"
+				}
+			}
+		},
+		"annotated_variants": {
+			"name":"Annotated Variants",
+			"data_formats": {
+				"f13": {
+					"name":"Format 13"
+				},
+				"f14": {
+					"name":"Format 14"
+				}
+			}
+		}
+	},
+	"objectives": {
+		"sequence": {
+			"name":"Sequence",
+			"nontool_output_data_format_ids": ["f01", "f02"],
+			"tools": {}
+		},
+		"map": {
+			"name":"Map",
+			"nontool_output_data_format_ids": [],
+			"tools": {
+				"map_tool_1": {
+					"name":"Map Tool 1",
+					"input_data_formats": ["f01"],
+					"output_data_formats": ["f03"]
+				},
+				"map_tool_2": {
+					"name":"Map Tool 2",
+					"input_data_formats": ["f02"],
+					"output_data_formats": ["f04"]
+				}
+			}
+		},
+		"call_svs": {
+			"name":"Map",
+			"nontool_output_data_format_ids": [],
+			"tools": {
+				"call_svs_tool_1": {
+					"name":"Call SVs Tool 1",
+					"input_data_formats": ["f03"]],
+					"output_data_formats": ["f09", "f11"]
+				},
+				"call_svs_tool_2": {
+					"name":"Call SVs Tool 2",
+					"input_data_formats": ["f03","f04"]],
+					"output_data_formats": ["f10"]
+				}
+			}
+		},
+		"call_de": {
+			"name":"Call Differential Expression",
+			"nontool_output_data_format_ids": [],
+			"tools": {
+				"call_de_tool_1": {
+					"name":"Call DE Tool 1",
+					"input_data_formats": ["f03, f04", "f05"]],
+					"output_data_formats": ["f05", "f11"]
+				},
+				"call_de_tool_2": {
+					"name":"Call DE Tool 2",
+					"input_data_formats": ["f03", "f05", "f06"]],
+					"output_data_formats": ["f10"]
+				},
+				"call_de_tool_3": {
+					"name":"Call DE Tool 3",
+					"input_data_formats": ["f04", "f06"]],
+					"output_data_formats": ["f10"]
+				}
+			}
+		},
+		"annotate": {
+			"name":"Annotate",
+			"nontool_output_data_format_ids": [],
+			"tools": {
+				"annotate_tool_1": {
+					"name":"Annotate Tool 1",
+					"input_data_formats": ["f09", "f10", "f11"]],
+					"output_data_formats": ["f14"]
+				}
+			}
+		}
+	},
+	"workflows": {
+		"workflow_1": {
+			"name": "Workflow 1",
+			"pipelines": {
+				"pipeline_1": {
+					"name": "Pipeline 1",
+					"tool_ids": ["map_tool_1",
+											 "call_de_tool_2"]
+				}
+			}
+		},
+		"workflow_2": {
+			"name": "Workflow 2",
+			"pipelines": {
+				"pipeline_2": {
+					"name": "Pipeline 2",
+					"tool_ids": ["call_svs_tool_1",
+											 "annotate_tool_1"]
+				},
+				"pipeline_4": {
+					"name": "Pipeline 4",
+					"tool_ids": ["call_svs_tool_2",
+											 "annotate_tool_1"]
+				}
+			}
+		},
+		"workflow_3": {
+			"name": "Workflow 3",
+			"pipelines": {
+				"pipeline_3": {
+					"name": "Pipeline 3",
+					"tool_ids": ["map_tool_1",
+											 "call_svs_tool_1"]
+				},
+				"pipeline_5": {
+					"name": "Pipeline 5",
+					"tool_ids": ["map_tool_2",
+											 "call_svs_tool_2"]
+				}
+			}
+		}
+	}
+}
