@@ -25,26 +25,30 @@
     	this.data_formats = config.data_formats.map(function(data_format_config) {
     		return new DataFormat(data_format_config, this);
     	}, this);
+
+    	this.in_objectives = [];
+    	this.out_objectives = [];
     }
 
     function Tool(config, objective) {
     	this.id = config.id;
     	this.name = config.name;
     	this.objective = objective;
-    	this.input_data_formats = app.data_formats.filter(function(df) {
-    		return config.input_data_formats.contains(df.id);
+    	this.in_data_formats = app.data_formats.filter(function(df) {
+    		return config.in_data_formats.contains(df.id);
     	});
-    	this.output_data_formats = app.data_formats.filter(function(df) {
-    		return config.output_data_formats.contains(df.id);
+    	this.out_data_formats = app.data_formats.filter(function(df) {
+    		return config.out_data_formats.contains(df.id);
     	});
-    	this.pipelines = []; // populated by Pipeline constructor
+
+    	this.pipelines = []; // backreferences populated later
     }
 
     function Objective(config) {
     	this.id = config.id;
     	this.name = config.name;
-    	this.nontool_output_data_formats = app.data_formats.filter(function(df) {
-    		return config.nontool_output_data_format_ids.contains(df.id);
+    	this.nontool_out_data_formats = app.data_formats.filter(function(df) {
+    		return config.nontool_out_data_format_ids.contains(df.id);
     	});
 
     	this.tools = config.tools.map(function(tool_config) {
@@ -52,8 +56,11 @@
     	}, this);
 
     	// convenience properties
-    	this.input_data_formats = this.tools.map(function(tool) {return tool.input_data_formats;}).flatten();
-    	this.output_data_formats = this.tools.map(function(tool) {return tool.output_data_formats;}).flatten().union(config.nontool_output_data_formats);
+    	this.in_data_formats = this.tools.map(function(tool) {return tool.in_data_formats;}).flatten().unique();
+    	this.in_data_types = this.in_data_formats.map(function(df) {return df.data_type;}).unique();
+    	this.out_data_formats = this.tools.map(function(tool) {return tool.out_data_formats;}).flatten().union(config.nontool_out_data_formats).unique();
+    	this.out_data_types = this.out_data_formats.map(function(df) {return df.data_type;}).unique();
+    	
     }
 
     function Workflow(config) {
@@ -76,11 +83,6 @@
     	this.tools = app.tools.filter(function(tool) {
     		return config.tool_ids.contains(tool.id);
     	});
-
-    	// add backreferences to tools
-    	this.tools.forEach(function(tool) {
-  			tool.pipelines.push(this);
-  		}, this);
 
     	// convenience properties
     	this.objectives = this.tools.map(function(tool) {return tool.objective;});
@@ -105,6 +107,20 @@
   	});
   	app.pipelines = app.workflows.map(function(wf){return wf.pipelines;}).flatten();
   	
-  	
+  	// add backreferences
+  	app.pipelines.forEach(function(pl) {
+    	pl.tools.forEach(function(tool) {
+  			tool.pipelines.push(pl);
+  		});
+  	});
+
+  	app.objectives.forEach(function(obj) {
+    	obj.in_data_types.forEach(function(dt) {
+  			dt.in_objectives.push(obj);
+  		});
+  		obj.out_data_types.forEach(function(dt) {
+  			dt.out_objectives.push(obj);
+  		});
+  	});
 
 }());
