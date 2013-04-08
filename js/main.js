@@ -26,6 +26,7 @@
     		return new DataFormat(data_format_config, this);
     	}, this);
 
+    	// backreferences populated later
     	this.in_objectives = [];
     	this.out_objectives = [];
     }
@@ -41,7 +42,8 @@
     		return config.out_data_formats.contains(df.id);
     	});
 
-    	this.pipelines = []; // backreferences populated later
+    	// backreferences populated later
+    	this.pipelines = [];
     }
 
     function Objective(config) {
