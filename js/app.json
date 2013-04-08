@@ -103,82 +103,82 @@
 		{
 			"id":"sequence",
 			"name":"Sequence",
-			"nontool_output_data_format_ids": ["f01", "f02"],
+			"nontool_out_data_format_ids": ["f01", "f02"],
 			"tools": []
 		},
 		{
 			"id":"map",
 			"name":"Map",
-			"nontool_output_data_format_ids": [],
+			"nontool_out_data_format_ids": [],
 			"tools": [
 				{
 					"id":"map_tool_1",
 					"name":"Map Tool 1",
-					"input_data_formats": ["f01"],
-					"output_data_formats": ["f03"]
+					"in_data_formats": ["f01"],
+					"out_data_formats": ["f03"]
 				},
 				{
 					"id":"map_tool_2",
 					"name":"Map Tool 2",
-					"input_data_formats": ["f02"],
-					"output_data_formats": ["f04"]
+					"in_data_formats": ["f02"],
+					"out_data_formats": ["f04"]
 				}
 			]
 		},
 		{
 			"id":"call_svs",
 			"name":"Map",
-			"nontool_output_data_format_ids": [],
+			"nontool_out_data_format_ids": [],
 			"tools": [
 				{
 					"id":"call_svs_tool_1",
 					"name":"Call SVs Tool 1",
-					"input_data_formats": ["f03"],
-					"output_data_formats": ["f09", "f11"]
+					"in_data_formats": ["f03"],
+					"out_data_formats": ["f09", "f11"]
 				},
 				{
 					"id":"call_svs_tool_2",
 					"name":"Call SVs Tool 2",
-					"input_data_formats": ["f03","f04"],
-					"output_data_formats": ["f10"]
+					"in_data_formats": ["f03","f04"],
+					"out_data_formats": ["f10"]
 				}
 			]
 		},
 		{
 			"id":"call_de",
 			"name":"Call Differential Expression",
-			"nontool_output_data_format_ids": [],
+			"nontool_out_data_format_ids": [],
 			"tools": [
 				{
 					"id":"call_de_tool_1",
 					"name":"Call DE Tool 1",
-					"input_data_formats": ["f03, f04", "f05"],
-					"output_data_formats": ["f05", "f11"]
+					"in_data_formats": ["f03, f04", "f05"],
+					"out_data_formats": ["f05", "f11"]
 				},
 				{
 					"id":"call_de_tool_2",
 					"name":"Call DE Tool 2",
-					"input_data_formats": ["f03", "f05", "f06"],
-					"output_data_formats": ["f10"]
+					"in_data_formats": ["f03", "f05", "f06"],
+					"out_data_formats": ["f10"]
 				},
 				{
 					"id":"call_de_tool_3",
 					"name":"Call DE Tool 3",
-					"input_data_formats": ["f04", "f06"],
-					"output_data_formats": ["f10"]
+					"in_data_formats": ["f04", "f06"],
+					"out_data_formats": ["f10"]
 				}
 			]
 		},
 		{
 			"id":"annotate",
 			"name":"Annotate",
-			"nontool_output_data_format_ids": [],
+			"nontool_out_data_format_ids": [],
 			"tools": [
 				{
 					"id":"annotate_tool_1",
 					"name":"Annotate Tool 1",
-					"input_data_formats": ["f09", "f10", "f11"],
-					"output_data_formats": ["f14"]
+					"in_data_formats": ["f09", "f10", "f11"],
+					"out_data_formats": ["f14"]
 				}
 			]
 		}

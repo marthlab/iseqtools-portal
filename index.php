@@ -24,7 +24,7 @@
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-        <script src="js/vendor/sugar-1.3.9.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <script src="js/vendor/dagre.js"></script>
 
