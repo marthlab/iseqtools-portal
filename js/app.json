@@ -114,14 +114,14 @@
 				{
 					"id":"map_tool_1",
 					"name":"Map Tool 1",
-					"in_data_formats": ["f01"],
-					"out_data_formats": ["f03"]
+					"data_formats_in": ["f01"],
+					"data_formats_out": ["f03"]
 				},
 				{
 					"id":"map_tool_2",
 					"name":"Map Tool 2",
-					"in_data_formats": ["f02"],
-					"out_data_formats": ["f04"]
+					"data_formats_in": ["f02"],
+					"data_formats_out": ["f04"]
 				}
 			]
 		},
@@ -133,14 +133,14 @@
 				{
 					"id":"call_svs_tool_1",
 					"name":"Call SVs Tool 1",
-					"in_data_formats": ["f03"],
-					"out_data_formats": ["f09", "f11"]
+					"data_formats_in": ["f03"],
+					"data_formats_out": ["f09", "f11"]
 				},
 				{
 					"id":"call_svs_tool_2",
 					"name":"Call SVs Tool 2",
-					"in_data_formats": ["f03","f04"],
-					"out_data_formats": ["f10"]
+					"data_formats_in": ["f03","f04"],
+					"data_formats_out": ["f10"]
 				}
 			]
 		},
@@ -152,20 +152,20 @@
 				{
 					"id":"call_de_tool_1",
 					"name":"Call DE Tool 1",
-					"in_data_formats": ["f03, f04", "f05"],
-					"out_data_formats": ["f05", "f11"]
+					"data_formats_in": ["f03, f04", "f05"],
+					"data_formats_out": ["f05", "f11"]
 				},
 				{
 					"id":"call_de_tool_2",
 					"name":"Call DE Tool 2",
-					"in_data_formats": ["f03", "f05", "f06"],
-					"out_data_formats": ["f10"]
+					"data_formats_in": ["f03", "f05", "f06"],
+					"data_formats_out": ["f10"]
 				},
 				{
 					"id":"call_de_tool_3",
 					"name":"Call DE Tool 3",
-					"in_data_formats": ["f04", "f06"],
-					"out_data_formats": ["f10"]
+					"data_formats_in": ["f04", "f06"],
+					"data_formats_out": ["f10"]
 				}
 			]
 		},
@@ -177,8 +177,8 @@
 				{
 					"id":"annotate_tool_1",
 					"name":"Annotate Tool 1",
-					"in_data_formats": ["f09", "f10", "f11"],
-					"out_data_formats": ["f14"]
+					"data_formats_in": ["f09", "f10", "f11"],
+					"data_formats_out": ["f14"]
 				}
 			]
 		}
