@@ -19,29 +19,32 @@
 	  // creates a dictionary from an array of objects. each object in
 	  // the array must have a unique value for key_property that is
 	  // a syntactically valid JS object key (defaults to "id")
-	  Array.prototype.toDict = function(key_property) {
-	  	new_obj = {};
-	  	key_property = key_property || "id";
-	  	_.each(this, function(element, index) {
-	  		new_obj[element[key_property]] = element;
-	  	});
-	  	return new_obj;
-	  }
+	  Object.defineProperties(Array.prototype, {
+		  "toDict": {
+		  	value: function(key_property) {
+			  	new_obj = {};
+			  	key_property = key_property || "id";
+			  	_.each(this, function(element, index) {
+			  		new_obj[element[key_property]] = element;
+			  	});
+			  	return new_obj;
+			  }
+		  }
+		});
 
-    function DataFormat(config, data_type) {
-    	this.id = config.id;
-    	this.order = config.order;
-    	this.name = config.name;
-    	this.data_type = data_type;
+    // global w.r.t. the containing IIFE
+    
+    var app = {};
+
+    function DataFormat(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name', 'data_type'));
     }
 
-    function DataType(config) {
-    	this.id = config.id;
-    	this.order = config.order;
-    	this.name = config.name;
+    function DataType(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
 
-	    this.data_formats = config.data_formats.map(function(df_cfg, order) {
-	    	return new DataFormat(_.extend(df_cfg, {order: order}), this);
+	    this.data_formats = cfg.data_formats.map(function(df_cfg, order) {
+	    	return new DataFormat(_.extend(df_cfg, {order: order, data_type: this}));
 	    }, this).toDict();
 
     	// backreferences populated later
@@ -49,48 +52,41 @@
     	this.objectives_accepting = {};
     }
 
-    function Tool(config, objective) {
-    	this.id = config.id;
-    	this.order = config.order;
-    	this.name = config.name;
-    	this.objective = objective;
+    function Tool(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name', 'objective'));
     	this.data_formats_in = _(app.data_formats).objFilter(function(df) {
-    		return _(config.data_formats_in).contains(df.id);
+    		return _(cfg.data_formats_in).contains(df.id);
     	});
     	this.data_formats_out = _(app.data_formats).objFilter(function(df) {
-    		return _(config.data_formats_out).contains(df.id);
+    		return _(cfg.data_formats_out).contains(df.id);
     	});
 
     	// backreferences populated later
     	this.pipelines = {};
     }
 
-    function Objective(config) {
-    	this.id = config.id;
-    	this.order = config.order;
-    	this.name = config.name;
+    function Objective(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	this.nontool_data_formats_out = _.objFilter(app.data_formats, function(df) {
-    		return _(config.nontool_out_data_format_ids).contains(df.id);
+    		return _(cfg.nontool_data_formats_out_ids).contains(df.id);
     	});
 
-	    this.tools = config.tools.map(function(tool_cfg, order) {
-	    	return new Tool(_.extend(tool_cfg, {order: order}), this);
+	    this.tools = cfg.tools.map(function(tool_cfg, order) {
+	    	return new Tool(_.extend(tool_cfg, {order: order, objective: this}));
 	    }, this).toDict();
 
     	// convenience properties
-    	this.data_formats_in = _.extend.apply({}, _(this.tools).map(function(tool) {return tool.data_formats_in;}));
+    	this.data_formats_in = _.extend.apply({}, _(this.tools).map(function(tool) {return tool.data_formats_in;})) || {};
     	this.data_types_in = _(this.data_formats_in).map(function(df) {return df.data_type;}).toDict();
-    	this.data_formats_out = _.extend.apply({}, _(this.tools).map(function(tool) {return tool.data_formats_out;}));
+    	this.data_formats_out = _(_.extend.apply({}, _(this.tools).map(function(tool) {return tool.data_formats_out;})) || {}).extend(this.nontool_data_formats_out);
     	this.data_types_out = _(this.data_formats_out).map(function(df) {return df.data_type;}).toDict();
     }
 
-    function Workflow(config) {
-    	this.id = config.id;
-    	this.order = config.order;
-    	this.name = config.name;
+    function Workflow(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
 
-    	this.pipelines = config.pipelines.map(function(pipeline_cfg, order) {
-	    	return new Pipeline(_.extend(pipeline_cfg, {order: order}), this);
+    	this.pipelines = cfg.pipelines.map(function(pipeline_cfg, order) {
+	    	return new Pipeline(_.extend(pipeline_cfg, {order: order, workflow: this}));
 	    }, this).toDict();
 
     	// convenience properties
@@ -98,72 +94,82 @@
     	this.objectives = _.extend.apply({}, _(this.pipelines).map(function(pl) {return pl.objectives;}));
     }
 
-    function Pipeline(config, workflow) {
-    	this.id = config.id;
-    	this.order = config.order;
-    	this.name = config.name;
-    	this.workflow = workflow;
+    function Pipeline(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name', 'workflow'));
     	this.tools = _(app.tools).objFilter(function(tool) {
-    		return _(config.tool_ids).contains(tool.id);
+    		return _(cfg.tool_ids).contains(tool.id);
     	});
 
     	// convenience properties
     	this.objectives = _(this.tools).map(function(tool) {return tool.objective;}).toDict();
     }
 
-    // global w.r.t. the containing IIFE
-    var app = {};
+    app.initialize_data_structures = function(cfg) {
+  		// add data in order of logical dependencies, and add convenience properties for nested objects
+	    app.data_types = cfg.data_types.map(function(dt_cfg, order) {
+	    	return new DataType(_.extend(dt_cfg, {order: order}) );
+	    }).toDict();
+	    app.data_formats = _.extend.apply({}, _(app.data_types).map(function(dt) {return dt.data_formats;}));
 
-    // add data in order of logical dependencies, and add convenience properties for nested objects
-    app.data_types = app_json.data_types.map(function(dt_cfg, order) {
-    	return new DataType(_.extend(dt_cfg, {order: order}) );
-    }).toDict();
-    app.data_formats = _.extend.apply({}, _(app.data_types).map(function(dt) {return dt.data_formats;}));
+	    app.objectives = cfg.objectives.map(function(obj_cfg, order) {
+	    	return new Objective(_.extend(obj_cfg, {order: order}) );
+	    }).toDict();
+	    app.tools = _.extend.apply({}, _(app.objectives).map(function(obj) {return obj.tools;}));
 
-    app.objectives = app_json.objectives.map(function(obj_cfg, order) {
-    	return new Objective(_.extend(obj_cfg, {order: order}) );
-    }).toDict();
-    app.tools = _.extend.apply({}, _(app.objectives).map(function(obj) {return obj.tools;}));
+	    app.workflows = cfg.workflows.map(function(wf_cfg, order) {
+	    	return new Workflow(_.extend(wf_cfg, {order: order}) );
+	    }).toDict();
+	    app.pipelines = _.extend.apply({}, _(app.workflows).map(function(obj) {return obj.pipelines;}));
 
-    app.workflows = app_json.workflows.map(function(wf_cfg, order) {
-    	return new Workflow(_.extend(wf_cfg, {order: order}) );
-    }).toDict();
-    app.pipelines = _.extend.apply({}, _(app.workflows).map(function(obj) {return obj.pipelines;}));
+	  	// add backreferences
+	  	_(app.pipelines).each(function(pl) {
+	    	_(pl.tools).each(function(tool) {
+	  			tool.pipelines[pl.id] = pl;
+	  		});
+	  	});
 
-  	// add backreferences
-  	_(app.pipelines).each(function(pl) {
-    	_(pl.tools).each(function(tool) {
-  			tool.pipelines[pl.id] = pl;
+	  	_(app.objectives).each(function(obj) {
+	    	_(obj.data_types_in).each(function(dt) {
+	  			dt.objectives_accepting[obj.id] = obj;
+	  		});
+	  		_(obj.data_types_out).each(function(dt) {
+	  			dt.objectives_yielding[obj.id] = obj;
+	  		});
+	  	});
+  	}
+    
+    app.render_global = function() {
+  		app.g.states = _(_({}).extend(app.objectives, app.data_types)).toArray();
+  		app.g.states.forEach(function(s) {
+  			s.label = s.id;
+  			s.edges = [];
   		});
-  	});
 
-  	_(app.objectives).each(function(obj) {
-    	_(obj.data_types_in).each(function(dt) {
-  			dt.objectives_accepting[obj.id] = obj;
-  		});
-  		_(obj.data_types_out).each(function(dt) {
-  			dt.objectives_yielding[obj.id] = obj;
-  		});
-  	});
-
-  	// add more properties and data structures for dagre rendering
-
-  	function renderGlobal() {
-  		var transitions_from_objectives = _(_(app.objectives).map(function(obj){
-  			return _(obj.data_types_out).map(function(dt) { 
+  		app.g.transitions = _(_(app.objectives).map(function(obj){
+  			var source_edges = _(obj.data_types_out).map(function(dt) {
   				return {source: obj, target: dt};
   			});
-  		})).flatten();
-
-  		var transitions_from_data_types = _(_(app.data_types).map(function(dt){
-  			return _(dt.objectives_accepting).map(function(obj) { 
+  			var target_edges = _(obj.data_types_in).map(function(dt) {
   				return {source: dt, target: obj};
   			});
+  			return _.union(source_edges, target_edges);
   		})).flatten();
 
-  		var transitions = _.union(transitions_from_objectives, transitions_from_data_types);
-  		
+  		app.g.transitions.forEach(function(t) {
+  			t.source.edges.push(t);
+  			t.target.edges.push(t);
+  		});
   	}
+
+  	app.initialize_data_structures(app_json);
+  	app.g = {
+  		cfg: {
+  			nodePadding: 10
+  		}
+  	};
+  	app.render_global();
+
+  	// add more properties and data structures for dagre rendering
 
   	  function spline(e) {
 		    var points = e.dagre.points.slice(0);
@@ -186,23 +192,7 @@
 		    });
 		  }
 
-		  renderGlobal();
-
-		  // Get the data in the right form
-		  var stateKeys = {};
-		  transitions.forEach(function(d) {
-		    var source = stateKeys[d.source],
-		        target = stateKeys[d.target];
-		    if (!source) source = stateKeys[d.source] = { label: d.source, edges: [] };
-		    if (!target) target = stateKeys[d.target] = { label: d.target, edges: [] };
-		    source.edges.push(d);
-		    target.edges.push(d);
-		  });
-		  var states = d3.values(stateKeys);
-		  transitions.forEach(function(d) {
-		    d.source = stateKeys[d.source];
-		    d.target = stateKeys[d.target];
-		  });
+		 // prep_global();
 
 		  // Now start laying things out
 		  var svg = d3.select("svg");
@@ -211,7 +201,7 @@
 		  // `nodes` is center positioned for easy layout later
 		  var nodes = svgGroup
 		    .selectAll("g .node")
-		    .data(states)
+		    .data(app.g.states)
 		    .enter()
 		      .append("g")
 		      .attr("class", "node")
@@ -219,7 +209,7 @@
 
 		  var edges = svgGroup
 		    .selectAll("path .edge")
-		    .data(transitions)
+		    .data(app.g.transitions)
 		    .enter()
 		      .append("path")
 		      .attr("class", "edge")
@@ -245,13 +235,13 @@
 		  labels.each(function(d) {
 		    var bbox = this.getBBox();
 		    d.bbox = bbox;
-		    d.width = bbox.width + 2 * nodePadding;
-		    d.height = bbox.height + 2 * nodePadding;
+		    d.width = bbox.width + 2 * app.g.cfg.nodePadding;
+		    d.height = bbox.height + 2 * app.g.cfg.nodePadding;
 		  });
 
 		  rects
-		    .attr("x", function(d) { return -(d.bbox.width / 2 + nodePadding); })
-		    .attr("y", function(d) { return -(d.bbox.height / 2 + nodePadding); })
+		    .attr("x", function(d) { return -(d.bbox.width / 2 + app.g.cfg.nodePadding); })
+		    .attr("y", function(d) { return -(d.bbox.height / 2 + app.g.cfg.nodePadding); })
 		    .attr("width", function(d) { return d.width; })
 		    .attr("height", function(d) { return d.height; });
 
@@ -264,8 +254,8 @@
 		    .nodeSep(50)
 		    .edgeSep(10)
 		    .rankSep(50)
-		    .nodes(states)
-		    .edges(transitions)
+		    .nodes(app.g.states)
+		    .edges(app.g.transitions)
 		    .debugLevel(1)
 		    .run();
 
@@ -327,4 +317,4 @@
 		  nodes.call(nodeDrag);
 		  edges.call(edgeDrag);
 
-// }());
+// }()); 

@@ -103,13 +103,13 @@
 		{
 			"id":"sequence",
 			"name":"Sequence",
-			"nontool_out_data_format_ids": ["f01", "f02"],
+			"nontool_data_formats_out_ids": ["f01", "f02"],
 			"tools": []
 		},
 		{
 			"id":"map",
 			"name":"Map",
-			"nontool_out_data_format_ids": [],
+			"nontool_data_formats_out_ids": [],
 			"tools": [
 				{
 					"id":"map_tool_1",
@@ -128,7 +128,7 @@
 		{
 			"id":"call_svs",
 			"name":"Map",
-			"nontool_out_data_format_ids": [],
+			"nontool_data_formats_out_ids": [],
 			"tools": [
 				{
 					"id":"call_svs_tool_1",
@@ -147,32 +147,32 @@
 		{
 			"id":"call_de",
 			"name":"Call Differential Expression",
-			"nontool_out_data_format_ids": [],
+			"nontool_data_formats_out_ids": [],
 			"tools": [
 				{
 					"id":"call_de_tool_1",
 					"name":"Call DE Tool 1",
 					"data_formats_in": ["f03, f04", "f05"],
-					"data_formats_out": ["f05", "f11"]
+					"data_formats_out": ["f07", "f08"]
 				},
 				{
 					"id":"call_de_tool_2",
 					"name":"Call DE Tool 2",
 					"data_formats_in": ["f03", "f05", "f06"],
-					"data_formats_out": ["f10"]
+					"data_formats_out": ["f07"]
 				},
 				{
 					"id":"call_de_tool_3",
 					"name":"Call DE Tool 3",
 					"data_formats_in": ["f04", "f06"],
-					"data_formats_out": ["f10"]
+					"data_formats_out": ["f08"]
 				}
 			]
 		},
 		{
 			"id":"annotate",
 			"name":"Annotate",
-			"nontool_out_data_format_ids": [],
+			"nontool_data_formats_out_ids": [],
 			"tools": [
 				{
 					"id":"annotate_tool_1",
