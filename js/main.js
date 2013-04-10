@@ -173,7 +173,7 @@
 
   	  function spline(e) {
 		    var points = e.dagre.points.slice(0);
-		    debugger;
+		    //debugger;
 		    var source = dagre.util.intersectRect(e.source.dagre, points[0]);
 		    var target = dagre.util.intersectRect(e.target.dagre, points[points.length - 1]);
 		    
@@ -258,9 +258,10 @@
 
 		  // Create the layout and get the graph
 		  dagre.layout()
-		    .nodeSep(100)
+		    .nodeSep(50)
 		    .edgeSep(10)
 		    .rankSep(50)
+		    .rankDir("LR")
 		    .nodes(app.g.states)
 		    .edges(app.g.transitions)
 		    .debugLevel(1)
