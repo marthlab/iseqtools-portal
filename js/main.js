@@ -173,15 +173,23 @@
 
   	  function spline(e) {
 		    var points = e.dagre.points.slice(0);
+		    debugger;
 		    var source = dagre.util.intersectRect(e.source.dagre, points[0]);
 		    var target = dagre.util.intersectRect(e.target.dagre, points[points.length - 1]);
+		    
 		    points.unshift(source);
 		    points.push(target);
-		    return d3.svg.line()
-		      .x(function(d) { return d.x; })
-		      .y(function(d) { return d.y; })
-		      .interpolate("linear")
-		      (points);
+
+		    // return d3.svg.line()
+		    //   .x(function(d) { return d.x; })
+		    //   .y(function(d) { return d.y; })
+		    //   .interpolate("linear")
+		    //   (points)
+
+		    var points_diag = {source: source, target: target};
+
+		    return d3.svg.diagonal()
+		      (points_diag)
 		  }
 
 		  // Translates all points in the edge using `dx` and `dy`.
@@ -192,7 +200,6 @@
 		    });
 		  }
 
-		 // prep_global();
 
 		  // Now start laying things out
 		  var svg = d3.select("svg");
@@ -264,13 +271,17 @@
 		  // Ensure that we have at least two points between source and target
 		  edges.each(function(d) {
 		    var points = d.dagre.points;
+		    //console.log(d);
+		    //console.log(points);
 		    if (!points.length) {
+		    	console.log("test_1");
 		      var s = d.source.dagre;
 		      var t = d.target.dagre;
 		      points.push({ x: (s.x + t.x) / 2, y: (s.y + t.y) / 2 });
 		    }
 
 		    if (points.length === 1) {
+		    	console.log("test_1");
 		      points.push({ x: points[0].x, y: points[0].y });
 		    }
 		  });
