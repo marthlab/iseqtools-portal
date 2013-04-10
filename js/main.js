@@ -220,7 +220,7 @@
 		    .enter()
 		      .append("path")
 		      .attr("class", "edge")
-		      .attr("marker-end", "url(#arrowhead)");
+		      //.attr("marker-end", "url(#arrowhead)");
 
 		  // Append rectangles to the nodes. We do this before laying out the text
 		  // because we want the text above the rectangle.
@@ -258,7 +258,7 @@
 
 		  // Create the layout and get the graph
 		  dagre.layout()
-		    .nodeSep(50)
+		    .nodeSep(100)
 		    .edgeSep(10)
 		    .rankSep(50)
 		    .nodes(app.g.states)
@@ -271,10 +271,7 @@
 		  // Ensure that we have at least two points between source and target
 		  edges.each(function(d) {
 		    var points = d.dagre.points;
-		    //console.log(d);
-		    //console.log(points);
 		    if (!points.length) {
-		    	console.log("test_1");
 		      var s = d.source.dagre;
 		      var t = d.target.dagre;
 		      points.push({ x: (s.x + t.x) / 2, y: (s.y + t.y) / 2 });
