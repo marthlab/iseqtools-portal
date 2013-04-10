@@ -172,24 +172,15 @@
   	// add more properties and data structures for dagre rendering
 
   	  function spline(e) {
-		    var points = e.dagre.points.slice(0);
-		    //debugger;
-		    var source = dagre.util.intersectRect(e.source.dagre, points[0]);
-		    var target = dagre.util.intersectRect(e.target.dagre, points[points.length - 1]);
-		    
-		    points.unshift(source);
-		    points.push(target);
 
-		    // return d3.svg.line()
-		    //   .x(function(d) { return d.x; })
-		    //   .y(function(d) { return d.y; })
-		    //   .interpolate("linear")
-		    //   (points)
+		    var source = {x: e.source.dagre.x+e.source.dagre.width/2, y: e.source.dagre.y};
+		    var target = {x: e.target.dagre.x-e.target.dagre.width/2, y: e.target.dagre.y};
 
-		    var points_diag = {source: source, target: target};
+		    var points = {source: source, target: target};
+		    var points_inv = {source: {x: source.y, y: source.x}, target: {x: target.y, y: target.x}};
 
-		    return d3.svg.diagonal()
-		      (points_diag)
+		    return d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; })
+		      (points_inv)
 		  }
 
 		  // Translates all points in the edge using `dx` and `dy`.
