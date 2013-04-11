@@ -22,21 +22,12 @@
 
         <h2>Graph Visualization</h2>
 
-        <svg width=0 height=0>
-          <defs>
-            <marker id="arrowhead"
-                    viewBox="0 0 10 10"
-                    refX="8"
-                    refY="5"
-                    markerUnits="strokeWidth"
-                    markerWidth="8"
-                    markerHeight="5"
-                    orient="auto"
-                    style="fill: #333">
-              <path d="M 0 0 L 10 5 L 0 10 z"></path>
-            </marker>
-          </defs>
-        </svg>
+        <div id="svg_container">
+            <!-- <svg >
+            </svg> -->
+            <svg preserveAspectRatio="xMidYMid meet">
+            </svg>
+        </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>

@@ -48,18 +48,16 @@
 	    }, this).toDict();
 
     	// backreferences populated later
-    	this.objectives_yielding = {};
-    	this.objectives_accepting = {};
+    	this.objectives_producing = {};
+    	this.objectives_consuming = {};
+    	this.pipelines_producing = {};
+    	this.pipelines_consuming = {};
     }
 
     function Tool(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name', 'objective'));
-    	this.data_formats_in = _(app.data_formats).objFilter(function(df) {
-    		return _(cfg.data_formats_in).contains(df.id);
-    	});
-    	this.data_formats_out = _(app.data_formats).objFilter(function(df) {
-    		return _(cfg.data_formats_out).contains(df.id);
-    	});
+    	this.data_formats_in = _(app.data_formats).objFilter(function(df) {return _(cfg.data_formats_in).contains(df.id); });
+    	this.data_formats_out = _(app.data_formats).objFilter(function(df) {return _(cfg.data_formats_out).contains(df.id); });
 
     	// backreferences populated later
     	this.pipelines = {};
@@ -67,9 +65,7 @@
 
     function Objective(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.nontool_data_formats_out = _.objFilter(app.data_formats, function(df) {
-    		return _(cfg.nontool_data_formats_out_ids).contains(df.id);
-    	});
+    	this.nontool_data_formats_out = _.objFilter(app.data_formats, function(df) { return _(cfg.nontool_data_formats_out_ids).contains(df.id); });
 
 	    this.tools = cfg.tools.map(function(tool_cfg, order) {
 	    	return new Tool(_.extend(tool_cfg, {order: order, objective: this}));
@@ -80,6 +76,9 @@
     	this.data_types_in = _(this.data_formats_in).map(function(df) {return df.data_type;}).toDict();
     	this.data_formats_out = _(_.extend.apply({}, _(this.tools).map(function(tool) {return tool.data_formats_out;})) || {}).extend(this.nontool_data_formats_out);
     	this.data_types_out = _(this.data_formats_out).map(function(df) {return df.data_type;}).toDict();
+
+    	// backreferences populated later
+    	this.pipelines = {};
     }
 
     function Workflow(cfg) {
@@ -122,26 +121,27 @@
 	    app.pipelines = _.extend.apply({}, _(app.workflows).map(function(obj) {return obj.pipelines;}));
 
 	  	// add backreferences
-	  	_(app.pipelines).each(function(pl) {
-	    	_(pl.tools).each(function(tool) {
-	  			tool.pipelines[pl.id] = pl;
-	  		});
+	  	_(app.tools).each(function(tool) {
+	  		tool.pipelines = _(app.pipelines).objFilter(function(pl) {return _(pl.tools).contains(tool); });
 	  	});
 
 	  	_(app.objectives).each(function(obj) {
-	    	_(obj.data_types_in).each(function(dt) {
-	  			dt.objectives_accepting[obj.id] = obj;
-	  		});
-	  		_(obj.data_types_out).each(function(dt) {
-	  			dt.objectives_yielding[obj.id] = obj;
-	  		});
+	  		obj.pipelines = _.extend.apply({}, _(obj.tools).map(function(tool) {return tool.pipelines;}));
 	  	});
+
+	  	_(app.data_types).each(function(dt) {
+	  		dt.objectives_consuming = _(app.objectives).objFilter(function(obj) {return _(obj.data_types_in).contains(dt); });
+	  		dt.objectives_producing = _(app.objectives).objFilter(function(obj) {return _(obj.data_types_out).contains(dt); });
+	  		dt.pipelines_consuming = _.extend.apply({}, _(dt.objectives_consuming).map(function(obj) {return obj.pipelines; }));
+	  		dt.pipelines_producing = _.extend.apply({}, _(dt.objectives_producing).map(function(obj) {return obj.pipelines; }));
+  		});
+
   	}
     
     app.render_global = function() {
   		app.g.states = _(_({}).extend(app.objectives, app.data_types)).toArray();
   		app.g.states.forEach(function(s) {
-  			s.label = s.id;
+  			s.label = s.name;
   			s.edges = [];
   		});
 
@@ -203,6 +203,8 @@
 		    .enter()
 		      .append("g")
 		      .attr("class", "node")
+		      .classed("objective", function(d) { return d instanceof Objective;})
+		      .classed("data_type", function(d) { return d instanceof DataType;})
 		      .attr("id", function(d) { return "node-" + d.label });
 
 		  var edges = svgGroup
@@ -226,7 +228,7 @@
 		  labels
 		    .append("tspan")
 		    .attr("x", 0)
-		    .attr("dy", "1em")
+		    .attr("dy", "-1em")
 		    .text(function(d) { return d.label; });
 
 		  // We need width and height for layout.
@@ -282,8 +284,19 @@
 
 		  // Resize the SVG element
 		  var svgBBox = svg.node().getBBox();
-		  svg.attr("width", svgBBox.width + 10);
-		  svg.attr("height", svgBBox.height + 10);
+		  // debugger;
+
+		  // var r1 = svgBBox.width/window.innerWidth;
+		  // var r2 = svgBBox.height/window.innerHeight;
+		  // r3 = Math.max(r1,r2);
+		  // svg.style("width", (svgBBox.width/r3)+'px');
+		  // svg.style("height", (svgBBox.height/r3)+'px');
+		  
+		  //svg.attr("width", svgBBox.width + 10);
+		  //svg.attr("height", svgBBox.height + 10);
+		  svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
+
+		  //$("#svg_1 > g").appendTo("#svg_2");
 
 		  // Drag handlers
 		  var nodeDrag = d3.behavior.drag()

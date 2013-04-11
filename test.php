@@ -20,18 +20,19 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
-					<defs>
-						<style type="text/css"><![CDATA[
-							circle {
-								stroke: #909;
-								stroke-width: 10;
-								fill: #f6f;
-							}
-						]]></style>
-					</defs>
-					<circle cx="100" cy="100" r="80" />
+        <svg>
+				    <defs>
+				        <pattern preserveAspectRatio="true" patternContentUnits="objectBoundingBox" height="0.125" width="0.25" y="0" x="0" id="black_h">
+				            <rect height="0.0675" width="0.125" y="0" x="0" fill="#333"/>
+				            <rect height="0.0675" width="0.125" y="0.0675" x="0" fill="#666"/>
+				            <rect height="0.0675" width="0.125" y="0" x="0.125" fill="#999"/>
+				            <rect height="0.0675" width="0.125" y="0.0675" x="0.125" fill="#000"/>
+				        </pattern>
+				    </defs>
+				    <!-- <path style="fill: url(#black_h)" d="M324 0 L324 375 L348 375 L348 0"/> -->
+				    <path class="edge" id="_E3" d="M639,63.90625C721.75,63.90625 721.75,19.453125 804.5,19.453125" style="fill: url(#black_h)"></path>
 				</svg>
+
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
