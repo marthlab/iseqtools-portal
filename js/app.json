@@ -2,235 +2,272 @@
 	"data_types": [
 		{
 			"id":"reads",
-			"name":"Reads",
-			"data_formats": [
-				{
-					"id":"f01",
-					"name":"Format 1"
-				},
-				{
-					"id":"f02",
-					"name":"Format 2"
-				}
-			]
+			"name":"Reads"
 		},
 		{
 			"id":"alignments",
-			"name":"Alignments",
-			"data_formats": [
-				{
-					"id":"f03",
-					"name":"Format 3"
-				},
-				{
-					"id":"f04",
-					"name":"Format 4"
-				}
-			]
+			"name":"Alignments"
 		},
 		{
 			"id":"gene_models",
-			"name":"Gene Models",
-			"data_formats": [
-				{
-					"id":"f05",
-					"name":"Format 5"
-				},
-				{
-					"id":"f06",
-					"name":"Format 6"
-				}
-			]
+			"name":"Gene Models"
 		},
 		{
 			"id":"de_genes",
-			"name":"DE Genes",
-			"data_formats": [
-				{
-					"id":"f07",
-					"name":"Format 7"
-				},
-				{
-					"id":"f08",
-					"name":"Format 8"
-				}
-			]
+			"name":"DE Genes"
 		},
 		{
 			"id":"variants",
-			"name":"Variants",
-			"data_formats": [
-				{
-					"id":"f09",
-					"name":"Format 9"
-				},
-				{
-					"id":"f10",
-					"name":"Format 10"
-				}
-			]
+			"name":"Variants"
 		},
 		{
 			"id":"functional_features",
-			"name":"Functional Features",
-			"data_formats": [
-				{
-					"id":"f11",
-					"name":"Format 11"
-				},
-				{
-					"id":"f12",
-					"name":"Format 12"
-				}
-			]
+			"name":"Functional Features"
 		},
 		{
-			"id":"annotated variants",
-			"name":"Annotated Variants",
-			"data_formats": [
-				{
-					"id":"f13",
-					"name":"Format 13"
-				},
-				{
-					"id":"f14",
-					"name":"Format 14"
-				}
-			]
+			"id":"annotated_variants",
+			"name":"Annotated Variants"
 		}
 	],
 	"objectives": [
 		{
 			"id":"sequence",
 			"name":"Sequence",
-			"nontool_data_formats_out_ids": ["f01", "f02"],
-			"tools": []
+			"in_data_types_ids": [],
+			"out_data_types_ids": ["reads"]
 		},
 		{
 			"id":"map",
 			"name":"Map",
-			"nontool_data_formats_out_ids": [],
-			"tools": [
-				{
-					"id":"map_tool_1",
-					"name":"Map Tool 1",
-					"data_formats_in": ["f01"],
-					"data_formats_out": ["f03"]
-				},
-				{
-					"id":"map_tool_2",
-					"name":"Map Tool 2",
-					"data_formats_in": ["f02"],
-					"data_formats_out": ["f04"]
-				}
-			]
+			"in_data_types_ids": ["reads"],
+			"out_data_types_ids": ["alignments"]
 		},
 		{
 			"id":"call_svs",
 			"name":"Map",
-			"nontool_data_formats_out_ids": [],
-			"tools": [
-				{
-					"id":"call_svs_tool_1",
-					"name":"Call SVs Tool 1",
-					"data_formats_in": ["f03"],
-					"data_formats_out": ["f09", "f11"]
-				},
-				{
-					"id":"call_svs_tool_2",
-					"name":"Call SVs Tool 2",
-					"data_formats_in": ["f03","f04"],
-					"data_formats_out": ["f10"]
-				}
-			]
+			"in_data_types_ids": ["alignments"],
+			"out_data_types_ids": ["functional_features", "variants"]
 		},
 		{
 			"id":"call_de",
 			"name":"Call Differential Expression",
-			"nontool_data_formats_out_ids": [],
-			"tools": [
-				{
-					"id":"call_de_tool_1",
-					"name":"Call DE Tool 1",
-					"data_formats_in": ["f03, f04", "f05"],
-					"data_formats_out": ["f07", "f08"]
-				},
-				{
-					"id":"call_de_tool_2",
-					"name":"Call DE Tool 2",
-					"data_formats_in": ["f03", "f05", "f06"],
-					"data_formats_out": ["f07"]
-				},
-				{
-					"id":"call_de_tool_3",
-					"name":"Call DE Tool 3",
-					"data_formats_in": ["f04", "f06"],
-					"data_formats_out": ["f08"]
-				}
-			]
+			"in_data_types_ids": ["alignments", "gene_models"],
+			"out_data_types_ids": ["de_genes"]
 		},
 		{
 			"id":"annotate",
 			"name":"Annotate",
-			"nontool_data_formats_out_ids": [],
-			"tools": [
-				{
-					"id":"annotate_tool_1",
-					"name":"Annotate Tool 1",
-					"data_formats_in": ["f09", "f10", "f11"],
-					"data_formats_out": ["f14"]
-				}
-			]
+			"in_data_types_ids": ["functional_features", "variants"],
+			"out_data_types_ids": ["annotated_variants"]
 		}
 	],
 	"workflows": [
 		{
 			"id":"workflow_1",
 			"name": "Workflow 1",
-			"pipelines": [
-				{
-					"id": "pipeline_1",
-					"name": "Pipeline 1",
-					"tool_ids": ["map_tool_1",
-											 "call_de_tool_2"]
-				}
-			]
+			"objectives_ids": ["sequence", "map"]
 		},
 		{
 			"id": "workflow_2",
 			"name": "Workflow 2",
-			"pipelines": [
-				{
-					"id": "pipeline_2",
-					"name": "Pipeline 2",
-					"tool_ids": ["call_svs_tool_1",
-											 "annotate_tool_1"]
-				},
-				{
-					"id": "pipeline_4",
-					"name": "Pipeline 4",
-					"tool_ids": ["call_svs_tool_2",
-											 "annotate_tool_1"]
-				}
-			]
+			"objectives_ids": ["sequence", "map", "call_svs"]
 		},
 		{
 			"id": "workflow_3",
 			"name": "Workflow 3",
-			"pipelines": [
+			"objectives_ids": ["sequence", "map", "call_de"]
+		},
+		{
+			"id": "workflow_4",
+			"name": "Workflow 4",
+			"objectives_ids": ["call_svs", "annotate"]
+		}
+	],
+	"data_formats": [
+		{
+			"id":"f01",
+			"name":"Format 1"
+		},
+		{
+			"id":"f02",
+			"name":"Format 2"
+		},
+		{
+			"id":"f03",
+			"name":"Format 3"
+		},
+		{
+			"id":"f04",
+			"name":"Format 4"
+		},
+		{
+			"id":"f05",
+			"name":"Format 5"
+		},
+		{
+			"id":"f06",
+			"name":"Format 6"
+		},
+		{
+			"id":"f07",
+			"name":"Format 7"
+		},
+		{
+			"id":"f08",
+			"name":"Format 8"
+		},
+		{
+			"id":"f09",
+			"name":"Format 9"
+		},
+		{
+			"id":"f10",
+			"name":"Format 10"
+		},
+		{
+			"id":"f11",
+			"name":"Format 11"
+		},
+		{
+			"id":"f12",
+			"name":"Format 12"
+		},
+		{
+			"id":"f13",
+			"name":"Format 13"
+		},
+		{
+			"id":"f14",
+			"name":"Format 14"
+		}
+	],
+	"tools": [
+		{
+			"id": "tool_1",
+			"name":"Tool 1"
+		},
+		{
+			"id": "tool_2",
+			"name":"Tool 2"
+		},
+		{
+			"id": "tool_3",
+			"name":"Tool 3"
+		},
+		{
+			"id": "tool_4",
+			"name":"Tool 4"
+		},
+		{
+			"id": "tool_5",
+			"name":"Tool 5"
+		},
+		{
+			"id": "tool_6",
+			"name":"Tool 6"
+		},
+		{
+			"id": "tool_7",
+			"name":"Tool 7"
+		},
+		{
+			"id": "tool_8",
+			"name":"Tool 8"
+		},
+		{
+			"id": "tool_9",
+			"name":"Tool 9"
+		},
+		{
+			"id": "tool_10",
+			"name":"Tool 10"
+		}
+	],
+	"pipelines": [
+		{
+			"id": "pipeline_1",
+			"name": "Pipeline 2",
+			"workflow_ids": ["workflow_1", "workflow_2"],
+			"tool_usages": [
 				{
-					"id": "pipeline_3",
-					"name": "Pipeline 3",
-					"tool_ids": ["map_tool_1",
-											 "call_svs_tool_1"]
+					"id": "tool_usage_1",
+					"tool_id": "tool_1",
+					"next_steps": [
+						{
+							"target_tool_usage_id": "tool_usage_2",
+							"data_formats_ids": ["f01"]
+						},
+						{
+							"target_tool_usage_id": "tool_usage_3",
+							"data_formats_ids": ["f01", "f02"]
+						},
+						{
+							"target_tool_usage_id": "tool_usage_4",
+							"data_formats_ids": ["f02"]
+						}
+					]
 				},
 				{
-					"id": "pipeline_5",
-					"name": "Pipeline 5",
-					"tool_ids": ["map_tool_2",
-											 "call_svs_tool_2"]
+					"id": "tool_usage_2",
+					"tool_id": "tool_2",
+					"next_steps": [
+						{
+							"target_tool_usage_id": "tool_usage_5",
+							"data_formats_ids": ["f03"]
+						},
+						{
+							"target_tool_usage_id": "tool_usage_6",
+							"data_formats_ids": ["f04"]
+						}
+					]
+				},
+				{
+					"id": "tool_usage_3",
+					"tool_id": "tool_3",
+					"next_steps": []
+				},
+				{
+					"id": "tool_usage_4",
+					"tool_id": "tool_1",
+					"next_steps": [
+						{
+							"target_tool_usage_id": "tool_usage_7",
+							"data_formats_ids": ["f03"]
+						}
+					]
+				},
+				{
+					"id": "tool_usage_5",
+					"tool_id": "tool_2",
+					"next_steps": []
+				},
+				{
+					"id": "tool_usage_6",
+					"tool_id": "tool_5",
+					"next_steps": [
+						{
+							"target_tool_usage_id": "tool_usage_8",
+							"data_formats_ids": ["f04"]
+						}
+					]
+				},
+				{
+					"id": "tool_usage_7",
+					"tool_id": "tool_4",
+					"next_steps": []
+				},
+				{
+					"id": "tool_usage_8",
+					"tool_id": "tool_3",
+					"next_steps": []
 				}
 			]
+		},
+		{
+			"id": "pipeline_2",
+			"name": "Pipeline 2",
+			"workflow_ids": ["workflow_2", "workflow_3"],
+			"tool_usages": []
 		}
 	]
 }

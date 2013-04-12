@@ -36,108 +36,114 @@
     
     var app = {};
 
-    function DataFormat(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name', 'data_type'));
-    }
-
     function DataType(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
 
-	    this.data_formats = cfg.data_formats.map(function(df_cfg, order) {
-	    	return new DataFormat(_.extend(df_cfg, {order: order, data_type: this}));
-	    }, this).toDict();
-
-    	// backreferences populated later
-    	this.objectives_producing = {};
+    	// references populated later
     	this.objectives_consuming = {};
-    	this.pipelines_producing = {};
-    	this.pipelines_consuming = {};
-    }
-
-    function Tool(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name', 'objective'));
-    	this.data_formats_in = _(app.data_formats).objFilter(function(df) {return _(cfg.data_formats_in).contains(df.id); });
-    	this.data_formats_out = _(app.data_formats).objFilter(function(df) {return _(cfg.data_formats_out).contains(df.id); });
-
-    	// backreferences populated later
-    	this.pipelines = {};
+    	this.objectives_producing = {};
     }
 
     function Objective(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.nontool_data_formats_out = _.objFilter(app.data_formats, function(df) { return _(cfg.nontool_data_formats_out_ids).contains(df.id); });
-
-	    this.tools = cfg.tools.map(function(tool_cfg, order) {
-	    	return new Tool(_.extend(tool_cfg, {order: order, objective: this}));
-	    }, this).toDict();
-
-    	// convenience properties
-    	this.data_formats_in = _.extend.apply({}, _(this.tools).map(function(tool) {return tool.data_formats_in;})) || {};
-    	this.data_types_in = _(this.data_formats_in).map(function(df) {return df.data_type;}).toDict();
-    	this.data_formats_out = _(_.extend.apply({}, _(this.tools).map(function(tool) {return tool.data_formats_out;})) || {}).extend(this.nontool_data_formats_out);
-    	this.data_types_out = _(this.data_formats_out).map(function(df) {return df.data_type;}).toDict();
-
-    	// backreferences populated later
-    	this.pipelines = {};
+    	this.in_data_types = _.objFilter(app.data_types, function(dt) { return _(cfg.in_data_types_ids).contains(dt.id); });
+    	this.out_data_types = _.objFilter(app.data_types, function(dt) { return _(cfg.out_data_types_ids).contains(dt.id); });
+    
+    	// references populated later
+    	this.workflows = {};
     }
 
     function Workflow(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
 
-    	this.pipelines = cfg.pipelines.map(function(pipeline_cfg, order) {
-	    	return new Pipeline(_.extend(pipeline_cfg, {order: order, workflow: this}));
-	    }, this).toDict();
+    	this.objectives = _.objFilter(app.objectives, function(obj) { return _(cfg.objectives_ids).contains(obj.id); });
+    	this.data_types = _.extend.apply({}, 
+    		_(this.objectives).map(function(obj) {return _.extend({}, obj.in_data_types, obj.out_data_types); })
+  		);
+    }
 
-    	// convenience properties
-    	this.tools = _.extend.apply({}, _(this.pipelines).map(function(pl) {return pl.tools;}));
-    	this.objectives = _.extend.apply({}, _(this.pipelines).map(function(pl) {return pl.objectives;}));
+    function DataFormat(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    }
+
+    function Tool(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     }
 
     function Pipeline(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name', 'workflow'));
-    	this.tools = _(app.tools).objFilter(function(tool) {
-    		return _(cfg.tool_ids).contains(tool.id);
-    	});
+    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	this.workflows = _.objFilter(app.workflows, function(wf) { return _(cfg.workflows_ids).contains(wf.id); });
 
-    	// convenience properties
-    	this.objectives = _(this.tools).map(function(tool) {return tool.objective;}).toDict();
+    	this.tool_usages = cfg.tool_usages.map(function(tu_cfg, order) {
+	    	return new ToolUsage(_.extend(tu_cfg, {order: order, pipeline: this}));
+	    }, this).toDict();
+
+    }
+
+    function ToolUsage(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
+    	this.tool = app.tools[cfg.tool_id];
+    	//var num_tool_uses = _(this.pipeline.tool_usages).filter(function(tu) { return tu.tool == this.tool;}, this).size();
+    	//this.id = "pipelineid__"+this.pipeline.id+"__toolid__"+this.tool.id+"__tu__"+num_tool_uses;
+    	this.objective = app.objectives[cfg.objective_id] || null;
+    	this.nontool_in_data_formats = _.objFilter(app.data_formats, function(df) { return _(cfg.nontool_in_data_formats).contains(df.id); });
+    	this.nontool_out_data_formats = _.objFilter(app.data_formats, function(df) { return _(cfg.nontool_out_data_formats).contains(df.id); });
+
+    	this.next_steps = [];
     }
 
     app.initialize_data_structures = function(cfg) {
   		// add data in order of logical dependencies, and add convenience properties for nested objects
+	    
 	    app.data_types = cfg.data_types.map(function(dt_cfg, order) {
 	    	return new DataType(_.extend(dt_cfg, {order: order}) );
 	    }).toDict();
-	    app.data_formats = _.extend.apply({}, _(app.data_types).map(function(dt) {return dt.data_formats;}));
-
+	    
 	    app.objectives = cfg.objectives.map(function(obj_cfg, order) {
 	    	return new Objective(_.extend(obj_cfg, {order: order}) );
 	    }).toDict();
-	    app.tools = _.extend.apply({}, _(app.objectives).map(function(obj) {return obj.tools;}));
-
+	    _(app.data_types).each(function(dt) {
+	  		dt.objectives_consuming = _(app.objectives).objFilter(function(obj) {return _(obj.in_data_types).contains(dt); });
+	  		dt.objectives_producing = _(app.objectives).objFilter(function(obj) {return _(obj.out_data_types).contains(dt); });
+	  	});
+	    
 	    app.workflows = cfg.workflows.map(function(wf_cfg, order) {
 	    	return new Workflow(_.extend(wf_cfg, {order: order}) );
 	    }).toDict();
-	    app.pipelines = _.extend.apply({}, _(app.workflows).map(function(obj) {return obj.pipelines;}));
-
-	  	// add backreferences
-	  	_(app.tools).each(function(tool) {
-	  		tool.pipelines = _(app.pipelines).objFilter(function(pl) {return _(pl.tools).contains(tool); });
+	    _(app.objectives).each(function(obj) {
+	  		obj.workflows = _(app.workflows).objFilter(function(wf) {return _(wf.objectives).contains(obj); });
 	  	});
 
-	  	_(app.objectives).each(function(obj) {
-	  		obj.pipelines = _.extend.apply({}, _(obj.tools).map(function(tool) {return tool.pipelines;}));
-	  	});
+	    app.data_formats = cfg.data_formats.map(function(df_cfg, order) {
+	    	return new DataFormat(_.extend(df_cfg, {order: order}) );
+	    }).toDict();
 
-	  	_(app.data_types).each(function(dt) {
-	  		dt.objectives_consuming = _(app.objectives).objFilter(function(obj) {return _(obj.data_types_in).contains(dt); });
-	  		dt.objectives_producing = _(app.objectives).objFilter(function(obj) {return _(obj.data_types_out).contains(dt); });
-	  		dt.pipelines_consuming = _.extend.apply({}, _(dt.objectives_consuming).map(function(obj) {return obj.pipelines; }));
-	  		dt.pipelines_producing = _.extend.apply({}, _(dt.objectives_producing).map(function(obj) {return obj.pipelines; }));
-  		});
+	    app.tools = cfg.tools.map(function(tool_cfg, order) {
+	    	return new Tool(_.extend(tool_cfg, {order: order}) );
+	    }).toDict();
+
+	    app.pipelines = cfg.pipelines.map(function(pl_cfg, order) {
+	    	return new Pipeline(_.extend(pl_cfg, {order: order}) );
+	    }).toDict();
+
+	    // hackish way of avoiding chicken and egg problem with target tool usages
+	    _(app.pipelines).each(function(pl) {
+	    	var tu_cfgs = cfg.pipelines[pl.order].tool_usages;
+	    	_(pl.tool_usages).each(function(tu){
+	    		tu.next_steps = tu_cfgs[tu.order].next_steps.map(function(ns_cfg) {
+			    	return {
+			    		source_tool_usage: tu,
+			    		target_tool_usage: pl.tool_usages[ns_cfg.target_tool_usage_id],
+			    		data_formats: _.objFilter(app.data_formats, function(df) { return _(ns_cfg.data_formats_ids).contains(df.id); })
+			    	};
+			    }, this);
+	    	});
+	    });
 
   	}
     
+ 		
+
     app.render_global = function() {
   		app.g.states = _(_({}).extend(app.objectives, app.data_types)).toArray();
   		app.g.states.forEach(function(s) {
@@ -146,10 +152,10 @@
   		});
 
   		app.g.transitions = _(_(app.objectives).map(function(obj){
-  			var source_edges = _(obj.data_types_out).map(function(dt) {
+  			var source_edges = _(obj.out_data_types).map(function(dt) {
   				return {source: obj, target: dt};
   			});
-  			var target_edges = _(obj.data_types_in).map(function(dt) {
+  			var target_edges = _(obj.in_data_types).map(function(dt) {
   				return {source: dt, target: obj};
   			});
   			return _.union(source_edges, target_edges);
@@ -167,6 +173,7 @@
   			nodePadding: 10
   		}
   	};
+  	debugger;
   	app.render_global();
 
   	// add more properties and data structures for dagre rendering
