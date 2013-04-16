@@ -1,12 +1,4 @@
 
-		function createUUID() {
-			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-		    return v.toString(16);
-			});
-		}
-		
-
 		_.mixin({
 		  // ### _.objFilter
 		  // _.filter for objects, keeps key/value associations
@@ -79,11 +71,19 @@
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	this.workflows = _.objFilter(app.workflows, function(wf) { return _(cfg.workflows_ids).contains(wf.id); });
 
+    	this.data_format_usages = cfg.data_format_usages.map(function(dfu_cfg, order) {
+	    	return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
+	    }, this).toDict();
+    	
     	this.tool_usages = cfg.tool_usages.map(function(tu_cfg, order) {
 	    	return new ToolUsage(_.extend(tu_cfg, {order: order, pipeline: this}));
 	    }, this).toDict();
 
-    	this.data_format_usages = {};
+    }
+
+    function DataFormatUsage(cfg) {
+    	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
+    	this.data_format = app.data_formats[cfg.data_format_id];
     }
 
     function ToolUsage(cfg) {
@@ -91,22 +91,14 @@
     	this.tool = app.tools[cfg.tool_id];
     	this.objective = app.objectives[cfg.objective_id] || null;
 
-    	this.in_data_format_usages = {};
-    	this.out_data_format_usages = {};
-
+    	this.in_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) { return _(cfg.in_data_format_usages_ids).contains(dfu.id); });
+    	this.out_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) { return _(cfg.out_data_format_usages_ids).contains(dfu.id); });
     }
 
-    function DataFormatUsage(cfg) {
-    	_(this).extend(_(cfg).pick('data_format'));
-    	this.source_tool_usage = cfg.source_tool_usage || null;
-    	this.target_tool_usage = cfg.target_tool_usage || null;
-
-    	this.id = createUUID();
-    }
+    
 
     app.initialize_data_structures = function(cfg) {
-  		// add data in order of logical dependencies, and add convenience properties for nested objects
-	    
+
 	    app.data_types = cfg.data_types.map(function(dt_cfg, order) {
 	    	return new DataType(_.extend(dt_cfg, {order: order}) );
 	    }).toDict();
@@ -114,6 +106,7 @@
 	    app.objectives = cfg.objectives.map(function(obj_cfg, order) {
 	    	return new Objective(_.extend(obj_cfg, {order: order}) );
 	    }).toDict();
+
 	    _(app.data_types).each(function(dt) {
 	  		dt.objectives_consuming = _(app.objectives).objFilter(function(obj) {return _(obj.in_data_types).contains(dt); });
 	  		dt.objectives_producing = _(app.objectives).objFilter(function(obj) {return _(obj.out_data_types).contains(dt); });
@@ -137,32 +130,6 @@
 	    app.pipelines = cfg.pipelines.map(function(pl_cfg, order) {
 	    	return new Pipeline(_.extend(pl_cfg, {order: order}) );
 	    }).toDict();
-
-	    // hackish way of avoiding chicken and egg problem with target tool usages
-	    _(app.pipelines).each(function(pl) {
-	    	_(pl.tool_usages).each(function(tu) {
-	    		var tu_cfg = cfg.pipelines[pl.order].tool_usages[tu.order];
-	    		(tu_cfg.next_steps || []).forEach(function(ns_cfg) {
-	    			ns_cfg.data_formats_ids.forEach(function(df_id) {
-	    				var target_tu = pl.tool_usages[ns_cfg.target_tool_usage_id];
-	    				var dfu = new DataFormatUsage({
-		  					data_format: app.data_formats[df_id],
-		  					source_tool_usage: tu,
-			    			target_tool_usage: target_tu
-		  				});
-		  				pl.data_format_usages[dfu.id] = tu.out_data_format_usages[dfu.id] = target_tu.in_data_format_usages[dfu.id] = dfu;
-	    			});
-	    		});
-	    		(tu_cfg.nonstep_out_data_formats || []).forEach(function(df_id) {
-	    			var dfu = new DataFormatUsage({ data_format: app.data_formats[df_id], source_tool_usage: tu });
-	    			pl.data_format_usages[dfu.id] = tu.out_data_format_usages[dfu.id] = dfu;
-	    		});
-	    		(tu_cfg.nonstep_in_data_formats || []).forEach(function(df_id) {
-	    			var dfu = new DataFormatUsage({ data_format: app.data_formats[df_id], target_tool_usage: tu });
-	    			pl.data_format_usages[dfu.id] = tu.in_data_format_usages[dfu.id] = dfu;
-	    		});
-	    	});
-	    });
 
   	}
 
@@ -383,8 +350,8 @@
   	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function PipelineGraph(pipeline) {
-  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tool_usage) { return new Node(tool_usage, tool_usage.tool.name);});
-  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(df_usage) { return new Node(df_usage, df_usage.data_format.name);});
+  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name);});
+  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name);});
 
   		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
   			var source_edges = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
@@ -393,6 +360,7 @@
   			var target_edges = _(tu_node.referent.in_data_format_usages).map(function(df_usage) {
   				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node);
   			}, this);
+
   			return _.union(source_edges, target_edges);
   		}, this), true);
 

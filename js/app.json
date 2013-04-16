@@ -152,7 +152,7 @@
 		},
 		{
 			"id": "tool_3",
-			"name":"Tool 3"
+			"name":"Tool 3 Tool 3 Tool 3 Tool 3"
 		},
 		{
 			"id": "tool_4",
@@ -188,83 +188,112 @@
 			"id": "pipeline_1",
 			"name": "Pipeline 1",
 			"workflow_ids": ["workflow_1", "workflow_2"],
+			"data_format_usages": [
+				{
+					"id": "dfu_01",
+					"data_format_id": "f01"
+				},
+				{
+					"id": "dfu_02",
+					"data_format_id": "f01"
+				},
+				{
+					"id": "dfu_03",
+					"data_format_id": "f02"
+				},
+				{
+					"id": "dfu_04",
+					"data_format_id": "f02"
+				},
+				{
+					"id": "dfu_05",
+					"data_format_id": "f03"
+				},
+				{
+					"id": "dfu_06",
+					"data_format_id": "f03"
+				},
+				{
+					"id": "dfu_07",
+					"data_format_id": "f04"
+				},
+				{
+					"id": "dfu_08",
+					"data_format_id": "f04"
+				},
+				{
+					"id": "dfu_09",
+					"data_format_id": "f05"
+				},
+				{
+					"id": "dfu_10",
+					"data_format_id": "f05"
+				},
+				{
+					"id": "dfu_11",
+					"data_format_id": "f06"
+				},
+				{
+					"id": "dfu_12",
+					"data_format_id": "f06"
+				},
+				{
+					"id": "dfu_13",
+					"data_format_id": "f07"
+				},
+				{
+					"id": "dfu_14",
+					"data_format_id": "f07"
+				}
+			],
 			"tool_usages": [
 				{
 					"id": "tool_usage_1",
 					"tool_id": "tool_1",
-					"nonstep_in_data_formats": ["f10", "f11"],
-					"next_steps": [
-						{
-							"target_tool_usage_id": "tool_usage_2",
-							"data_formats_ids": ["f01"]
-						},
-						{
-							"target_tool_usage_id": "tool_usage_3",
-							"data_formats_ids": ["f01", "f02"]
-						},
-						{
-							"target_tool_usage_id": "tool_usage_4",
-							"data_formats_ids": ["f02"]
-						}
-					]
+					"in_data_format_usages_ids": ["dfu_01", "dfu_03"],
+					"out_data_format_usages_ids": ["dfu_02", "dfu_06"]
 				},
 				{
 					"id": "tool_usage_2",
 					"tool_id": "tool_2",
-					"next_steps": [
-						{
-							"target_tool_usage_id": "tool_usage_5",
-							"data_formats_ids": ["f03"]
-						},
-						{
-							"target_tool_usage_id": "tool_usage_6",
-							"data_formats_ids": ["f04"]
-						}
-					]
+					"in_data_format_usages_ids": ["dfu_03"],
+					"out_data_format_usages_ids": ["dfu_02"]
 				},
 				{
 					"id": "tool_usage_3",
 					"tool_id": "tool_3",
-					"nonstep_out_data_formats": ["f12", "f13"],
-					"next_steps": []
+					"in_data_format_usages_ids": ["dfu_01", "dfu_03", "dfu_05"],
+					"out_data_format_usages_ids": ["dfu_04", "dfu_07"]
 				},
 				{
 					"id": "tool_usage_4",
 					"tool_id": "tool_1",
-					"next_steps": [
-						{
-							"target_tool_usage_id": "tool_usage_7",
-							"data_formats_ids": ["f03"]
-						}
-					]
+					"in_data_format_usages_ids": ["dfu_02", "dfu_04", "dfu_06"],
+					"out_data_format_usages_ids": ["dfu_07", "dfu_08"]
 				},
 				{
 					"id": "tool_usage_5",
 					"tool_id": "tool_2",
-					"nonstep_out_data_formats": ["f12"],
-					"next_steps": []
+					"in_data_format_usages_ids": ["dfu_04", "dfu_07", "dfu_08"],
+					"out_data_format_usages_ids": ["dfu_09"]
 				},
 				{
 					"id": "tool_usage_6",
 					"tool_id": "tool_5",
-					"next_steps": [
-						{
-							"target_tool_usage_id": "tool_usage_8",
-							"data_formats_ids": ["f04"]
-						}
-					]
+					"in_data_format_usages_ids": ["dfu_02", "dfu_09"],
+					"out_data_format_usages_ids": ["dfu_10"]
 				},
 				{
 					"id": "tool_usage_7",
 					"tool_id": "tool_4",
-					"nonstep_out_data_formats": ["f13"],
-					"next_steps": []
+					"in_data_format_usages_ids": ["dfu_08", "dfu_09", "dfu_10"],
+					"out_data_format_usages_ids": ["dfu_11", "dfu_12"]
 				},
 				{
 					"id": "tool_usage_8",
 					"tool_id": "tool_3",
-					"nonstep_out_data_formats": ["f13", "f14"],
-					"next_steps": []
+					"in_data_format_usages_ids": ["dfu_09", "dfu_11"],
+					"out_data_format_usages_ids": ["dfu_13", "dfu_14"]
 				}
 			]
 		},
@@ -272,6 +301,7 @@
 			"id": "pipeline_2",
 			"name": "Pipeline 2",
 			"workflow_ids": ["workflow_2", "workflow_3"],
+			"data_format_usages": [],
 			"tool_usages": []
 		}
 	]
