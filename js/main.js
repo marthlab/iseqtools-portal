@@ -173,7 +173,7 @@
   			nodePadding: 10
   		}
   	};
-  	debugger;
+
   	app.render_global();
 
   	// add more properties and data structures for dagre rendering
