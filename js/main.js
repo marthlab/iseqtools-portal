@@ -1,6 +1,11 @@
 
-//Immediately-Invoked Function Expression 
-// (function() {
+		function createUUID() {
+			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+		    return v.toString(16);
+			});
+		}
+		
 
 		_.mixin({
 		  // ### _.objFilter
@@ -32,7 +37,7 @@
 		  }
 		});
 
-    // global w.r.t. the containing IIFE
+    // basic data structures
     
     var app = {};
 
@@ -78,18 +83,25 @@
 	    	return new ToolUsage(_.extend(tu_cfg, {order: order, pipeline: this}));
 	    }, this).toDict();
 
+    	this.data_format_usages = {};
     }
 
     function ToolUsage(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
     	this.tool = app.tools[cfg.tool_id];
-    	//var num_tool_uses = _(this.pipeline.tool_usages).filter(function(tu) { return tu.tool == this.tool;}, this).size();
-    	//this.id = "pipelineid__"+this.pipeline.id+"__toolid__"+this.tool.id+"__tu__"+num_tool_uses;
     	this.objective = app.objectives[cfg.objective_id] || null;
-    	this.nontool_in_data_formats = _.objFilter(app.data_formats, function(df) { return _(cfg.nontool_in_data_formats).contains(df.id); });
-    	this.nontool_out_data_formats = _.objFilter(app.data_formats, function(df) { return _(cfg.nontool_out_data_formats).contains(df.id); });
 
-    	this.next_steps = [];
+    	this.in_data_format_usages = {};
+    	this.out_data_format_usages = {};
+
+    }
+
+    function DataFormatUsage(cfg) {
+    	_(this).extend(_(cfg).pick('data_format'));
+    	this.source_tool_usage = cfg.source_tool_usage || null;
+    	this.target_tool_usage = cfg.target_tool_usage || null;
+
+    	this.id = createUUID();
     }
 
     app.initialize_data_structures = function(cfg) {
@@ -128,57 +140,67 @@
 
 	    // hackish way of avoiding chicken and egg problem with target tool usages
 	    _(app.pipelines).each(function(pl) {
-	    	var tu_cfgs = cfg.pipelines[pl.order].tool_usages;
-	    	_(pl.tool_usages).each(function(tu){
-	    		tu.next_steps = tu_cfgs[tu.order].next_steps.map(function(ns_cfg) {
-			    	return {
-			    		source_tool_usage: tu,
-			    		target_tool_usage: pl.tool_usages[ns_cfg.target_tool_usage_id],
-			    		data_formats: _.objFilter(app.data_formats, function(df) { return _(ns_cfg.data_formats_ids).contains(df.id); })
-			    	};
-			    }, this);
+	    	_(pl.tool_usages).each(function(tu) {
+	    		var tu_cfg = cfg.pipelines[pl.order].tool_usages[tu.order];
+	    		(tu_cfg.next_steps || []).forEach(function(ns_cfg) {
+	    			ns_cfg.data_formats_ids.forEach(function(df_id) {
+	    				var target_tu = pl.tool_usages[ns_cfg.target_tool_usage_id];
+	    				var dfu = new DataFormatUsage({
+		  					data_format: app.data_formats[df_id],
+		  					source_tool_usage: tu,
+			    			target_tool_usage: target_tu
+		  				});
+		  				pl.data_format_usages[dfu.id] = tu.out_data_format_usages[dfu.id] = target_tu.in_data_format_usages[dfu.id] = dfu;
+	    			});
+	    		});
+	    		(tu_cfg.nonstep_out_data_formats || []).forEach(function(df_id) {
+	    			var dfu = new DataFormatUsage({ data_format: app.data_formats[df_id], source_tool_usage: tu });
+	    			pl.data_format_usages[dfu.id] = tu.out_data_format_usages[dfu.id] = dfu;
+	    		});
+	    		(tu_cfg.nonstep_in_data_formats || []).forEach(function(df_id) {
+	    			var dfu = new DataFormatUsage({ data_format: app.data_formats[df_id], target_tool_usage: tu });
+	    			pl.data_format_usages[dfu.id] = tu.in_data_format_usages[dfu.id] = dfu;
+	    		});
 	    	});
 	    });
 
   	}
-    
- 		
 
-    app.render_global = function() {
-  		app.g.states = _(_({}).extend(app.objectives, app.data_types)).toArray();
-  		app.g.states.forEach(function(s) {
-  			s.label = s.name;
-  			s.edges = [];
-  		});
+  	// "Graph" is used as a base class and is never instantiated outside of derived class constructors
+  	function Node(referent, label) {
+  		this.referent = referent;
+  		this.label = label;
+  		this.edges = [];
+  	}
+  	Node.prototype = {
 
-  		app.g.transitions = _(_(app.objectives).map(function(obj){
-  			var source_edges = _(obj.out_data_types).map(function(dt) {
-  				return {source: obj, target: dt};
-  			});
-  			var target_edges = _(obj.in_data_types).map(function(dt) {
-  				return {source: dt, target: obj};
-  			});
-  			return _.union(source_edges, target_edges);
-  		})).flatten();
-
-  		app.g.transitions.forEach(function(t) {
-  			t.source.edges.push(t);
-  			t.target.edges.push(t);
-  		});
   	}
 
-  	app.initialize_data_structures(app_json);
-  	app.g = {
-  		cfg: {
-  			nodePadding: 10
-  		}
-  	};
+  	function Edge(source_node, target_node) {
+  		this.source = source_node;
+  		this.target = target_node;
+  	}
+  	Edge.prototype = {
 
-  	app.render_global();
+  	}
 
-  	// add more properties and data structures for dagre rendering
+  	function Graph() {
+  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
+  		//debugger;
+  		this.edges.forEach(function(e) {
+  			e.source.edges.push(e);
+  			e.target.edges.push(e);
+  		});
+  	}
+  	Graph.prototype = {
 
-  	  function spline(e) {
+  	}
+
+  	Graph.prototype.render = function() {
+
+  		var nodePadding = 10;
+
+  		function spline(e) {
 
 		    var source = {x: e.source.dagre.x+e.source.dagre.width/2, y: e.source.dagre.y};
 		    var target = {x: e.target.dagre.x-e.target.dagre.width/2, y: e.target.dagre.y};
@@ -198,15 +220,14 @@
 		    });
 		  }
 
-
 		  // Now start laying things out
 		  var svg = d3.select("svg");
 		  var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
 
 		  // `nodes` is center positioned for easy layout later
-		  var nodes = svgGroup
+		  var nodes_elems = svgGroup
 		    .selectAll("g .node")
-		    .data(app.g.states)
+		    .data(this.nodes)
 		    .enter()
 		      .append("g")
 		      .attr("class", "node")
@@ -214,9 +235,9 @@
 		      .classed("data_type", function(d) { return d instanceof DataType;})
 		      .attr("id", function(d) { return "node-" + d.label });
 
-		  var edges = svgGroup
+		  var edges_elems = svgGroup
 		    .selectAll("path .edge")
-		    .data(app.g.transitions)
+		    .data(this.edges)
 		    .enter()
 		      .append("path")
 		      .attr("class", "edge")
@@ -224,10 +245,10 @@
 
 		  // Append rectangles to the nodes. We do this before laying out the text
 		  // because we want the text above the rectangle.
-		  var rects = nodes.append("rect");
+		  var rects = nodes_elems.append("rect");
 
 		  // Append text
-		  var labels = nodes
+		  var labels = nodes_elems
 		    .append("text")
 		      .attr("text-anchor", "middle")
 		      .attr("x", 0);
@@ -242,13 +263,13 @@
 		  labels.each(function(d) {
 		    var bbox = this.getBBox();
 		    d.bbox = bbox;
-		    d.width = bbox.width + 2 * app.g.cfg.nodePadding;
-		    d.height = bbox.height + 2 * app.g.cfg.nodePadding;
+		    d.width = bbox.width + 2 * nodePadding;
+		    d.height = bbox.height + 2 * nodePadding;
 		  });
 
 		  rects
-		    .attr("x", function(d) { return -(d.bbox.width / 2 + app.g.cfg.nodePadding); })
-		    .attr("y", function(d) { return -(d.bbox.height / 2 + app.g.cfg.nodePadding); })
+		    .attr("x", function(d) { return -(d.bbox.width / 2 + nodePadding); })
+		    .attr("y", function(d) { return -(d.bbox.height / 2 + nodePadding); })
 		    .attr("width", function(d) { return d.width; })
 		    .attr("height", function(d) { return d.height; });
 
@@ -262,15 +283,15 @@
 		    .edgeSep(10)
 		    .rankSep(50)
 		    .rankDir("LR")
-		    .nodes(app.g.states)
-		    .edges(app.g.transitions)
+		    .nodes(this.nodes)
+		    .edges(this.edges)
 		    .debugLevel(1)
 		    .run();
 
-		  nodes.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
+		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
 
 		  // Ensure that we have at least two points between source and target
-		  edges.each(function(d) {
+		  edges_elems.each(function(d) {
 		    var points = d.dagre.points;
 		    if (!points.length) {
 		      var s = d.source.dagre;
@@ -284,7 +305,7 @@
 		    }
 		  });
 
-		  edges
+		  edges_elems
 		    // Set the id. of the SVG element to have access to it later
 		    .attr('id', function(e) { return e.dagre.id; })
 		    .attr("d", function(e) { return spline(e); });
@@ -293,17 +314,7 @@
 		  var svgBBox = svg.node().getBBox();
 		  // debugger;
 
-		  // var r1 = svgBBox.width/window.innerWidth;
-		  // var r2 = svgBBox.height/window.innerHeight;
-		  // r3 = Math.max(r1,r2);
-		  // svg.style("width", (svgBBox.width/r3)+'px');
-		  // svg.style("height", (svgBBox.height/r3)+'px');
-		  
-		  //svg.attr("width", svgBBox.width + 10);
-		  //svg.attr("height", svgBBox.height + 10);
 		  svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
-
-		  //$("#svg_1 > g").appendTo("#svg_2");
 
 		  // Drag handlers
 		  var nodeDrag = d3.behavior.drag()
@@ -334,7 +345,66 @@
 		      d3.select(this).attr('d', spline(d));
 		    });
 
-		  nodes.call(nodeDrag);
-		  edges.call(edgeDrag);
+		  nodes_elems.call(nodeDrag);
+		  edges_elems.call(edgeDrag);
+  	}
 
-// }()); 
+  	// "ObjectivesGraph" is used as a base class and is never instantiated outside of derived class constructors
+  	function ObjectivesGraph() {
+  		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
+  			var source_edges = _(obj_node.referent.out_data_types).map(function(dt) {
+  				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}));
+  			}, this);
+  			var target_edges = _(obj_node.referent.in_data_types).map(function(dt) {
+  				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node);
+  			}, this);
+  			return _.union(source_edges, target_edges);
+  		}, this), true);
+
+  		Graph.call(this);
+  	}
+  	ObjectivesGraph.prototype = Object.create(Graph.prototype);
+
+  	function GlobalGraph() {
+  		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name);});
+  		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name);});
+  		ObjectivesGraph.call(this);
+
+  	}
+  	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype);
+
+  	function WorkflowGraph(workflow) {
+  		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name);});
+  		this.secondary_nodes = this.data_types_nodes = _.flatten(_(workflow.objectives).map(function(obj) { return _.union(obj.in_data_types, obj.out_data_types);}))
+  																										.map(function(dt) { return new Node(dt, dt.name);});
+  		ObjectivesGraph.call(this);
+
+  	}
+  	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
+
+  	function PipelineGraph(pipeline) {
+  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tool_usage) { return new Node(tool_usage, tool_usage.tool.name);});
+  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(df_usage) { return new Node(df_usage, df_usage.data_format.name);});
+
+  		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
+  			var source_edges = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
+  				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}));
+  			}, this);
+  			var target_edges = _(tu_node.referent.in_data_format_usages).map(function(df_usage) {
+  				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node);
+  			}, this);
+  			return _.union(source_edges, target_edges);
+  		}, this), true);
+
+  		Graph.call(this);
+
+  	}
+  	PipelineGraph.prototype = Object.create(Graph.prototype);
+
+  	
+  	  
+		app.initialize_data_structures(app_json);
+ 		//app.graph = new GlobalGraph();
+ 		app.graph = new PipelineGraph(app.pipelines.pipeline_1);
+ 		app.graph.render();
+

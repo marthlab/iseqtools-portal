@@ -186,12 +186,13 @@
 	"pipelines": [
 		{
 			"id": "pipeline_1",
-			"name": "Pipeline 2",
+			"name": "Pipeline 1",
 			"workflow_ids": ["workflow_1", "workflow_2"],
 			"tool_usages": [
 				{
 					"id": "tool_usage_1",
 					"tool_id": "tool_1",
+					"nonstep_in_data_formats": ["f10", "f11"],
 					"next_steps": [
 						{
 							"target_tool_usage_id": "tool_usage_2",
@@ -224,6 +225,7 @@
 				{
 					"id": "tool_usage_3",
 					"tool_id": "tool_3",
+					"nonstep_out_data_formats": ["f12", "f13"],
 					"next_steps": []
 				},
 				{
@@ -239,6 +241,7 @@
 				{
 					"id": "tool_usage_5",
 					"tool_id": "tool_2",
+					"nonstep_out_data_formats": ["f12"],
 					"next_steps": []
 				},
 				{
@@ -254,11 +257,13 @@
 				{
 					"id": "tool_usage_7",
 					"tool_id": "tool_4",
+					"nonstep_out_data_formats": ["f13"],
 					"next_steps": []
 				},
 				{
 					"id": "tool_usage_8",
 					"tool_id": "tool_3",
+					"nonstep_out_data_formats": ["f13", "f14"],
 					"next_steps": []
 				}
 			]
