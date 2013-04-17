@@ -65,11 +65,22 @@ html, body { margin:0; padding:0; overflow:hidden; width:100%; height:100%; }
 svg {display:block; margin:0 auto; width:80%;}
 
 
-
-.node rect {
+.node line {
   stroke-width: 1.5px;
   stroke: #333;
+}
+
+.node circle {
+  stroke-width: 1.5px;
+  stroke: #333;
+}
+
+.node circle.primary {
   fill: #fff;
+}
+
+.node circle.secondary {
+  fill: #000;
 }
 
 #node-CLOSED rect {

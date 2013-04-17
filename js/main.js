@@ -33,6 +33,19 @@
     
     var app = {};
 
+    app.cfg = {
+    	nodes: {
+    		primary: {
+	    		radius: 30,
+	    		fill: "#fff"
+	    	},
+	    	secondary: {
+	    		radius:10,
+	    		fill: "#000"
+	    	}
+    	}
+    }
+
     function DataType(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
 
@@ -134,16 +147,33 @@
   	}
 
   	// "Graph" is used as a base class and is never instantiated outside of derived class constructors
-  	function Node(referent, label) {
+  	function Node(referent, label, is_primary, graph) {
+  		this.is_primary = is_primary || false;
   		this.referent = referent;
   		this.label = label;
+  		this.graph = graph;
   		this.edges = [];
+  		this.cfg = app.cfg.nodes[this.is_primary ? "primary":"secondary"]
   	}
   	Node.prototype = {
-
+  		getChildren: function() {
+  			return _(this.graph.nodes).filter(function(node){
+  				return _(this.edges).find(function(edge) {
+  					return edge.target === node && this !== node;
+  				}, this);
+  			}, this);
+  		},
+  		getParents: function() {
+  			return _(this.graph.nodes).filter(function(node){
+  				return _(this.edges).find(function(edge) {
+  					return edge.source === node && this !== node;
+  				}, this);
+  			}, this);
+  		}
   	}
 
-  	function Edge(source_node, target_node) {
+  	function Edge(source_node, target_node, graph) {
+  		this.graph = graph;
   		this.source = source_node;
   		this.target = target_node;
   	}
@@ -153,7 +183,6 @@
 
   	function Graph() {
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
-  		//debugger;
   		this.edges.forEach(function(e) {
   			e.source.edges.push(e);
   			e.target.edges.push(e);
@@ -228,7 +257,8 @@
 
 		  // Append rectangles to the nodes. We do this before laying out the text
 		  // because we want the text above the rectangle.
-		  var rects = nodes_elems.append("rect");
+		  var circles = nodes_elems.append("circle");
+		  
 
 		  // Append text
 		  var labels = nodes_elems
@@ -239,7 +269,7 @@
 		  labels
 		    .append("tspan")
 		    .attr("x", 0)
-		    .attr("dy", "-1em")
+		    .attr("dy", "-0.5em")
 		    .text(function(d) { return d.label; });
 
 		  // We need width and height for layout.
@@ -250,19 +280,28 @@
 		    d.height = bbox.height + 2 * nodePadding;
 		  });
 
-		  rects
-		    .attr("x", function(d) { return -(d.bbox.width / 2 + nodePadding); })
-		    .attr("y", function(d) { return -(d.bbox.height / 2 + nodePadding); })
-		    .attr("width", function(d) { return d.width; })
-		    .attr("height", function(d) { return d.height; });
+		  circles
+		  	.attr("cx", function(d) { return 0; })
+				.attr("cy", function(d) { return 0; })
+				.attr("r", function(d) { return d.cfg.radius; })
+				.classed("primary", function(d) { return d.is_primary; })
+				.classed("secondary", function(d) { return !d.is_primary; })
+
+			
+
+		  // rects
+		  //   .attr("x", function(d) { return -(d.bbox.width / 2 + nodePadding); })
+		  //   .attr("y", function(d) { return -(d.bbox.height / 2 + nodePadding); })
+		  //   .attr("width", function(d) { return d.width; })
+		  //   .attr("height", function(d) { return d.height; });
 
 		  labels
 		    .attr("x", function(d) { return -d.bbox.width / 2; })
-		    .attr("y", function(d) { return -d.bbox.height / 2; });
+		    .attr("y", function(d) { return -d.cfg.radius; });
 
 		  // Create the layout and get the graph
 		  dagre.layout()
-		    .nodeSep(50)
+		    .nodeSep(80)
 		    .edgeSep(10)
 		    .rankSep(50)
 		    .rankDir("LR")
@@ -276,6 +315,7 @@
 		  // Ensure that we have at least two points between source and target
 		  edges_elems.each(function(d) {
 		    var points = d.dagre.points;
+		    console.log(points.length);
 		    if (!points.length) {
 		      var s = d.source.dagre;
 		      var t = d.target.dagre;
@@ -283,21 +323,34 @@
 		    }
 
 		    if (points.length === 1) {
-		    	console.log("test_1");
 		      points.push({ x: points[0].x, y: points[0].y });
 		    }
 		  });
 
 		  edges_elems
-		  .attr("num_points", function(e) { return e.dagre.points.length; })
 		    // Set the id. of the SVG element to have access to it later
 		    .attr('id', function(e) { return e.dagre.id; })
 		    .attr("d", function(e) { return spline(e); });
-		    
+
+		  var node_connectors_left = nodes_elems.filter(function(d) { return !_(d.getParents()).isEmpty(); }).append("line");
+
+		  node_connectors_left
+		  	.attr("x1", function(d) { return -d.dagre.width/2; })
+				.attr("y1", function(d) { return 0; })
+				.attr("x2", function(d) { return -d.cfg.radius; })
+				.attr("y2", function(d) { return 0; })
+
+		  var node_connectors_right = nodes_elems.filter(function(d) { return !_(d.getChildren()).isEmpty(); }).append("line");
+
+		  node_connectors_right
+		  	.attr("x1", function(d) { return d.cfg.radius; })
+				.attr("y1", function(d) { return 0; })
+				.attr("x2", function(d) { return d.dagre.width/2; })
+				.attr("y2", function(d) { return 0; })
 
 		  // Resize the SVG element
 		  var svgBBox = svg.node().getBBox();
-		  // debugger;
+	
 
 		  svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
 
@@ -338,10 +391,10 @@
   	function ObjectivesGraph() {
   		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
   			var source_edges = _(obj_node.referent.out_data_types).map(function(dt) {
-  				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}));
+  				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
   			}, this);
   			var target_edges = _(obj_node.referent.in_data_types).map(function(dt) {
-  				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node);
+  				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
   			}, this);
   			return _.union(source_edges, target_edges);
   		}, this), true);
@@ -351,25 +404,25 @@
   	ObjectivesGraph.prototype = Object.create(Graph.prototype);
 
   	function GlobalGraph() {
-  		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name);});
-  		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name);});
+  		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name, true, this);}, this);
+  		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name, false, this);}, this);
   		ObjectivesGraph.call(this);
 
   	}
   	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function WorkflowGraph(workflow) {
-  		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name);});
+  		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name, true, this);}, this);
   		this.secondary_nodes = this.data_types_nodes = _.flatten(_(workflow.objectives).map(function(obj) { return _.union(obj.in_data_types, obj.out_data_types);}))
-  																										.map(function(dt) { return new Node(dt, dt.name);});
+  																										.map(function(dt) { return new Node(dt, dt.name, false, this);}, this);
   		ObjectivesGraph.call(this);
 
   	}
   	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function PipelineGraph(pipeline) {
-  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name);});
-  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name);});
+  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name, true, this);}, this);
+  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name, false, this);}, this);
 
   		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
   			var source_edges = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
