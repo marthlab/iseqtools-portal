@@ -68,13 +68,17 @@
 
     function Pipeline(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	cfg.initial_data_format_usages = cfg.initial_data_format_usages || [];
+
     	this.workflows = cfg.workflows_ids.map(function(wf_id){ return app.workflows[wf_id];}).toDict();
 
-	    this.data_format_usages = _.flatten(cfg.tool_usages.map(function(tu_cfg) {
-	    	return tu_cfg.out_data_format_usages.map(function(dfu_cfg, order){
-	    		return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
-	    	}, this);
-	    }, this), true).toDict();
+    	var create_dfu = function(dfu_cfg, order){
+    		return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
+    	};
+
+	    this.data_format_usages = _.flatten(_(cfg.tool_usages.map(function(tu_cfg) {
+	    	return tu_cfg.out_data_format_usages.map(create_dfu, this);
+	    }, this)).union(cfg.initial_data_format_usages.map(create_dfu, this)), true).toDict();
     	
     	this.tool_usages = cfg.tool_usages.map(function(tu_cfg, order) {
 	    	return new ToolUsage(_.extend(tu_cfg, {order: order, pipeline: this}));

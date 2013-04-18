@@ -188,11 +188,25 @@
 			"id": "pipeline_1",
 			"name": "Pipeline 1",
 			"workflows_ids": ["workflow_1", "workflow_2"],
+			"initial_data_format_usages": [
+				{
+					"id": "dfu_01",
+					"data_format_id": "f01"
+				},
+				{
+					"id": "dfu_03",
+					"data_format_id": "f02"
+ 		  	},
+				{
+					"id": "dfu_05",
+					"data_format_id": "f03"
+				}
+			],
 			"tool_usages": [
 				{
 					"id": "tool_usage_1",
 					"tool_id": "tool_1",
-					"in_data_format_usages_ids": [],
+					"in_data_format_usages_ids": ["dfu_01", "dfu_03"],
 					"out_data_format_usages": [
 						{
 							"id": "dfu_02",
@@ -207,7 +221,7 @@
 				{
 					"id": "tool_usage_3",
 					"tool_id": "tool_3",
-					"in_data_format_usages_ids": [],
+					"in_data_format_usages_ids": ["dfu_01", "dfu_05"],
 					"out_data_format_usages": [
 						{
 							"id": "dfu_04",
