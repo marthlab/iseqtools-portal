@@ -187,12 +187,12 @@
 		{
 			"id": "pipeline_1",
 			"name": "Pipeline 1",
-			"workflow_ids": ["workflow_1", "workflow_2"],
+			"workflows_ids": ["workflow_1", "workflow_2"],
 			"tool_usages": [
 				{
 					"id": "tool_usage_1",
 					"tool_id": "tool_1",
-					"in_data_format_usages_ids": ["dfu_01", "dfu_03"],
+					"in_data_format_usages_ids": [],
 					"out_data_format_usages": [
 						{
 							"id": "dfu_02",
@@ -207,7 +207,7 @@
 				{
 					"id": "tool_usage_3",
 					"tool_id": "tool_3",
-					"in_data_format_usages_ids": ["dfu_01", "dfu_03", "dfu_05"],
+					"in_data_format_usages_ids": [],
 					"out_data_format_usages": [
 						{
 							"id": "dfu_04",
@@ -291,7 +291,7 @@
 		{
 			"id": "pipeline_2",
 			"name": "Pipeline 2",
-			"workflow_ids": ["workflow_2", "workflow_3"],
+			"workflows_ids": ["workflow_2", "workflow_3"],
 			"data_format_usages": [],
 			"tool_usages": []
 		}

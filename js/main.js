@@ -1,30 +1,9 @@
 
-		_.mixin({
-		  // ### _.objFilter
-		  // _.filter for objects, keeps key/value associations
-		  // but only includes the properties that pass test().
-		  objFilter: function (input, test, context) {
-		    return _.reduce(input, function (obj, v, k) {
-		             if (test.call(context, v, k, input)) {
-		               obj[k] = v;
-		             }
-		             return obj;
-		           }, {}, context);
-		  }
-		});
-
-	  // creates a dictionary from an array of objects. each object in
-	  // the array must have a unique value for key_property that is
-	  // a syntactically valid JS object key (defaults to "id")
+	  // creates a dictionary from an array of objects
 	  Object.defineProperties(Array.prototype, {
 		  "toDict": {
-		  	value: function(key_property) {
-			  	new_obj = {};
-			  	key_property = key_property || "id";
-			  	_.each(this, function(element, index) {
-			  		new_obj[element[key_property]] = element;
-			  	});
-			  	return new_obj;
+			  value: function(key_property) {
+			  	return _.object(this.map(function(item){ return item[key_property || "id"];}), this);
 			  }
 		  }
 		});
@@ -33,8 +12,16 @@
     
     var app = {};
 
-    app.cfg = {
+    app.settings = {
+    	graph: {
+    		nodeSep: 50,
+		    edgeSep: 10,
+		    rankSep: 50
+    	},
     	nodes: {
+
+    	},
+    	node_types: {
     		primary: {
 	    		radius: 30,
 	    		fill: "#fff"
@@ -56,8 +43,8 @@
 
     function Objective(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.in_data_types = _.objFilter(app.data_types, function(dt) { return _(cfg.in_data_types_ids).contains(dt.id); });
-    	this.out_data_types = _.objFilter(app.data_types, function(dt) { return _(cfg.out_data_types_ids).contains(dt.id); });
+    	this.in_data_types = cfg.in_data_types_ids.map(function(dt_id){ return app.data_types[dt_id];}).toDict();
+    	this.out_data_types = cfg.out_data_types_ids.map(function(dt_id){ return app.data_types[dt_id];}).toDict();
     
     	// references populated later
     	this.workflows = {};
@@ -65,8 +52,7 @@
 
     function Workflow(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-
-    	this.objectives = _.objFilter(app.objectives, function(obj) { return _(cfg.objectives_ids).contains(obj.id); });
+    	this.objectives = cfg.objectives_ids.map(function(obj_id){ return app.objectives[obj_id];}).toDict();
     	this.data_types = _.extend.apply({}, 
     		_(this.objectives).map(function(obj) {return _.extend({}, obj.in_data_types, obj.out_data_types); })
   		);
@@ -82,11 +68,7 @@
 
     function Pipeline(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.workflows = _.objFilter(app.workflows, function(wf) { return _(cfg.workflows_ids).contains(wf.id); });
-
-    	// this.data_format_usages = cfg.data_format_usages.map(function(dfu_cfg, order) {
-	    // 	return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
-	    // }, this).toDict();
+    	this.workflows = cfg.workflows_ids.map(function(wf_id){ return app.workflows[wf_id];}).toDict();
 
 	    this.data_format_usages = _.flatten(cfg.tool_usages.map(function(tu_cfg) {
 	    	return tu_cfg.out_data_format_usages.map(function(dfu_cfg, order){
@@ -110,12 +92,9 @@
     	this.tool = app.tools[cfg.tool_id];
     	this.objective = app.objectives[cfg.objective_id] || null;
 
-    	this.in_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) {
-    		return _(cfg.in_data_format_usages_ids).contains(dfu.id);
-    	});
-    	this.out_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) {
-    		return _(cfg.out_data_format_usages.map(function(dfu_cfg){ return dfu_cfg.id; })).contains(dfu.id);
-    	});
+    	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return this.pipeline.data_format_usages[dfu_id];}, this).toDict();
+    	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return this.pipeline.data_format_usages[dfu_cfg.id];}, this).toDict();
+
     }
 
     
@@ -131,15 +110,15 @@
 	    }).toDict();
 
 	    _(app.data_types).each(function(dt) {
-	  		dt.objectives_consuming = _(app.objectives).objFilter(function(obj) {return _(obj.in_data_types).contains(dt); });
-	  		dt.objectives_producing = _(app.objectives).objFilter(function(obj) {return _(obj.out_data_types).contains(dt); });
+	  		dt.objectives_consuming = _(app.objectives).filter(function(obj) {return _(obj.in_data_types).contains(dt); }).toDict();
+	  		dt.objectives_producing = _(app.objectives).filter(function(obj) {return _(obj.out_data_types).contains(dt); }).toDict();
 	  	});
 	    
 	    app.workflows = cfg.workflows.map(function(wf_cfg, order) {
 	    	return new Workflow(_.extend(wf_cfg, {order: order}) );
 	    }).toDict();
 	    _(app.objectives).each(function(obj) {
-	  		obj.workflows = _(app.workflows).objFilter(function(wf) {return _(wf.objectives).contains(obj); });
+	  		obj.workflows = _(app.workflows).filter(function(wf) {return _(wf.objectives).contains(obj); }).toDict();
 	  	});
 
 	    app.data_formats = cfg.data_formats.map(function(df_cfg, order) {
@@ -158,27 +137,19 @@
 
   	// "Graph" is used as a base class and is never instantiated outside of derived class constructors
   	function Node(referent, label, is_primary, graph) {
-  		this.is_primary = is_primary || false;
+  		this.type = is_primary ? 'primary' : 'secondary';
   		this.referent = referent;
   		this.label = label;
   		this.graph = graph;
   		this.edges = [];
-  		this.cfg = app.cfg.nodes[this.is_primary ? "primary":"secondary"]
+  		this.settings = _({}).extend(app.settings.nodes, app.settings.node_types[this.type]);
   	}
   	Node.prototype = {
   		getChildren: function() {
-  			return _(this.graph.nodes).filter(function(node){
-  				return _(this.edges).find(function(edge) {
-  					return edge.target === node && this !== node;
-  				}, this);
-  			}, this);
+  			return this.edges.map(function(e){ return e.target;}).filter(function(n){ return n !== this;});
   		},
   		getParents: function() {
-  			return _(this.graph.nodes).filter(function(node){
-  				return _(this.edges).find(function(edge) {
-  					return edge.source === node && this !== node;
-  				}, this);
-  			}, this);
+  			return this.edges.map(function(e){ return e.source;}).filter(function(n){ return n !== this;});
   		}
   	}
 
@@ -187,9 +158,6 @@
   		this.source = source_node;
   		this.target = target_node;
   	}
-  	Edge.prototype = {
-
-  	}
 
   	function Graph() {
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
@@ -197,9 +165,7 @@
   			e.source.edges.push(e);
   			e.target.edges.push(e);
   		});
-  	}
-  	Graph.prototype = {
-
+  		this.settings = app.settings.graph;
   	}
 
   	Graph.prototype.render = function() {
@@ -224,20 +190,12 @@
 	      var start = {x: e.source.dagre.x+e.source.dagre.width/2, y: e.source.dagre.y};
 			  var end = {x: e.target.dagre.x-e.target.dagre.width/2, y: e.target.dagre.y};
 
-		  	path_string = line([{x: start.x-e.source.dagre.width/2+e.source.cfg.radius, y: start.y}, start])
+		  	path_string = line([{x: start.x-e.source.dagre.width/2+e.source.settings.radius, y: start.y}, start])
 		  							+ (points.length == 1 ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end) )
-		  							+ line([end, {x: end.x+e.target.dagre.width/2-e.target.cfg.radius, y: end.y}]);
+		  							+ line([end, {x: end.x+e.target.dagre.width/2-e.target.settings.radius, y: end.y}]);
 
 			  return path_string;
 		}
-
-		  // Translates all points in the edge using `dx` and `dy`.
-		  function translateEdge(e, dx, dy) {
-		    e.dagre.points.forEach(function(p) {
-		      p.x = Math.max(0, Math.min(svgBBox.width, p.x + dx));
-		      p.y = Math.max(0, Math.min(svgBBox.height, p.y + dy));
-		    });
-		  }
 
 		  var svg = d3.select("svg");
 		  var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
@@ -249,8 +207,8 @@
 		      .append("g")
 		      .attr("class", "node")
 		      .attr("id", function(d) { return "node-" + d.referent.id; })
-		      .classed("primary", function(d) { return d.is_primary; })
-					.classed("secondary", function(d) { return !d.is_primary; });
+		      .classed("primary", function(d) { return d.type === 'primary'; })
+					.classed("secondary", function(d) { return d.type === 'secondary'; });
 
 		  var edges_elems = svgGroup
 		    .selectAll("path .edge")
@@ -260,16 +218,16 @@
 		      .attr("class", "edge")
 
 	    var circles = nodes_elems.append("circle")
-		  	.attr("cx", function(d) { return 0; })
-				.attr("cy", function(d) { return 0; })
-				.attr("r", function(d) { return d.cfg.radius; })
+		  	.attr("cx", 0)
+				.attr("cy", 0)
+				.attr("r", function(d) { return d.settings.radius; })
 				
 
 		  var labels = nodes_elems
 		    .append("text")
 	      .attr("text-anchor", "middle")
 	      .attr("x", 0)
-	      .attr("y", function(d) { return -d.cfg.radius; });
+	      .attr("y", function(d) { return -d.settings.radius; });
 
 		  labels
 		    .append("tspan")
@@ -285,9 +243,9 @@
 		  });
 
 		  dagre.layout()
-		    .nodeSep(50)
-		    .edgeSep(10)
-		    .rankSep(50)
+		    .nodeSep(this.settings.nodeSep)
+		    .edgeSep(this.settings.edgeSep)
+		    .rankSep(this.settings.rankSep)
 		    .rankDir("LR")
 		    .nodes(this.nodes)
 		    .edges(this.edges)
