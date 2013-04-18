@@ -84,9 +84,15 @@
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	this.workflows = _.objFilter(app.workflows, function(wf) { return _(cfg.workflows_ids).contains(wf.id); });
 
-    	this.data_format_usages = cfg.data_format_usages.map(function(dfu_cfg, order) {
-	    	return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
-	    }, this).toDict();
+    	// this.data_format_usages = cfg.data_format_usages.map(function(dfu_cfg, order) {
+	    // 	return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
+	    // }, this).toDict();
+
+	    this.data_format_usages = _.flatten(cfg.tool_usages.map(function(tu_cfg) {
+	    	return tu_cfg.out_data_format_usages.map(function(dfu_cfg, order){
+	    		return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
+	    	}, this);
+	    }, this), true).toDict();
     	
     	this.tool_usages = cfg.tool_usages.map(function(tu_cfg, order) {
 	    	return new ToolUsage(_.extend(tu_cfg, {order: order, pipeline: this}));
@@ -104,8 +110,12 @@
     	this.tool = app.tools[cfg.tool_id];
     	this.objective = app.objectives[cfg.objective_id] || null;
 
-    	this.in_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) { return _(cfg.in_data_format_usages_ids).contains(dfu.id); });
-    	this.out_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) { return _(cfg.out_data_format_usages_ids).contains(dfu.id); });
+    	this.in_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) {
+    		return _(cfg.in_data_format_usages_ids).contains(dfu.id);
+    	});
+    	this.out_data_format_usages = _.objFilter(this.pipeline.data_format_usages, function(dfu) {
+    		return _(cfg.out_data_format_usages.map(function(dfu_cfg){ return dfu_cfg.id; })).contains(dfu.id);
+    	});
     }
 
     
@@ -214,10 +224,8 @@
 	      var start = {x: e.source.dagre.x+e.source.dagre.width/2, y: e.source.dagre.y};
 			  var end = {x: e.target.dagre.x-e.target.dagre.width/2, y: e.target.dagre.y};
 
-			  var path_string = (points.length == 1) ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end);
-
 		  	path_string = line([{x: start.x-e.source.dagre.width/2+e.source.cfg.radius, y: start.y}, start])
-		  							+ path_string
+		  							+ (points.length == 1 ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end) )
 		  							+ line([end, {x: end.x+e.target.dagre.width/2-e.target.cfg.radius, y: end.y}]);
 
 			  return path_string;
