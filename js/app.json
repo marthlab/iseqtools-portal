@@ -44,7 +44,7 @@
 		},
 		{
 			"id":"call_svs",
-			"name":"Map",
+			"name":"Call SVs",
 			"in_data_types_ids": ["alignments"],
 			"out_data_types_ids": ["functional_features", "variants"]
 		},
@@ -98,7 +98,7 @@
 		},
 		{
 			"id":"f04",
-			"name":"Format 4"
+			"name":"Placeholder Format 4"
 		},
 		{
 			"id":"f05",
@@ -152,7 +152,7 @@
 		},
 		{
 			"id": "tool_3",
-			"name":"Tool 3 Tool 3 Tool 3 Tool 3"
+			"name":"Placeholder Tool 3"
 		},
 		{
 			"id": "tool_4",

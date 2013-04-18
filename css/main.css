@@ -75,11 +75,11 @@ svg {display:block; margin:0 auto; width:80%;}
   stroke: #333;
 }
 
-.node circle.primary {
+.node.primary circle {
   fill: #fff;
 }
 
-.node circle.secondary {
+.node.secondary circle {
   fill: #000;
 }
 
@@ -88,11 +88,15 @@ svg {display:block; margin:0 auto; width:80%;}
   fill: #f88;
 }
 
-.node text {
+.node.primary text {
   font: 300 16px "Helvetica Neue";
 }
 
-.node:hover {
+.node.secondary text {
+  font: 300 13px "Helvetica Neue";
+}
+
+.node:hover circle, .node:hover text {
   cursor: pointer;
   opacity: 0.4;
 }

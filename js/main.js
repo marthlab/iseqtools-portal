@@ -194,17 +194,15 @@
 
   	Graph.prototype.render = function() {
 
-  		var nodePadding = 10;
-
   		function spline(e) {
 
-  			function horzDiag(source, target) {
+  			function diag(source, target) {
   				var diag_points = {source: {x: source.y, y: source.x}, target: {x: target.y, y: target.x}};
   				return d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; })
 		      (diag_points);
   			}
 
-  			function horzLine(line_points) {
+  			function line(line_points) {
   				return d3.svg.line()
 		      .x(function(d) { return d.x; })
 		      .y(function(d) { return d.y; })
@@ -212,16 +210,17 @@
 		      (line_points)
   			}
 
-	      var points = e.dagre.points.slice(0);
+	      var points = e.dagre.points;
 	      var start = {x: e.source.dagre.x+e.source.dagre.width/2, y: e.source.dagre.y};
 			  var end = {x: e.target.dagre.x-e.target.dagre.width/2, y: e.target.dagre.y};
 
-	      if(points[1].x == points[0].x && points[1].y == points[0].y) {
-			    return horzDiag(start, end);
-			  } else {
-			  	return horzDiag(start, points[0])+horzLine([points[0], points[1]])+horzDiag(points[1], end);
-			  }
+			  var path_string = (points.length == 1) ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end);
 
+		  	path_string = line([{x: start.x-e.source.dagre.width/2+e.source.cfg.radius, y: start.y}, start])
+		  							+ path_string
+		  							+ line([end, {x: end.x+e.target.dagre.width/2-e.target.cfg.radius, y: end.y}]);
+
+			  return path_string;
 		}
 
 		  // Translates all points in the edge using `dx` and `dy`.
@@ -232,20 +231,18 @@
 		    });
 		  }
 
-		  // Now start laying things out
 		  var svg = d3.select("svg");
 		  var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
 
-		  // `nodes` is center positioned for easy layout later
 		  var nodes_elems = svgGroup
 		    .selectAll("g .node")
 		    .data(this.nodes)
 		    .enter()
 		      .append("g")
 		      .attr("class", "node")
-		      .classed("objective", function(d) { return d instanceof Objective;})
-		      .classed("data_type", function(d) { return d instanceof DataType;})
-		      .attr("id", function(d) { return "node-" + d.label });
+		      .attr("id", function(d) { return "node-" + d.referent.id; })
+		      .classed("primary", function(d) { return d.is_primary; })
+					.classed("secondary", function(d) { return !d.is_primary; });
 
 		  var edges_elems = svgGroup
 		    .selectAll("path .edge")
@@ -253,18 +250,18 @@
 		    .enter()
 		      .append("path")
 		      .attr("class", "edge")
-		      //.attr("marker-end", "url(#arrowhead)");
 
-		  // Append rectangles to the nodes. We do this before laying out the text
-		  // because we want the text above the rectangle.
-		  var circles = nodes_elems.append("circle");
-		  
+	    var circles = nodes_elems.append("circle")
+		  	.attr("cx", function(d) { return 0; })
+				.attr("cy", function(d) { return 0; })
+				.attr("r", function(d) { return d.cfg.radius; })
+				
 
-		  // Append text
 		  var labels = nodes_elems
 		    .append("text")
-		      .attr("text-anchor", "middle")
-		      .attr("x", 0);
+	      .attr("text-anchor", "middle")
+	      .attr("x", 0)
+	      .attr("y", function(d) { return -d.cfg.radius; });
 
 		  labels
 		    .append("tspan")
@@ -272,36 +269,15 @@
 		    .attr("dy", "-0.5em")
 		    .text(function(d) { return d.label; });
 
-		  // We need width and height for layout.
-		  labels.each(function(d) {
+			nodes_elems.each(function(d) {
 		    var bbox = this.getBBox();
 		    d.bbox = bbox;
-		    d.width = bbox.width + 2 * nodePadding;
-		    d.height = bbox.height + 2 * nodePadding;
+		    d.width = bbox.width;
+		    d.height = bbox.height;
 		  });
 
-		  circles
-		  	.attr("cx", function(d) { return 0; })
-				.attr("cy", function(d) { return 0; })
-				.attr("r", function(d) { return d.cfg.radius; })
-				.classed("primary", function(d) { return d.is_primary; })
-				.classed("secondary", function(d) { return !d.is_primary; })
-
-			
-
-		  // rects
-		  //   .attr("x", function(d) { return -(d.bbox.width / 2 + nodePadding); })
-		  //   .attr("y", function(d) { return -(d.bbox.height / 2 + nodePadding); })
-		  //   .attr("width", function(d) { return d.width; })
-		  //   .attr("height", function(d) { return d.height; });
-
-		  labels
-		    .attr("x", function(d) { return -d.bbox.width / 2; })
-		    .attr("y", function(d) { return -d.cfg.radius; });
-
-		  // Create the layout and get the graph
 		  dagre.layout()
-		    .nodeSep(80)
+		    .nodeSep(50)
 		    .edgeSep(10)
 		    .rankSep(50)
 		    .rankDir("LR")
@@ -312,79 +288,15 @@
 
 		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
 
-		  // Ensure that we have at least two points between source and target
-		  edges_elems.each(function(d) {
-		    var points = d.dagre.points;
-		    console.log(points.length);
-		    if (!points.length) {
-		      var s = d.source.dagre;
-		      var t = d.target.dagre;
-		      points.push({ x: (s.x + t.x) / 2, y: (s.y + t.y) / 2 });
-		    }
-
-		    if (points.length === 1) {
-		      points.push({ x: points[0].x, y: points[0].y });
-		    }
-		  });
-
 		  edges_elems
 		    // Set the id. of the SVG element to have access to it later
 		    .attr('id', function(e) { return e.dagre.id; })
 		    .attr("d", function(e) { return spline(e); });
 
-		  var node_connectors_left = nodes_elems.filter(function(d) { return !_(d.getParents()).isEmpty(); }).append("line");
-
-		  node_connectors_left
-		  	.attr("x1", function(d) { return -d.dagre.width/2; })
-				.attr("y1", function(d) { return 0; })
-				.attr("x2", function(d) { return -d.cfg.radius; })
-				.attr("y2", function(d) { return 0; })
-
-		  var node_connectors_right = nodes_elems.filter(function(d) { return !_(d.getChildren()).isEmpty(); }).append("line");
-
-		  node_connectors_right
-		  	.attr("x1", function(d) { return d.cfg.radius; })
-				.attr("y1", function(d) { return 0; })
-				.attr("x2", function(d) { return d.dagre.width/2; })
-				.attr("y2", function(d) { return 0; })
-
 		  // Resize the SVG element
 		  var svgBBox = svg.node().getBBox();
-	
-
 		  svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
 
-		  // Drag handlers
-		  var nodeDrag = d3.behavior.drag()
-		    // Set the right origin (based on the Dagre layout or the current position)
-		    .origin(function(d) { return d.pos ? {x: d.pos.x, y: d.pos.y} : {x: d.dagre.x, y: d.dagre.y}; })
-		    .on('drag', function (d, i) {
-		      var prevX = d.dagre.x,
-		          prevY = d.dagre.y;
-
-		      // The node must be inside the SVG area
-		      d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
-		      d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
-		      d3.select(this).attr('transform', 'translate('+ d.dagre.x +','+ d.dagre.y +')');
-
-		      var dx = d.dagre.x - prevX,
-		          dy = d.dagre.y - prevY;
-
-		      // Edges position (inside SVG area)
-		      d.edges.forEach(function(e) {
-		        translateEdge(e, dx, dy);
-		        d3.select('#'+ e.dagre.id).attr('d', spline(e));
-		      });
-		    });
-
-		  var edgeDrag = d3.behavior.drag()
-		    .on('drag', function (d, i) {
-		      translateEdge(d, d3.event.dx, d3.event.dy);
-		      d3.select(this).attr('d', spline(d));
-		    });
-
-		  nodes_elems.call(nodeDrag);
-		  edges_elems.call(edgeDrag);
   	}
 
   	// "ObjectivesGraph" is used as a base class and is never instantiated outside of derived class constructors
