@@ -101,13 +101,13 @@ svg {display:block; margin:0 auto; width:80%;}
   opacity: 0.4;
 }
 
-path.edge {
+.edge path {
   fill: none;
   stroke: #333;
   stroke-width: 1.5px;
 }
 
-.edge:hover {
+.edge path:hover {
   cursor: pointer;
   opacity: 0.4;
 }

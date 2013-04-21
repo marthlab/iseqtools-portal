@@ -160,16 +160,8 @@
   		this.graph = graph;
   		this.source = source_node;
   		this.target = target_node;
-  	}
-
-  	function ObjectivesGraphEdge(source_node, target_node, graph) {
-  		Edge.call(this, source_node, target_node, graph);
-  	}
-
-  	ObjectivesGraphEdge.prototype = {
-  		getWorkflows: function() {
-  			return _.intersection(this.graph.workflows, _.union(this.source.referent.workflows, this.target.referent.workflows));
-  		}
+  		debugger;
+  		this.referents = (this.graph.getEdgeReferents ? this.graph.getEdgeReferents(this) : [this]);
   	}
 
   	function Graph() {
@@ -183,8 +175,8 @@
 
   	Graph.prototype.render = function() {
 
-  		function spline(e) {
-
+  		function spline(e, path_item) {
+  
   			function diag(source, target) {
   				var diag_points = {source: {x: source.y, y: source.x}, target: {x: target.y, y: target.x}};
   				return d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; })
@@ -208,7 +200,7 @@
 		  							+ line([end, {x: end.x+e.target.dagre.width/2-e.target.settings.radius, y: end.y}]);
 
 			  return path_string;
-		}
+			}
 
 		  var graph = this;
 
@@ -225,30 +217,18 @@
 		      .classed("primary", function(d) { return d.getType() === 'primary'; })
 					.classed("secondary", function(d) { return d.getType() === 'secondary'; });
 
-		  // var edges_elems = svgGroup
-		  //   .selectAll(".edge")
-		  //   .data(this.edges)
-		  //   .enter()
-		  //   	.append("g")
-		  //   	.attr("class", "edge")
-		  //   	.each(function(d, i) {
-		  //   		 var edge_paths = d3.selectAll(".edge path");
-		  //   		 if(d.getWorkflows) {
-		  //   		 		edge_paths
-		  //   		 		.data(d.getWorkflows() )
-		  //   		 		.enter()
-		  //   		 		.append("path")
-		  //   		 		.attr("class", "workflow_path")
-		  //   		 }
-
-		  //   	});
-
-			var edges_elems = svgGroup
-		    .selectAll("path .edge")
+		  var edges_elems = svgGroup
+		    .selectAll("g.edge")
 		    .data(this.edges)
 		    .enter()
-		      .append("path")
-		      .attr("class", "edge")
+		    	.append("g")
+		      .attr("class", "edge");
+
+		  var edges_paths =  edges_elems
+		  	.selectAll("path")
+		    .data(function(e, i) { return e.referents; })
+		    .enter()
+		    	.append("path")
 
 	    var circles = nodes_elems.append("circle")
 		  	.attr("cx", 0)
@@ -290,7 +270,14 @@
 		  edges_elems
 		    // Set the id. of the SVG element to have access to it later
 		    .attr('id', function(e) { return e.dagre.id; })
-		    .attr("d", function(e) { return spline(e); });
+		    //.attr("d", function(e) { return spline(e); });
+
+		  edges_paths
+		    // Set the id. of the SVG element to have access to it later
+		    //.attr('id', function(e) { return e.dagre.id; })
+		    .attr("d", function(path_item, path_item_index, edge_index) {
+		    	return spline(edges_elems[0][edge_index].__data__, path_item);
+		    });
 
 		  // Resize the SVG element
 		  var svgBBox = svg.node().getBBox();
@@ -302,29 +289,36 @@
   	function ObjectivesGraph() {
   		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
   			var source_edges = _(obj_node.referent.out_data_types).map(function(dt) {
-  				return new ObjectivesGraphEdge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
+  				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
   			}, this);
   			var target_edges = _(obj_node.referent.in_data_types).map(function(dt) {
-  				return new ObjectivesGraphEdge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
+  				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
   			}, this);
   			return _.union(source_edges, target_edges);
   		}, this), true);
 
   		Graph.call(this);
   	}
-  	ObjectivesGraph.prototype = Object.create(Graph.prototype);
+  	ObjectivesGraph.prototype = Object.create(Graph.prototype)
 
   	function GlobalGraph() {
   		this.workflows = _(app.workflows).toArray();
+
   		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
   		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
   		ObjectivesGraph.call(this);
   	}
-  	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype);
+  	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype, {
+  		getEdgeReferents: {
+  			value: function(edge) {
+	  			return _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []);
+	  		}
+  		}
+  	});
 
   	function WorkflowGraph(workflow) {
-  		this.workflows = [workflow];
+  		this.workflow = workflow;
 
   		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
   		this.secondary_nodes = this.data_types_nodes = _.uniq(_.flatten(_(workflow.objectives).map(function(obj) {
@@ -333,7 +327,6 @@
 
   		ObjectivesGraph.call(this);
   	}
-  	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function PipelineGraph(pipeline) {
   		this.pipeline = pipeline;
@@ -354,7 +347,6 @@
 
   		Graph.call(this);
   	}
-  	PipelineGraph.prototype = Object.create(Graph.prototype);
 
   	
   	  
