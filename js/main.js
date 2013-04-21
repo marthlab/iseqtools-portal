@@ -1,12 +1,9 @@
 
-	  // creates a dictionary from an array of objects
-	  Object.defineProperties(Array.prototype, {
-		  "toDict": {
-			  value: function(key_property) {
-			  	return _.object(this.map(function(item){ return item[key_property || "id"];}), this);
-			  }
-		  }
-		});
+	  function by_id(id) {
+			return function(element) {
+				return element.id === id;
+			}
+		}
 
     // basic data structures
     
@@ -43,8 +40,8 @@
 
     function Objective(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.in_data_types = cfg.in_data_types_ids.map(function(dt_id){ return app.data_types[dt_id];}).toDict();
-    	this.out_data_types = cfg.out_data_types_ids.map(function(dt_id){ return app.data_types[dt_id];}).toDict();
+    	this.in_data_types = cfg.in_data_types_ids.map(function(dt_id){ return _(app.data_types).find(by_id(dt_id));});
+    	this.out_data_types = cfg.out_data_types_ids.map(function(dt_id){ return _(app.data_types).find(by_id(dt_id));});
     
     	// references populated later
     	this.workflows = {};
@@ -52,9 +49,9 @@
 
     function Workflow(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.objectives = cfg.objectives_ids.map(function(obj_id){ return app.objectives[obj_id];}).toDict();
-    	this.data_types = _.extend.apply({}, 
-    		_(this.objectives).map(function(obj) {return _.extend({}, obj.in_data_types, obj.out_data_types); })
+    	this.objectives = cfg.objectives_ids.map(function(obj_id){ return _(app.objectives).find(by_id(obj_id));});
+    	this.data_types = _.union.apply(
+    		_(this.objectives).map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types); })
   		);
     }
 
@@ -70,7 +67,7 @@
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	cfg.initial_data_format_usages = cfg.initial_data_format_usages || [];
 
-    	this.workflows = cfg.workflows_ids.map(function(wf_id){ return app.workflows[wf_id];}).toDict();
+    	this.workflows = cfg.workflows_ids.map(function(wf_id){ return _(app.workflows).find(by_id(wf_id));});
 
     	var create_dfu = function(dfu_cfg, order){
     		return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
@@ -78,11 +75,11 @@
 
 	    this.data_format_usages = _.flatten(_(cfg.tool_usages.map(function(tu_cfg) {
 	    	return tu_cfg.out_data_format_usages.map(create_dfu, this);
-	    }, this)).union(cfg.initial_data_format_usages.map(create_dfu, this)), true).toDict();
+	    }, this)).union(cfg.initial_data_format_usages.map(create_dfu, this)), true);
     	
     	this.tool_usages = cfg.tool_usages.map(function(tu_cfg, order) {
 	    	return new ToolUsage(_.extend(tu_cfg, {order: order, pipeline: this}));
-	    }, this).toDict();
+	    }, this);
 
     }
 
@@ -96,8 +93,8 @@
     	this.tool = app.tools[cfg.tool_id];
     	this.objective = app.objectives[cfg.objective_id] || null;
 
-    	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return this.pipeline.data_format_usages[dfu_id];}, this).toDict();
-    	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return this.pipeline.data_format_usages[dfu_cfg.id];}, this).toDict();
+    	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return this.pipeline.data_format_usages[dfu_id];}, this);
+    	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return this.pipeline.data_format_usages[dfu_cfg.id];}, this);
 
     }
 
@@ -107,35 +104,35 @@
 
 	    app.data_types = cfg.data_types.map(function(dt_cfg, order) {
 	    	return new DataType(_.extend(dt_cfg, {order: order}) );
-	    }).toDict();
+	    });
 	    
 	    app.objectives = cfg.objectives.map(function(obj_cfg, order) {
 	    	return new Objective(_.extend(obj_cfg, {order: order}) );
-	    }).toDict();
+	    });
 
 	    _(app.data_types).each(function(dt) {
-	  		dt.objectives_consuming = _(app.objectives).filter(function(obj) {return _(obj.in_data_types).contains(dt); }).toDict();
-	  		dt.objectives_producing = _(app.objectives).filter(function(obj) {return _(obj.out_data_types).contains(dt); }).toDict();
+	  		dt.objectives_consuming = _(app.objectives).filter(function(obj) {return _(obj.in_data_types).contains(dt); });
+	  		dt.objectives_producing = _(app.objectives).filter(function(obj) {return _(obj.out_data_types).contains(dt); });
 	  	});
 	    
 	    app.workflows = cfg.workflows.map(function(wf_cfg, order) {
 	    	return new Workflow(_.extend(wf_cfg, {order: order}) );
-	    }).toDict();
+	    });
 	    _(app.objectives).each(function(obj) {
-	  		obj.workflows = _(app.workflows).filter(function(wf) {return _(wf.objectives).contains(obj); }).toDict();
+	  		obj.workflows = _(app.workflows).filter(function(wf) {return _(wf.objectives).contains(obj); });
 	  	});
 
 	    app.data_formats = cfg.data_formats.map(function(df_cfg, order) {
 	    	return new DataFormat(_.extend(df_cfg, {order: order}) );
-	    }).toDict();
+	    });
 
 	    app.tools = cfg.tools.map(function(tool_cfg, order) {
 	    	return new Tool(_.extend(tool_cfg, {order: order}) );
-	    }).toDict();
+	    });
 
 	    app.pipelines = cfg.pipelines.map(function(pl_cfg, order) {
 	    	return new Pipeline(_.extend(pl_cfg, {order: order}) );
-	    }).toDict();
+	    });
 
   	}
 
@@ -163,6 +160,16 @@
   		this.graph = graph;
   		this.source = source_node;
   		this.target = target_node;
+  	}
+
+  	function ObjectivesGraphEdge(source_node, target_node, graph) {
+  		Edge.call(this, source_node, target_node, graph);
+  	}
+
+  	ObjectivesGraphEdge.prototype = {
+  		getWorkflows: function() {
+  			return _.intersection(this.graph.workflows, _.union(this.source.referent.workflows, this.target.referent.workflows));
+  		}
   	}
 
   	function Graph() {
@@ -203,6 +210,8 @@
 			  return path_string;
 		}
 
+		  var graph = this;
+
 		  var svg = d3.select("svg");
 		  var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
 
@@ -216,7 +225,25 @@
 		      .classed("primary", function(d) { return d.getType() === 'primary'; })
 					.classed("secondary", function(d) { return d.getType() === 'secondary'; });
 
-		  var edges_elems = svgGroup
+		  // var edges_elems = svgGroup
+		  //   .selectAll(".edge")
+		  //   .data(this.edges)
+		  //   .enter()
+		  //   	.append("g")
+		  //   	.attr("class", "edge")
+		  //   	.each(function(d, i) {
+		  //   		 var edge_paths = d3.selectAll(".edge path");
+		  //   		 if(d.getWorkflows) {
+		  //   		 		edge_paths
+		  //   		 		.data(d.getWorkflows() )
+		  //   		 		.enter()
+		  //   		 		.append("path")
+		  //   		 		.attr("class", "workflow_path")
+		  //   		 }
+
+		  //   	});
+
+			var edges_elems = svgGroup
 		    .selectAll("path .edge")
 		    .data(this.edges)
 		    .enter()
@@ -275,10 +302,10 @@
   	function ObjectivesGraph() {
   		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
   			var source_edges = _(obj_node.referent.out_data_types).map(function(dt) {
-  				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
+  				return new ObjectivesGraphEdge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
   			}, this);
   			var target_edges = _(obj_node.referent.in_data_types).map(function(dt) {
-  				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
+  				return new ObjectivesGraphEdge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
   			}, this);
   			return _.union(source_edges, target_edges);
   		}, this), true);
@@ -288,6 +315,7 @@
   	ObjectivesGraph.prototype = Object.create(Graph.prototype);
 
   	function GlobalGraph() {
+  		this.workflows = _(app.workflows).toArray();
   		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
   		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
@@ -296,16 +324,20 @@
   	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function WorkflowGraph(workflow) {
+  		this.workflows = [workflow];
+
   		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
   		this.secondary_nodes = this.data_types_nodes = _.uniq(_.flatten(_(workflow.objectives).map(function(obj) {
-  				return _.union(_.toArray(obj.in_data_types), _.toArray(obj.out_data_types));
+  				return _.union(obj.in_data_types, obj.out_data_types);
 			}))).map(function(dt) { return new Node(dt, dt.name, this);}, this);
-			
+
   		ObjectivesGraph.call(this);
   	}
   	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function PipelineGraph(pipeline) {
+  		this.pipeline = pipeline;
+
   		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
   		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 
@@ -327,8 +359,8 @@
   	
   	  
 		app.initialize_data_structures(app_json);
- 		//app.graph = new GlobalGraph();
+ 		app.graph = new GlobalGraph();
  		//app.graph = new PipelineGraph(app.pipelines.pipeline_1);
- 		app.graph = new WorkflowGraph(app.workflows.workflow_2);
+ 		//app.graph = new WorkflowGraph(app.workflows.workflow_2);
  		app.graph.render();
 
