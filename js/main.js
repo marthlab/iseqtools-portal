@@ -140,13 +140,12 @@
   	}
 
   	// "Graph" is used as a base class and is never instantiated outside of derived class constructors
-  	function Node(referent, label, is_primary, graph) {
-  		this.type = is_primary ? 'primary' : 'secondary';
+  	function Node(referent, label, graph) {
   		this.referent = referent;
   		this.label = label;
   		this.graph = graph;
   		this.edges = [];
-  		this.settings = _({}).extend(app.settings.nodes, app.settings.node_types[this.type]);
+  		this.settings = _({}).extend(app.settings.nodes, app.settings.node_types[this.getType()]);
   	}
   	Node.prototype = {
   		getChildren: function() {
@@ -154,6 +153,9 @@
   		},
   		getParents: function() {
   			return this.edges.map(function(e){ return e.source;}).filter(function(n){ return n !== this;});
+  		},
+  		getType: function() {
+  			return _([Objective, ToolUsage]).contains(this.referent.constructor) ? 'primary' : 'secondary';
   		}
   	}
 
@@ -211,8 +213,8 @@
 		      .append("g")
 		      .attr("class", "node")
 		      .attr("id", function(d) { return "node-" + d.referent.id; })
-		      .classed("primary", function(d) { return d.type === 'primary'; })
-					.classed("secondary", function(d) { return d.type === 'secondary'; });
+		      .classed("primary", function(d) { return d.getType() === 'primary'; })
+					.classed("secondary", function(d) { return d.getType() === 'secondary'; });
 
 		  var edges_elems = svgGroup
 		    .selectAll("path .edge")
@@ -286,25 +288,26 @@
   	ObjectivesGraph.prototype = Object.create(Graph.prototype);
 
   	function GlobalGraph() {
-  		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name, true, this);}, this);
-  		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name, false, this);}, this);
-  		ObjectivesGraph.call(this);
+  		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
+  		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
+  		ObjectivesGraph.call(this);
   	}
   	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function WorkflowGraph(workflow) {
-  		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name, true, this);}, this);
-  		this.secondary_nodes = this.data_types_nodes = _.flatten(_(workflow.objectives).map(function(obj) { return _.union(obj.in_data_types, obj.out_data_types);}))
-  																										.map(function(dt) { return new Node(dt, dt.name, false, this);}, this);
+  		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
+  		this.secondary_nodes = this.data_types_nodes = _.uniq(_.flatten(_(workflow.objectives).map(function(obj) {
+  				return _.union(_.toArray(obj.in_data_types), _.toArray(obj.out_data_types));
+			}))).map(function(dt) { return new Node(dt, dt.name, this);}, this);
+			
   		ObjectivesGraph.call(this);
-
   	}
   	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
 
   	function PipelineGraph(pipeline) {
-  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name, true, this);}, this);
-  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name, false, this);}, this);
+  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
+  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 
   		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
   			var source_edges = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
@@ -318,7 +321,6 @@
   		}, this), true);
 
   		Graph.call(this);
-
   	}
   	PipelineGraph.prototype = Object.create(Graph.prototype);
 
@@ -326,6 +328,7 @@
   	  
 		app.initialize_data_structures(app_json);
  		//app.graph = new GlobalGraph();
- 		app.graph = new PipelineGraph(app.pipelines.pipeline_1);
+ 		//app.graph = new PipelineGraph(app.pipelines.pipeline_1);
+ 		app.graph = new WorkflowGraph(app.workflows.workflow_2);
  		app.graph.render();
 
