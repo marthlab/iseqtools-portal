@@ -27,12 +27,10 @@
     	},
     	node_types: {
     		primary: {
-	    		radius: 30,
-	    		fill: "#fff"
+	    		radius: 30
 	    	},
 	    	secondary: {
-	    		radius:10,
-	    		fill: "#000"
+	    		radius:8
 	    	}
     	},
     	edges: {
@@ -245,8 +243,10 @@
 
 		  var svg = d3.select("svg");
 		  var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
+		  var edgeGroup = svgGroup.append("g");
+		  var nodeGroup = svgGroup.append("g");
 
-		  var nodes_elems = svgGroup
+		  var nodes_elems = nodeGroup
 		    .selectAll("g .node")
 		    .data(this.nodes)
 		    .enter()
@@ -256,7 +256,7 @@
 		      .classed("primary", function(n) { return n.getType() === 'primary'; })
 					.classed("secondary", function(n) { return n.getType() === 'secondary'; });
 
-		  var edges_elems = svgGroup
+		  var edges_elems = edgeGroup
 		    .selectAll("g.edge")
 		    .data(this.edges)
 		    .enter()
@@ -274,9 +274,7 @@
 		  	.attr("cx", 0)
 				.attr("cy", 0)
 				.attr("r", function(n) { return n.settings.radius; })
-				.attr("stroke-width", app.settings.edges["stroke-width"])
-				
-				
+				.attr("stroke-width", app.settings.edges["stroke-width"])	
 
 		  var labels = nodes_elems
 		    .append("text")
@@ -405,8 +403,8 @@
   	
   	  
 		app.initialize_data_structures(app_json);
- 		//app.graph = new GlobalGraph();
- 		app.graph = new PipelineGraph(app.pipelines[0]);
+ 		app.graph = new GlobalGraph();
+ 		//app.graph = new PipelineGraph(app.pipelines[0]);
  		//app.graph = new WorkflowGraph(app.workflows[3]);
  		app.graph.render();
 
