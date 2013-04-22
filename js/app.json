@@ -239,10 +239,6 @@
 					"in_data_format_usages_ids": ["dfu_02", "dfu_04", "dfu_06"],
 					"out_data_format_usages": [
 						{
-							"id": "dfu_07",
-							"data_format_id": "f04"
-						},
-						{
 							"id": "dfu_08",
 							"data_format_id": "f04"
 						}

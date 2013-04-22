@@ -85,16 +85,16 @@
 
     function DataFormatUsage(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
-    	this.data_format = app.data_formats[cfg.data_format_id];
+    	this.data_format = _(app.data_formats).find(by_id(cfg.data_format_id));
     }
 
     function ToolUsage(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
-    	this.tool = app.tools[cfg.tool_id];
-    	this.objective = app.objectives[cfg.objective_id] || null;
+    	this.tool = _(app.tools).find(by_id(cfg.tool_id));
+    	this.objective = _(app.objectives).find(by_id(cfg.objective_id)) || null;
 
-    	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return this.pipeline.data_format_usages[dfu_id];}, this);
-    	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return this.pipeline.data_format_usages[dfu_cfg.id];}, this);
+    	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return _(this.pipeline.data_format_usages).find(by_id(dfu_id));}, this);
+    	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return _(this.pipeline.data_format_usages).find(by_id(dfu_cfg.id));}, this);
 
     }
 
@@ -160,8 +160,10 @@
   		this.graph = graph;
   		this.source = source_node;
   		this.target = target_node;
-  		debugger;
-  		this.referents = (this.graph.getEdgeReferents ? this.graph.getEdgeReferents(this) : [this]);
+  		this.referents = this.graph.getEdgeReferents(this);
+  	}
+  	Edge.prototype = {
+
   	}
 
   	function Graph() {
@@ -170,6 +172,9 @@
   			e.source.edges.push(e);
   			e.target.edges.push(e);
   		});
+  		this.edgeColors = d3.scale.category10()
+  										 .domain(_.uniq(_.flatten(this.edges.map(function(e){ return e.referents.map(function(r){return r.id});}))));
+
   		this.settings = app.settings.graph;
   	}
 
@@ -275,9 +280,14 @@
 		  edges_paths
 		    // Set the id. of the SVG element to have access to it later
 		    //.attr('id', function(e) { return e.dagre.id; })
-		    .attr("d", function(path_item, path_item_index, edge_index) {
-		    	return spline(edges_elems[0][edge_index].__data__, path_item);
-		    });
+		    .attr("d", function(referent, referent_index, edge_index) {
+		    	var edge = edges_elems[0][edge_index].__data__;
+		    	return spline(edge, referent);
+		    })
+		    .attr("stroke", function(referent, referent_index, edge_index) {
+		    	var edge = edges_elems[0][edge_index].__data__;
+		    	return edge.graph.edgeColors(referent.id);
+		    })
 
 		  // Resize the SVG element
 		  var svgBBox = svg.node().getBBox();
@@ -285,7 +295,6 @@
 
   	}
 
-  	// "ObjectivesGraph" is used as a base class and is never instantiated outside of derived class constructors
   	function ObjectivesGraph() {
   		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
   			var source_edges = _(obj_node.referent.out_data_types).map(function(dt) {
@@ -302,20 +311,16 @@
   	ObjectivesGraph.prototype = Object.create(Graph.prototype)
 
   	function GlobalGraph() {
-  		this.workflows = _(app.workflows).toArray();
-
+  		this.workflows = app.workflows;
   		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
   		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
   		ObjectivesGraph.call(this);
   	}
-  	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype, {
-  		getEdgeReferents: {
-  			value: function(edge) {
-	  			return _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []);
-	  		}
-  		}
-  	});
+  	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype);
+  	GlobalGraph.prototype.getEdgeReferents = function(edge) {
+			return _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []);
+		}
 
   	function WorkflowGraph(workflow) {
   		this.workflow = workflow;
@@ -327,19 +332,22 @@
 
   		ObjectivesGraph.call(this);
   	}
+  	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
+  	WorkflowGraph.prototype.getEdgeReferents = function(edge) {
+			return [this.workflow];
+		}
 
   	function PipelineGraph(pipeline) {
   		this.pipeline = pipeline;
-
   		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
   		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 
   		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
   			var source_edges = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
-  				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}));
+  				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
   			}, this);
   			var target_edges = _(tu_node.referent.in_data_format_usages).map(function(df_usage) {
-  				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node);
+  				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node, this);
   			}, this);
 
   			return _.union(source_edges, target_edges);
@@ -347,12 +355,16 @@
 
   		Graph.call(this);
   	}
+  	PipelineGraph.prototype = Object.create(Graph.prototype);
+  	PipelineGraph.prototype.getEdgeReferents = function(edge) {
+			return [this.pipeline];
+		}
 
   	
   	  
 		app.initialize_data_structures(app_json);
- 		app.graph = new GlobalGraph();
- 		//app.graph = new PipelineGraph(app.pipelines.pipeline_1);
- 		//app.graph = new WorkflowGraph(app.workflows.workflow_2);
+ 		//app.graph = new GlobalGraph();
+ 		app.graph = new PipelineGraph(app.pipelines[0]);
+ 		//app.graph = new WorkflowGraph(app.workflows[1]);
  		app.graph.render();
 
