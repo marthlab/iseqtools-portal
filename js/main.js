@@ -179,7 +179,6 @@
   		},
   		getPathOutOrder: function(edge, referent) {
 				var lower_ordered_edges = this.edges_out.slice(0, Math.max(0, this.edges_out.indexOf(edge)));
-  			console.log(this.edges_out.indexOf(edge)-1);
   			var order_within_edge = edge.referents.indexOf(referent);
   			return order_within_edge+_.sum(lower_ordered_edges.map(function(e) {return e.referents.length;}));
   		}
@@ -231,8 +230,6 @@
   			
   			var start_y = s.dagre.y + app.settings.edges["stroke-width"]*(s.getPathOutOrder(e, path_item)-s.getNumPathsOut()/2);
   			var end_y = t.dagre.y + app.settings.edges["stroke-width"]*(t.getPathInOrder(e, path_item)-t.getNumPathsIn()/2);
-  			console.log(s.referent.id + ', ' + t.referent.id + ', ' + path_item.id);
-  			console.log(start_y);
 	      var points = e.dagre.points;
 	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
 			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
@@ -314,10 +311,10 @@
 
 		  this.nodes.forEach(function(n) {
 		  	n.edges_in = _.sortBy(n.edges_in, function(e) {
-		  		return (e.dagre.points.length == 1 ? e.source.dagre.y : e.dagre.points[0]);
+		  		return (e.dagre.points.length == 1 ? e.source.dagre.y : e.dagre.points[0].y);
 		  	});
 		  	n.edges_out = _.sortBy(n.edges_out, function(e) {
-		  		return (e.dagre.points.length == 1 ? e.target.dagre.y : e.dagre.points[0]);
+		  		return (e.dagre.points.length == 1 ? e.target.dagre.y : e.dagre.points[0].y);
 		  	});
 		  });
 
@@ -408,8 +405,8 @@
   	
   	  
 		app.initialize_data_structures(app_json);
- 		app.graph = new GlobalGraph();
- 		//app.graph = new PipelineGraph(app.pipelines[0]);
+ 		//app.graph = new GlobalGraph();
+ 		app.graph = new PipelineGraph(app.pipelines[0]);
  		//app.graph = new WorkflowGraph(app.workflows[3]);
  		app.graph.render();
 
