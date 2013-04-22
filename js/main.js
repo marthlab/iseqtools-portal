@@ -1,4 +1,11 @@
 
+	  _.sum = function(obj) {
+		  if (!$.isArray(obj) || obj.length == 0) return 0;
+		  return _.reduce(obj, function(sum, n) {
+		    return sum += n;
+		  });
+		}
+
 	  function by_id(id) {
 			return function(element) {
 				return element.id === id;
@@ -27,6 +34,9 @@
 	    		radius:10,
 	    		fill: "#000"
 	    	}
+    	},
+    	edges: {
+    		"stroke-width": 2
     	}
     }
 
@@ -142,6 +152,8 @@
   		this.label = label;
   		this.graph = graph;
   		this.edges = [];
+  		this.edges_in = [];
+  		this.edges_out = [];
   		this.settings = _({}).extend(app.settings.nodes, app.settings.node_types[this.getType()]);
   	}
   	Node.prototype = {
@@ -153,6 +165,23 @@
   		},
   		getType: function() {
   			return _([Objective, ToolUsage]).contains(this.referent.constructor) ? 'primary' : 'secondary';
+  		},
+  		getNumPathsIn: function() {
+  			return _.sum(this.edges_in.map(function(e) {return e.referents.length;}));
+  		},
+  		getNumPathsOut: function() {
+  			return _.sum(this.edges_out.map(function(e) {return e.referents.length;}));
+  		},
+  		getPathInOrder: function(edge, referent) {
+				var lower_ordered_edges = this.edges_in.slice(0, Math.max(0, this.edges_in.indexOf(edge)));
+  			var order_within_edge = edge.referents.indexOf(referent);
+  			return order_within_edge+_.sum(lower_ordered_edges.map(function(e) {return e.referents.length;}));
+  		},
+  		getPathOutOrder: function(edge, referent) {
+				var lower_ordered_edges = this.edges_out.slice(0, Math.max(0, this.edges_out.indexOf(edge)));
+  			console.log(this.edges_out.indexOf(edge)-1);
+  			var order_within_edge = edge.referents.indexOf(referent);
+  			return order_within_edge+_.sum(lower_ordered_edges.map(function(e) {return e.referents.length;}));
   		}
   	}
 
@@ -170,7 +199,9 @@
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
   		this.edges.forEach(function(e) {
   			e.source.edges.push(e);
+  			e.source.edges_out.push(e);
   			e.target.edges.push(e);
+  			e.target.edges_in.push(e);
   		});
   		this.edgeColors = d3.scale.category10()
   										 .domain(_.uniq(_.flatten(this.edges.map(function(e){ return e.referents.map(function(r){return r.id});}))));
@@ -196,13 +227,19 @@
 		      (line_points)
   			}
 
+  			var s = e.source, t = e.target;
+  			
+  			var start_y = s.dagre.y + app.settings.edges["stroke-width"]*(s.getPathOutOrder(e, path_item)-s.getNumPathsOut()/2);
+  			var end_y = t.dagre.y + app.settings.edges["stroke-width"]*(t.getPathInOrder(e, path_item)-t.getNumPathsIn()/2);
+  			console.log(s.referent.id + ', ' + t.referent.id + ', ' + path_item.id);
+  			console.log(start_y);
 	      var points = e.dagre.points;
-	      var start = {x: e.source.dagre.x+e.source.dagre.width/2, y: e.source.dagre.y};
-			  var end = {x: e.target.dagre.x-e.target.dagre.width/2, y: e.target.dagre.y};
+	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
+			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
 
-		  	path_string = line([{x: start.x-e.source.dagre.width/2+e.source.settings.radius, y: start.y}, start])
+		  	path_string = line([{x: start.x-s.dagre.width/2+s.settings.radius, y: start.y}, start])
 		  							+ (points.length == 1 ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end) )
-		  							+ line([end, {x: end.x+e.target.dagre.width/2-e.target.settings.radius, y: end.y}]);
+		  							+ line([end, {x: end.x+t.dagre.width/2-t.settings.radius, y: end.y}]);
 
 			  return path_string;
 			}
@@ -218,9 +255,9 @@
 		    .enter()
 		      .append("g")
 		      .attr("class", "node")
-		      .attr("id", function(d) { return "node-" + d.referent.id; })
-		      .classed("primary", function(d) { return d.getType() === 'primary'; })
-					.classed("secondary", function(d) { return d.getType() === 'secondary'; });
+		      .attr("id", function(n) { return "node-" + n.referent.id; })
+		      .classed("primary", function(n) { return n.getType() === 'primary'; })
+					.classed("secondary", function(n) { return n.getType() === 'secondary'; });
 
 		  var edges_elems = svgGroup
 		    .selectAll("g.edge")
@@ -231,33 +268,36 @@
 
 		  var edges_paths =  edges_elems
 		  	.selectAll("path")
-		    .data(function(e, i) { return e.referents; })
+		    .data(function(e) { return e.referents; })
 		    .enter()
 		    	.append("path")
+		    	.attr("stroke-width", app.settings.edges["stroke-width"])
 
 	    var circles = nodes_elems.append("circle")
 		  	.attr("cx", 0)
 				.attr("cy", 0)
-				.attr("r", function(d) { return d.settings.radius; })
+				.attr("r", function(n) { return n.settings.radius; })
+				.attr("stroke-width", app.settings.edges["stroke-width"])
+				
 				
 
 		  var labels = nodes_elems
 		    .append("text")
 	      .attr("text-anchor", "middle")
 	      .attr("x", 0)
-	      .attr("y", function(d) { return -d.settings.radius; });
+	      .attr("y", function(n) { return -n.settings.radius; });
 
 		  labels
 		    .append("tspan")
 		    .attr("x", 0)
 		    .attr("dy", "-0.5em")
-		    .text(function(d) { return d.label; });
+		    .text(function(n) { return n.label; });
 
-			nodes_elems.each(function(d) {
+			nodes_elems.each(function(n) {
 		    var bbox = this.getBBox();
-		    d.bbox = bbox;
-		    d.width = bbox.width;
-		    d.height = bbox.height;
+		    n.bbox = bbox;
+		    n.width = bbox.width;
+		    n.height = bbox.height;
 		  });
 
 		  dagre.layout()
@@ -272,14 +312,19 @@
 
 		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
 
+		  this.nodes.forEach(function(n) {
+		  	n.edges_in = _.sortBy(n.edges_in, function(e) {
+		  		return (e.dagre.points.length == 1 ? e.source.dagre.y : e.dagre.points[0]);
+		  	});
+		  	n.edges_out = _.sortBy(n.edges_out, function(e) {
+		  		return (e.dagre.points.length == 1 ? e.target.dagre.y : e.dagre.points[0]);
+		  	});
+		  });
+
 		  edges_elems
-		    // Set the id. of the SVG element to have access to it later
 		    .attr('id', function(e) { return e.dagre.id; })
-		    //.attr("d", function(e) { return spline(e); });
 
 		  edges_paths
-		    // Set the id. of the SVG element to have access to it later
-		    //.attr('id', function(e) { return e.dagre.id; })
 		    .attr("d", function(referent, referent_index, edge_index) {
 		    	var edge = edges_elems[0][edge_index].__data__;
 		    	return spline(edge, referent);
@@ -297,13 +342,13 @@
 
   	function ObjectivesGraph() {
   		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
-  			var source_edges = _(obj_node.referent.out_data_types).map(function(dt) {
+  			var edges_out = _(obj_node.referent.out_data_types).map(function(dt) {
   				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
   			}, this);
-  			var target_edges = _(obj_node.referent.in_data_types).map(function(dt) {
+  			var edges_in = _(obj_node.referent.in_data_types).map(function(dt) {
   				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
   			}, this);
-  			return _.union(source_edges, target_edges);
+  			return _.union(edges_in, edges_out);
   		}, this), true);
 
   		Graph.call(this);
@@ -343,14 +388,14 @@
   		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 
   		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
-  			var source_edges = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
+  			var edges_out = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
   				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
   			}, this);
-  			var target_edges = _(tu_node.referent.in_data_format_usages).map(function(df_usage) {
+  			var edges_in = _(tu_node.referent.in_data_format_usages).map(function(df_usage) {
   				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node, this);
   			}, this);
 
-  			return _.union(source_edges, target_edges);
+  			return _.union(edges_in, edges_out);
   		}, this), true);
 
   		Graph.call(this);
@@ -363,8 +408,8 @@
   	
   	  
 		app.initialize_data_structures(app_json);
- 		//app.graph = new GlobalGraph();
- 		app.graph = new PipelineGraph(app.pipelines[0]);
- 		//app.graph = new WorkflowGraph(app.workflows[1]);
+ 		app.graph = new GlobalGraph();
+ 		//app.graph = new PipelineGraph(app.pipelines[0]);
+ 		//app.graph = new WorkflowGraph(app.workflows[3]);
  		app.graph.render();
 

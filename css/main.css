@@ -66,7 +66,6 @@ svg {display:block; margin:0 auto; width:80%;}
 
 
 .node circle {
-  stroke-width: 1.5px;
   stroke: #333;
 }
 
@@ -93,7 +92,6 @@ svg {display:block; margin:0 auto; width:80%;}
 
 .edge path {
   fill: none;
-  stroke-width: 1.5px;
 }
 
 .edge path:hover {

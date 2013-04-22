@@ -65,7 +65,7 @@
 		{
 			"id":"workflow_1",
 			"name": "Workflow 1",
-			"objectives_ids": ["sequence", "map"]
+			"objectives_ids": ["sequence", "map", "call_svs"]
 		},
 		{
 			"id": "workflow_2",
