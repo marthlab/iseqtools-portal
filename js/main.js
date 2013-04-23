@@ -162,6 +162,7 @@
   			return paths_in_prior_edges+order_within_edge;
   		}
   	}
+  	Node.key = function(n) {	return n.referent.id; }
 
   	function Edge(source_node, target_node, graph) {
   		this.graph = graph;
@@ -171,9 +172,7 @@
 
   		this.cfg = app.cfg.edges;
   	}
-  	Edge.prototype = {
-
-  	}
+  	Edge.key = function(e) {	return e.source.referent.id + "__" + e.target.referent.id; }
 
   	function Graph() {
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
@@ -224,7 +223,7 @@
 
 		  var nodes_elems = nodeGroup
 		    .selectAll("g .node")
-		    .data(this.nodes)
+		    .data(this.nodes, Node.key)
 		    .enter()
 		      .append("g")
 		      .attr("class", "node")
@@ -234,14 +233,14 @@
 
 		  var edges_elems = edgeGroup
 		    .selectAll("g.edge")
-		    .data(this.edges)
+		    .data(this.edges, Edge.key)
 		    .enter()
 		    	.append("g")
 		      .attr("class", "edge");
 
 		  var edges_paths =  edges_elems
 		  	.selectAll("path")
-		    .data(function(e) { return e.referents; })
+		    .data(function(e) { return e.referents; }, function(r) {return r.id;})
 		    .enter()
 		    	.append("path")
 		    	.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
@@ -298,7 +297,16 @@
 
   	}
 
-  	function ObjectivesGraph() {
+  	function WorkflowsGraph(workflows) {
+  		this.workflows = workflows || app.workflows;
+
+			var objectives = _.union.apply(this, this.workflows.map(function(w) {return w.objectives}));
+
+  		this.primary_nodes = this.objectives_nodes = objectives.map(function(obj) { return new Node(obj, obj.name, this);}, this);
+
+  		this.secondary_nodes = this.data_types_nodes = _.union.apply(this, objectives.map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types);}))
+  																										.map(function(dt) { return new Node(dt, dt.name, this);}, this);
+
   		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
   			var edges_out = obj_node.referent.out_data_types.map(function(dt) {
   				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
@@ -311,33 +319,9 @@
 
   		Graph.call(this);
   	}
-  	ObjectivesGraph.prototype = Object.create(Graph.prototype)
-
-  	function GlobalGraph() {
-  		this.workflows = app.workflows;
-  		this.primary_nodes = this.objectives_nodes = app.objectives.map(function(obj) { return new Node(obj, obj.name, this);}, this);
-  		this.secondary_nodes = this.data_types_nodes = app.data_types.map(function(dt) { return new Node(dt, dt.name, this);}, this);
-
-  		ObjectivesGraph.call(this);
-  	}
-  	GlobalGraph.prototype = Object.create(ObjectivesGraph.prototype);
-  	GlobalGraph.prototype.getEdgeReferents = function(edge) {
-			return _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []);
-		}
-
-  	function WorkflowGraph(workflow) {
-  		this.workflow = workflow;
-
-  		this.primary_nodes = this.objectives_nodes = workflow.objectives.map(function(obj) { return new Node(obj, obj.name, this);}, this);
-  		this.secondary_nodes = this.data_types_nodes = _.uniq(_.flatten(workflow.objectives.map(function(obj) {
-  				return _.union(obj.in_data_types, obj.out_data_types);
-			}))).map(function(dt) { return new Node(dt, dt.name, this);}, this);
-
-  		ObjectivesGraph.call(this);
-  	}
-  	WorkflowGraph.prototype = Object.create(ObjectivesGraph.prototype);
-  	WorkflowGraph.prototype.getEdgeReferents = function(edge) {
-			return [this.workflow];
+  	WorkflowsGraph.prototype = Object.create(Graph.prototype);
+  	WorkflowsGraph.prototype.getEdgeReferents = function(edge) {
+			return _.intersection(this.workflows, _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []));
 		}
 
   	function PipelineGraph(pipeline) {
@@ -366,8 +350,8 @@
   	
   	  
 		app.initialize_data_structures(app_json);
- 		app.graph = new GlobalGraph();
+ 		app.graph = new WorkflowsGraph();
+ 		//app.graph = new WorkflowsGraph([app.workflows[1], app.workflows[3]]);
  		//app.graph = new PipelineGraph(app.pipelines[0]);
- 		//app.graph = new WorkflowGraph(app.workflows[3]);
  		app.graph.render();
 
