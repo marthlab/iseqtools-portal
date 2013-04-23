@@ -140,35 +140,23 @@
   		this.cfg = _({}).extend(app.cfg.nodes, app.cfg.node_types[this.type()]);
   	}
   	Node.prototype = {
-  		edgesIn: function() {
-  			return this.graph.edges.filter(function(e){ return e.target === this;}, this);
-  		},
-  		edgesOut: function() {
-  			return this.graph.edges.filter(function(e){ return e.source === this;}, this);
+  		edges: function(dir) {
+  				return this.graph.edges.filter(function(e){ return e[dir === "in" ? "target" : "source"] === this;}, this);
   		},
   		type: function() {
   			return _([Objective, ToolUsage]).contains(this.referent.constructor) ? 'primary' : 'secondary';
   		},
   		numPathsIn: function() {
-  			return _.sum(this.edgesIn().map(function(e) {return e.referents.length;}));
+  			return _.sum(this.edges("in").map(function(e) {return e.referents.length;}));
   		},
   		numPathsOut: function() {
-  			return _.sum(this.edgesOut().map(function(e) {return e.referents.length;}));
+  			return _.sum(this.edges("out").map(function(e) {return e.referents.length;}));
   		},
-  		pathInOrder: function(edge, referent) {
-  			var sorted_edges_in = _.sortBy(this.edgesIn(), function(e) {
-		  		return (e.dagre.points.length == 1 ? e.source.dagre.y : e.dagre.points[0].y);
+  		pathOrder: function(edge, referent, dir) {
+  			var sorted_edges = _.sortBy(this.edges(dir), function(e) {
+		  		return (e.dagre.points.length == 1 ? e[dir === "out" ? "target" : "source"].dagre.y : e.dagre.points[0].y);
 		  	});
-				var prior_edges = sorted_edges_in.slice(0, sorted_edges_in.indexOf(edge));
-				var paths_in_prior_edges = _.sum(prior_edges.map(function(e) {return e.referents.length;}));
-  			var order_within_edge = edge.referents.indexOf(referent);
-  			return paths_in_prior_edges+order_within_edge;
-  		},
-  		pathOutOrder: function(edge, referent) {
-  			var sorted_edges_out = _.sortBy(this.edgesOut(), function(e) {
-		  		return (e.dagre.points.length == 1 ? e.target.dagre.y : e.dagre.points[0].y);
-		  	});
-				var prior_edges = sorted_edges_out.slice(0, sorted_edges_out.indexOf(edge));
+				var prior_edges = sorted_edges.slice(0, sorted_edges.indexOf(edge));
 				var paths_in_prior_edges = _.sum(prior_edges.map(function(e) {return e.referents.length;}));
   			var order_within_edge = edge.referents.indexOf(referent);
   			return paths_in_prior_edges+order_within_edge;
@@ -216,8 +204,8 @@
 
   			var s = e.source, t = e.target;
   			
-  			var start_y = s.dagre.y + e.cfg["stroke-width"]*(s.pathOutOrder(e, path_item)-s.numPathsOut()/2);
-  			var end_y = t.dagre.y + e.cfg["stroke-width"]*(t.pathInOrder(e, path_item)-t.numPathsIn()/2);
+  			var start_y = s.dagre.y + e.cfg["stroke-width"]*(s.pathOrder(e, path_item, "out")-s.numPathsOut()/2);
+  			var end_y = t.dagre.y + e.cfg["stroke-width"]*(t.pathOrder(e, path_item, "in")-t.numPathsIn()/2);
 	      var points = e.dagre.points;
 	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
 			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
