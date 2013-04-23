@@ -21,7 +21,7 @@
 		    rankSep: 50
     	},
     	nodes: {
-
+    		"stroke-width": 2
     	},
     	node_types: {
     		primary: {
@@ -180,6 +180,8 @@
   		this.source = source_node;
   		this.target = target_node;
   		this.referents = this.graph.getEdgeReferents(this);
+
+  		this.cfg = app.cfg.edges;
   	}
   	Edge.prototype = {
 
@@ -217,8 +219,8 @@
 
   			var s = e.source, t = e.target;
   			
-  			var start_y = s.dagre.y + app.cfg.edges["stroke-width"]*(s.pathOutOrder(e, path_item)-s.numPathsOut()/2);
-  			var end_y = t.dagre.y + app.cfg.edges["stroke-width"]*(t.pathInOrder(e, path_item)-t.numPathsIn()/2);
+  			var start_y = s.dagre.y + e.cfg["stroke-width"]*(s.pathOutOrder(e, path_item)-s.numPathsOut()/2);
+  			var end_y = t.dagre.y + e.cfg["stroke-width"]*(t.pathInOrder(e, path_item)-t.numPathsIn()/2);
 	      var points = e.dagre.points;
 	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
 			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
@@ -257,13 +259,13 @@
 		    .data(function(e) { return e.referents; })
 		    .enter()
 		    	.append("path")
-		    	.attr("stroke-width", app.cfg.edges["stroke-width"])
+		    	.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
 
 	    var circles = nodes_elems.append("circle")
 		  	.attr("cx", 0)
 				.attr("cy", 0)
 				.attr("r", function(n) { return n.cfg.radius; })
-				.attr("stroke-width", app.cfg.edges["stroke-width"])	
+				.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; })	
 
 		  var labels = nodes_elems
 		    .append("text")
@@ -296,12 +298,12 @@
 		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
 
 		  edges_paths
-		    .attr("d", function(referent, referent_index, edge_index) {
-		    	var edge = edges_elems[0][edge_index].__data__;
+		    .attr("d", function(referent) {
+		    	var edge = d3.select(this.parentNode).datum();
 		    	return spline(edge, referent);
 		    })
-		    .attr("stroke", function(referent, referent_index, edge_index) {
-		    	var edge = edges_elems[0][edge_index].__data__;
+		    .attr("stroke", function(referent) {
+		    	var edge = d3.select(this.parentNode).datum();
 		    	return edge.graph.edgeColors(referent.id);
 		    })
 
