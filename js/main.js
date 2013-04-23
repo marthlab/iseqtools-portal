@@ -7,16 +7,14 @@
 		}
 
 	  function by_id(id) {
-			return function(element) {
-				return element.id === id;
-			}
+			return function(element) { return element.id === id; }
 		}
 
     // basic data structures
     
     var app = {};
 
-    app.settings = {
+    app.cfg = {
     	graph: {
     		nodeSep: 50,
 		    edgeSep: 10,
@@ -40,10 +38,6 @@
 
     function DataType(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-
-    	// references populated later
-    	this.objectives_consuming = {};
-    	this.objectives_producing = {};
     }
 
     function Objective(cfg) {
@@ -59,7 +53,7 @@
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	this.objectives = cfg.objectives_ids.map(function(obj_id){ return _(app.objectives).find(by_id(obj_id));});
     	this.data_types = _.union.apply(
-    		_(this.objectives).map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types); })
+    		this.objectives.map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types); })
   		);
     }
 
@@ -117,11 +111,6 @@
 	    app.objectives = cfg.objectives.map(function(obj_cfg, order) {
 	    	return new Objective(_.extend(obj_cfg, {order: order}) );
 	    });
-
-	    _(app.data_types).each(function(dt) {
-	  		dt.objectives_consuming = _(app.objectives).filter(function(obj) {return _(obj.in_data_types).contains(dt); });
-	  		dt.objectives_producing = _(app.objectives).filter(function(obj) {return _(obj.out_data_types).contains(dt); });
-	  	});
 	    
 	    app.workflows = cfg.workflows.map(function(wf_cfg, order) {
 	    	return new Workflow(_.extend(wf_cfg, {order: order}) );
@@ -144,41 +133,45 @@
 
   	}
 
-  	// "Graph" is used as a base class and is never instantiated outside of derived class constructors
   	function Node(referent, label, graph) {
   		this.referent = referent;
   		this.label = label;
   		this.graph = graph;
-  		this.edges = [];
-  		this.edges_in = [];
-  		this.edges_out = [];
-  		this.settings = _({}).extend(app.settings.nodes, app.settings.node_types[this.getType()]);
+  		this.cfg = _({}).extend(app.cfg.nodes, app.cfg.node_types[this.type()]);
   	}
   	Node.prototype = {
-  		getChildren: function() {
-  			return this.edges.map(function(e){ return e.target;}).filter(function(n){ return n !== this;});
+  		edgesIn: function() {
+  			return this.graph.edges.filter(function(e){ return e.target === this;}, this);
   		},
-  		getParents: function() {
-  			return this.edges.map(function(e){ return e.source;}).filter(function(n){ return n !== this;});
+  		edgesOut: function() {
+  			return this.graph.edges.filter(function(e){ return e.source === this;}, this);
   		},
-  		getType: function() {
+  		type: function() {
   			return _([Objective, ToolUsage]).contains(this.referent.constructor) ? 'primary' : 'secondary';
   		},
-  		getNumPathsIn: function() {
-  			return _.sum(this.edges_in.map(function(e) {return e.referents.length;}));
+  		numPathsIn: function() {
+  			return _.sum(this.edgesIn().map(function(e) {return e.referents.length;}));
   		},
-  		getNumPathsOut: function() {
-  			return _.sum(this.edges_out.map(function(e) {return e.referents.length;}));
+  		numPathsOut: function() {
+  			return _.sum(this.edgesOut().map(function(e) {return e.referents.length;}));
   		},
-  		getPathInOrder: function(edge, referent) {
-				var lower_ordered_edges = this.edges_in.slice(0, Math.max(0, this.edges_in.indexOf(edge)));
+  		pathInOrder: function(edge, referent) {
+  			var sorted_edges_in = _.sortBy(this.edgesIn(), function(e) {
+		  		return (e.dagre.points.length == 1 ? e.source.dagre.y : e.dagre.points[0].y);
+		  	});
+				var prior_edges = sorted_edges_in.slice(0, sorted_edges_in.indexOf(edge));
+				var paths_in_prior_edges = _.sum(prior_edges.map(function(e) {return e.referents.length;}));
   			var order_within_edge = edge.referents.indexOf(referent);
-  			return order_within_edge+_.sum(lower_ordered_edges.map(function(e) {return e.referents.length;}));
+  			return paths_in_prior_edges+order_within_edge;
   		},
-  		getPathOutOrder: function(edge, referent) {
-				var lower_ordered_edges = this.edges_out.slice(0, Math.max(0, this.edges_out.indexOf(edge)));
+  		pathOutOrder: function(edge, referent) {
+  			var sorted_edges_out = _.sortBy(this.edgesOut(), function(e) {
+		  		return (e.dagre.points.length == 1 ? e.target.dagre.y : e.dagre.points[0].y);
+		  	});
+				var prior_edges = sorted_edges_out.slice(0, sorted_edges_out.indexOf(edge));
+				var paths_in_prior_edges = _.sum(prior_edges.map(function(e) {return e.referents.length;}));
   			var order_within_edge = edge.referents.indexOf(referent);
-  			return order_within_edge+_.sum(lower_ordered_edges.map(function(e) {return e.referents.length;}));
+  			return paths_in_prior_edges+order_within_edge;
   		}
   	}
 
@@ -195,15 +188,13 @@
   	function Graph() {
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
   		this.edges.forEach(function(e) {
-  			e.source.edges.push(e);
-  			e.source.edges_out.push(e);
-  			e.target.edges.push(e);
-  			e.target.edges_in.push(e);
+  			e.source.edgesOut().push(e);
+  			e.target.edgesIn().push(e);
   		});
   		this.edgeColors = d3.scale.category10()
   										 .domain(_.uniq(_.flatten(this.edges.map(function(e){ return e.referents.map(function(r){return r.id});}))));
 
-  		this.settings = app.settings.graph;
+  		this.cfg = app.cfg.graph;
   	}
 
   	Graph.prototype.render = function() {
@@ -226,20 +217,18 @@
 
   			var s = e.source, t = e.target;
   			
-  			var start_y = s.dagre.y + app.settings.edges["stroke-width"]*(s.getPathOutOrder(e, path_item)-s.getNumPathsOut()/2);
-  			var end_y = t.dagre.y + app.settings.edges["stroke-width"]*(t.getPathInOrder(e, path_item)-t.getNumPathsIn()/2);
+  			var start_y = s.dagre.y + app.cfg.edges["stroke-width"]*(s.pathOutOrder(e, path_item)-s.numPathsOut()/2);
+  			var end_y = t.dagre.y + app.cfg.edges["stroke-width"]*(t.pathInOrder(e, path_item)-t.numPathsIn()/2);
 	      var points = e.dagre.points;
 	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
 			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
 
-		  	path_string = line([{x: start.x-s.dagre.width/2+s.settings.radius, y: start.y}, start])
+		  	path_string = line([{x: start.x-s.dagre.width/2+s.cfg.radius, y: start.y}, start])
 		  							+ (points.length == 1 ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end) )
-		  							+ line([end, {x: end.x+t.dagre.width/2-t.settings.radius, y: end.y}]);
+		  							+ line([end, {x: end.x+t.dagre.width/2-t.cfg.radius, y: end.y}]);
 
 			  return path_string;
 			}
-
-		  var graph = this;
 
 		  var svg = d3.select("svg");
 		  var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
@@ -253,8 +242,8 @@
 		      .append("g")
 		      .attr("class", "node")
 		      .attr("id", function(n) { return "node-" + n.referent.id; })
-		      .classed("primary", function(n) { return n.getType() === 'primary'; })
-					.classed("secondary", function(n) { return n.getType() === 'secondary'; });
+		      .classed("primary", function(n) { return n.type() === 'primary'; })
+					.classed("secondary", function(n) { return n.type() === 'secondary'; });
 
 		  var edges_elems = edgeGroup
 		    .selectAll("g.edge")
@@ -268,19 +257,19 @@
 		    .data(function(e) { return e.referents; })
 		    .enter()
 		    	.append("path")
-		    	.attr("stroke-width", app.settings.edges["stroke-width"])
+		    	.attr("stroke-width", app.cfg.edges["stroke-width"])
 
 	    var circles = nodes_elems.append("circle")
 		  	.attr("cx", 0)
 				.attr("cy", 0)
-				.attr("r", function(n) { return n.settings.radius; })
-				.attr("stroke-width", app.settings.edges["stroke-width"])	
+				.attr("r", function(n) { return n.cfg.radius; })
+				.attr("stroke-width", app.cfg.edges["stroke-width"])	
 
 		  var labels = nodes_elems
 		    .append("text")
 	      .attr("text-anchor", "middle")
 	      .attr("x", 0)
-	      .attr("y", function(n) { return -n.settings.radius; });
+	      .attr("y", function(n) { return -n.cfg.radius; });
 
 		  labels
 		    .append("tspan")
@@ -296,28 +285,15 @@
 		  });
 
 		  dagre.layout()
-		    .nodeSep(this.settings.nodeSep)
-		    .edgeSep(this.settings.edgeSep)
-		    .rankSep(this.settings.rankSep)
+		    .nodeSep(this.cfg.nodeSep)
+		    .edgeSep(this.cfg.edgeSep)
+		    .rankSep(this.cfg.rankSep)
 		    .rankDir("LR")
 		    .nodes(this.nodes)
 		    .edges(this.edges)
-		    .debugLevel(1)
 		    .run();
 
 		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
-
-		  this.nodes.forEach(function(n) {
-		  	n.edges_in = _.sortBy(n.edges_in, function(e) {
-		  		return (e.dagre.points.length == 1 ? e.source.dagre.y : e.dagre.points[0].y);
-		  	});
-		  	n.edges_out = _.sortBy(n.edges_out, function(e) {
-		  		return (e.dagre.points.length == 1 ? e.target.dagre.y : e.dagre.points[0].y);
-		  	});
-		  });
-
-		  edges_elems
-		    .attr('id', function(e) { return e.dagre.id; })
 
 		  edges_paths
 		    .attr("d", function(referent, referent_index, edge_index) {
@@ -337,10 +313,10 @@
 
   	function ObjectivesGraph() {
   		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
-  			var edges_out = _(obj_node.referent.out_data_types).map(function(dt) {
+  			var edges_out = obj_node.referent.out_data_types.map(function(dt) {
   				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
   			}, this);
-  			var edges_in = _(obj_node.referent.in_data_types).map(function(dt) {
+  			var edges_in = obj_node.referent.in_data_types.map(function(dt) {
   				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
   			}, this);
   			return _.union(edges_in, edges_out);
@@ -352,8 +328,8 @@
 
   	function GlobalGraph() {
   		this.workflows = app.workflows;
-  		this.primary_nodes = this.objectives_nodes = _(app.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
-  		this.secondary_nodes = this.data_types_nodes = _(app.data_types).map(function(dt) { return new Node(dt, dt.name, this);}, this);
+  		this.primary_nodes = this.objectives_nodes = app.objectives.map(function(obj) { return new Node(obj, obj.name, this);}, this);
+  		this.secondary_nodes = this.data_types_nodes = app.data_types.map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
   		ObjectivesGraph.call(this);
   	}
@@ -365,8 +341,8 @@
   	function WorkflowGraph(workflow) {
   		this.workflow = workflow;
 
-  		this.primary_nodes = this.objectives_nodes = _(workflow.objectives).map(function(obj) { return new Node(obj, obj.name, this);}, this);
-  		this.secondary_nodes = this.data_types_nodes = _.uniq(_.flatten(_(workflow.objectives).map(function(obj) {
+  		this.primary_nodes = this.objectives_nodes = workflow.objectives.map(function(obj) { return new Node(obj, obj.name, this);}, this);
+  		this.secondary_nodes = this.data_types_nodes = _.uniq(_.flatten(workflow.objectives.map(function(obj) {
   				return _.union(obj.in_data_types, obj.out_data_types);
 			}))).map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
@@ -379,14 +355,14 @@
 
   	function PipelineGraph(pipeline) {
   		this.pipeline = pipeline;
-  		this.primary_nodes = this.tool_usages_nodes = _(pipeline.tool_usages).map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
-  		this.secondary_nodes = this.data_format_usages_nodes = _(pipeline.data_format_usages).map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
+  		this.primary_nodes = this.tool_usages_nodes = pipeline.tool_usages.map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
+  		this.secondary_nodes = this.data_format_usages_nodes = pipeline.data_format_usages.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 
   		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
-  			var edges_out = _(tu_node.referent.out_data_format_usages).map(function(df_usage) {
+  			var edges_out = tu_node.referent.out_data_format_usages.map(function(df_usage) {
   				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
   			}, this);
-  			var edges_in = _(tu_node.referent.in_data_format_usages).map(function(df_usage) {
+  			var edges_in = tu_node.referent.in_data_format_usages.map(function(df_usage) {
   				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node, this);
   			}, this);
 

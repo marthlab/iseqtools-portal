@@ -75,7 +75,7 @@
 		{
 			"id": "workflow_3",
 			"name": "Workflow 3",
-			"objectives_ids": ["sequence", "map", "call_de"]
+			"objectives_ids": ["map", "call_de"]
 		},
 		{
 			"id": "workflow_4",
