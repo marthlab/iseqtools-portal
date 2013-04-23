@@ -189,10 +189,7 @@
 
   	function Graph() {
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
-  		this.edges.forEach(function(e) {
-  			e.source.edgesOut().push(e);
-  			e.target.edgesIn().push(e);
-  		});
+
   		this.edgeColors = d3.scale.category10()
   										 .domain(_.uniq(_.flatten(this.edges.map(function(e){ return e.referents.map(function(r){return r.id});}))));
 
