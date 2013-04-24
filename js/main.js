@@ -220,44 +220,26 @@
 
   	app.graph.render = function() {
 
-		  
+		  // handle nodes
 
-	    var new_nodes_elems = this.nodeGroup.selectAll("g .node")
+	    var joined_nodes_elems = this.nodeGroup.selectAll("g .node")
 	    	.each(function(n) { console.log(n); delete n["dagre"]; delete n["width"]; delete n["height"]; delete n["bbox"];})
-		    //.each(function(n) { console.log(n); delete n["dagre"];})
-		    //.each(function(n) { console.log('S');})
-		    .data(this.nodes, Node.key)
-		    .enter()
-		      .append("g")
+		    .data(this.nodes, Node.key);
+
+		  var new_nodes_elems = joined_nodes_elems.enter()
+	      .append("g")
 		      .each(function(n) { console.log("entering: "); console.log(n);})
 		      .attr("class", "node")
 		      .attr("id", function(n) { return "node-" + n.referent.id; })
 		      .classed("primary", function(n) { return n.type() === 'primary'; })
-					.classed("secondary", function(n) { return n.type() === 'secondary'; });
+					.classed("secondary", function(n) { return n.type() === 'secondary'; })
+			
+			joined_nodes_elems.exit()
+				.remove()
 				
 			var nodes_elems = this.nodeGroup.selectAll("g .node");
 
-		  var new_edges_elems = this.edgeGroup
-		    .selectAll("g.edge")
-		    .data(this.edges, Edge.key)
-		    .enter()
-		    	.append("g")
-		      .attr("class", "edge");
-
-		  var edges_elems = this.edgeGroup
-		    .selectAll("g.edge")
-
-		  var new_edges_paths =  edges_elems
-		  	.selectAll("path")
-		    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
-		    .enter()
-		    	.append("path")
-		    	.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
-
-		  var edges_paths = edges_elems
-		  	.selectAll("path")
-
-	    var circles = new_nodes_elems.append("circle")
+			var circles = new_nodes_elems.append("circle")
 		  	.attr("cx", 0)
 				.attr("cy", 0)
 				.attr("r", function(n) { return n.cfg.radius; })
@@ -267,9 +249,7 @@
 		    .append("text")
 	      .attr("text-anchor", "middle")
 	      .attr("x", 0)
-	      .attr("y", function(n) { return -n.cfg.radius; });
-
-		  labels
+	      .attr("y", function(n) { return -n.cfg.radius; })
 		    .append("tspan")
 		    .attr("x", 0)
 		    .attr("dy", "-0.5em")
@@ -281,6 +261,37 @@
 		    n.width = bbox.width;
 		    n.height = bbox.height;
 		  });
+
+			// handle edges
+
+			var joined_edges_elems = this.edgeGroup
+		    .selectAll("g.edge")
+		    .data(this.edges, Edge.key)
+
+		  joined_edges_elems
+		    .enter()
+		    	.append("g")
+		      .attr("class", "edge");
+
+     	joined_edges_elems.exit()
+      	.remove();
+
+		  var edges_elems = this.edgeGroup
+		  	.selectAll("g.edge")
+
+		  var joined_edges_paths = edges_elems
+		  	.selectAll("path")
+		    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
+
+		  joined_edges_paths.enter()
+	    	.append("path")
+	    	.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
+
+		  joined_edges_paths.exit()
+	  		.remove();
+
+		  var edges_paths = edges_elems
+		  	.selectAll("path")
 
 		  dagre.layout()
 		    .nodeSep(this.cfg.nodeSep)
@@ -381,7 +392,7 @@
  		app.graph.init();
  		//app.graph.load_pipeline();
  		//app.graph.load_workflows();
- 		app.graph.load_workflows([app.workflows[1], app.workflows[3]]);
+ 		app.graph.load_workflows([app.workflows[3]]);
  		app.graph.render();
  		
 
