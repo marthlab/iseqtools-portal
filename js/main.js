@@ -63,6 +63,7 @@
 
     function Tool(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	this.objective = _(app.objectives).find(by_id(cfg.objective_id)) || null;
     }
 
     function Pipeline(cfg) {
@@ -93,7 +94,6 @@
     function ToolUsage(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
     	this.tool = _(app.tools).find(by_id(cfg.tool_id));
-    	this.objective = _(app.objectives).find(by_id(cfg.objective_id)) || null;
 
     	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return _(this.pipeline.data_format_usages).find(by_id(dfu_id));}, this);
     	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return _(this.pipeline.data_format_usages).find(by_id(dfu_cfg.id));}, this);
@@ -147,18 +147,18 @@
   			return _([Objective, ToolUsage]).contains(this.referent.constructor) ? 'primary' : 'secondary';
   		},
   		numPathsIn: function() {
-  			return _.sum(this.edges("in").map(function(e) {return e.referents.length;}));
+  			return _.sum(this.edges("in").map(function(e) {return e.path_items.length;}));
   		},
   		numPathsOut: function() {
-  			return _.sum(this.edges("out").map(function(e) {return e.referents.length;}));
+  			return _.sum(this.edges("out").map(function(e) {return e.path_items.length;}));
   		},
-  		pathOrder: function(edge, referent, dir) {
+  		pathOrder: function(edge, path_item, dir) {
   			var sorted_edges = _.sortBy(this.edges(dir), function(e) {
 		  		return (e.dagre.points.length == 1 ? e[dir === "out" ? "target" : "source"].dagre.y : e.dagre.points[0].y);
 		  	});
 				var prior_edges = sorted_edges.slice(0, sorted_edges.indexOf(edge));
-				var paths_in_prior_edges = _.sum(prior_edges.map(function(e) {return e.referents.length;}));
-  			var order_within_edge = edge.referents.indexOf(referent);
+				var paths_in_prior_edges = _.sum(prior_edges.map(function(e) {return e.path_items.length;}));
+  			var order_within_edge = edge.path_items.indexOf(path_item);
   			return paths_in_prior_edges+order_within_edge;
   		}
   	}
@@ -168,24 +168,12 @@
   		this.graph = graph;
   		this.source = source_node;
   		this.target = target_node;
-  		this.referents = this.graph.getEdgeReferents(this);
+  		this.path_items = this.graph.getEdgeReferents(this);
 
   		this.cfg = app.cfg.edges;
   	}
-  	Edge.key = function(e) {	return e.source.referent.id + "__" + e.target.referent.id; }
-
-  	function Graph() {
-  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
-
-  		this.edgeColors = d3.scale.category10()
-  										 .domain(_.uniq(_.flatten(this.edges.map(function(e){ return e.referents.map(function(r){return r.id});}))));
-
-  		this.cfg = app.cfg.graph;
-  	}
-
-  	Graph.prototype.render = function() {
-
-  		function spline(e, path_item) {
+  	Edge.prototype = {
+  		spline: function(path_item) {
   
   			function diag(source, target) {
   				var diag_points = {source: {x: source.y, y: source.x}, target: {x: target.y, y: target.x}};
@@ -201,8 +189,8 @@
 		      (line_points)
   			}
 
-  			var s = e.source, t = e.target;
-  			
+  			var e = this, s = e.source, t = e.target;
+
   			var start_y = s.dagre.y + e.cfg["stroke-width"]*(s.pathOrder(e, path_item, "out")-s.numPathsOut()/2);
   			var end_y = t.dagre.y + e.cfg["stroke-width"]*(t.pathOrder(e, path_item, "in")-t.numPathsIn()/2);
 	      var points = e.dagre.points;
@@ -215,43 +203,67 @@
 
 			  return path_string;
 			}
+  	};
+  	Edge.key = function(e) {	return e.source.referent.id + "__" + e.target.referent.id; }
 
-		  var svg = d3.select("svg");
-		  var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
-		  var edgeGroup = svgGroup.append("g");
-		  var nodeGroup = svgGroup.append("g");
+  	app.graph = {
+  		cfg: app.cfg.graph,
+  		init: function() {
+  			this.svg = d3.select("svg");
+			  this.svgGroup = this.svg.append("g").attr("transform", "translate(5, 5)");
+			  this.edgeGroup = this.svgGroup.append("g");
+			  this.nodeGroup = this.svgGroup.append("g");
+  		}
+  	};
 
-		  var nodes_elems = nodeGroup
-		    .selectAll("g .node")
+
+
+  	app.graph.render = function() {
+
+		  
+
+	    var new_nodes_elems = this.nodeGroup.selectAll("g .node")
+	    	.each(function(n) { console.log(n); delete n["dagre"]; delete n["width"]; delete n["height"]; delete n["bbox"];})
+		    //.each(function(n) { console.log(n); delete n["dagre"];})
+		    //.each(function(n) { console.log('S');})
 		    .data(this.nodes, Node.key)
 		    .enter()
 		      .append("g")
+		      .each(function(n) { console.log("entering: "); console.log(n);})
 		      .attr("class", "node")
 		      .attr("id", function(n) { return "node-" + n.referent.id; })
 		      .classed("primary", function(n) { return n.type() === 'primary'; })
 					.classed("secondary", function(n) { return n.type() === 'secondary'; });
+				
+			var nodes_elems = this.nodeGroup.selectAll("g .node");
 
-		  var edges_elems = edgeGroup
+		  var new_edges_elems = this.edgeGroup
 		    .selectAll("g.edge")
 		    .data(this.edges, Edge.key)
 		    .enter()
 		    	.append("g")
 		      .attr("class", "edge");
 
-		  var edges_paths =  edges_elems
+		  var edges_elems = this.edgeGroup
+		    .selectAll("g.edge")
+
+		  var new_edges_paths =  edges_elems
 		  	.selectAll("path")
-		    .data(function(e) { return e.referents; }, function(r) {return r.id;})
+		    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
 		    .enter()
 		    	.append("path")
 		    	.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
 
-	    var circles = nodes_elems.append("circle")
+		  var edges_paths = edges_elems
+		  	.selectAll("path")
+
+	    var circles = new_nodes_elems.append("circle")
 		  	.attr("cx", 0)
 				.attr("cy", 0)
 				.attr("r", function(n) { return n.cfg.radius; })
 				.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; })	
 
-		  var labels = nodes_elems
+		  var labels = new_nodes_elems
 		    .append("text")
 	      .attr("text-anchor", "middle")
 	      .attr("x", 0)
@@ -269,7 +281,7 @@
 		    n.width = bbox.width;
 		    n.height = bbox.height;
 		  });
-
+debugger;
 		  dagre.layout()
 		    .nodeSep(this.cfg.nodeSep)
 		    .edgeSep(this.cfg.edgeSep)
@@ -277,27 +289,33 @@
 		    .rankDir("LR")
 		    .nodes(this.nodes)
 		    .edges(this.edges)
+		    .debugLevel(1)
 		    .run();
-
+//debugger;
 		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
 
 		  edges_paths
-		    .attr("d", function(referent) {
+		    .attr("d", function(path_item) {
 		    	var edge = d3.select(this.parentNode).datum();
-		    	return spline(edge, referent);
+		    	return edge.spline(path_item);
 		    })
-		    .attr("stroke", function(referent) {
+		    .attr("stroke", function(path_item) {
 		    	var edge = d3.select(this.parentNode).datum();
-		    	return edge.graph.edgeColors(referent.id);
+		    	return edge.graph.pathColors(path_item.id);
 		    })
 
 		  // Resize the SVG element
-		  var svgBBox = svg.node().getBBox();
-		  svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
+		  var svgBBox = this.svg.node().getBBox();
+		  this.svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
 
   	}
 
-  	function WorkflowsGraph(workflows) {
+  	app.graph.test = function() {
+
+  	}
+
+  	app.graph.load_workflows = function(workflows) {
+
   		this.workflows = workflows || app.workflows;
 
 			var objectives = _.union.apply(this, this.workflows.map(function(w) {return w.objectives}));
@@ -307,7 +325,11 @@
   		this.secondary_nodes = this.data_types_nodes = _.union.apply(this, objectives.map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types);}))
   																										.map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
-  		this.edges = _.flatten(this.objectives_nodes.map(function(obj_node) {
+  		this.getEdgeReferents = function(edge) {
+				return _.intersection(this.workflows, _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []));
+			}
+
+  		this.edges = _.union.apply(this, this.objectives_nodes.map(function(obj_node) {
   			var edges_out = obj_node.referent.out_data_types.map(function(dt) {
   				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
   			}, this);
@@ -315,21 +337,27 @@
   				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
   			}, this);
   			return _.union(edges_in, edges_out);
-  		}, this), true);
+  		}, this));
 
-  		Graph.call(this);
+  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
+
+  		this.pathColors = d3.scale.category10()
+  										 .domain(app.workflows.map(function(w){return w.id}));
+  		
   	}
-  	WorkflowsGraph.prototype = Object.create(Graph.prototype);
-  	WorkflowsGraph.prototype.getEdgeReferents = function(edge) {
-			return _.intersection(this.workflows, _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []));
-		}
 
-  	function PipelineGraph(pipeline) {
+  	app.graph.load_pipeline = function(workflows) {
   		this.pipeline = pipeline;
   		this.primary_nodes = this.tool_usages_nodes = pipeline.tool_usages.map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
   		this.secondary_nodes = this.data_format_usages_nodes = pipeline.data_format_usages.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 
-  		this.edges = _.flatten(this.tool_usages_nodes.map(function(tu_node) {
+  		this.getEdgeReferents = function(edge) {
+				return [(edge.source.referent.tool && edge.source.referent.tool.objective) || 
+								(edge.target.referent.tool && edge.target.referent.tool.objective) ||
+								 this.pipeline];
+			}
+
+  		this.edges = _.union.apply(this, this.tool_usages_nodes.map(function(tu_node) {
   			var edges_out = tu_node.referent.out_data_format_usages.map(function(df_usage) {
   				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
   			}, this);
@@ -338,20 +366,22 @@
   			}, this);
 
   			return _.union(edges_in, edges_out);
-  		}, this), true);
+  		}, this));
 
-  		Graph.call(this);
+  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
+
+  		this.pathColors = d3.scale.category10()
+  										 .domain(app.objectives.map(function(obj){return obj.id}).push(this.pipeline.id));
+
+  		
   	}
-  	PipelineGraph.prototype = Object.create(Graph.prototype);
-  	PipelineGraph.prototype.getEdgeReferents = function(edge) {
-			return [this.pipeline];
-		}
-
   	
   	  
 		app.initialize_data_structures(app_json);
- 		app.graph = new WorkflowsGraph();
- 		//app.graph = new WorkflowsGraph([app.workflows[1], app.workflows[3]]);
- 		//app.graph = new PipelineGraph(app.pipelines[0]);
+ 		app.graph.init();
+ 		//app.graph.load_pipeline();
+ 		//app.graph.load_workflows();
+ 		app.graph.load_workflows([app.workflows[1], app.workflows[3]]);
  		app.graph.render();
+ 		
 

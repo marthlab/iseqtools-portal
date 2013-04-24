@@ -144,35 +144,43 @@
 	"tools": [
 		{
 			"id": "tool_1",
-			"name":"Tool 1"
+			"name":"Tool 1",
+			"objective_id": "map"
 		},
 		{
 			"id": "tool_2",
-			"name":"Tool 2"
+			"name":"Tool 2",
+			"objective_id": "map"
 		},
 		{
 			"id": "tool_3",
-			"name":"Placeholder Tool 3"
+			"name":"Placeholder Tool 3",
+			"objective_id": "call_de"
 		},
 		{
 			"id": "tool_4",
-			"name":"Tool 4"
+			"name":"Tool 4",
+			"objective_id": "call_de"
 		},
 		{
 			"id": "tool_5",
-			"name":"Tool 5"
+			"name":"Tool 5",
+			"objective_id": "call_svs"
 		},
 		{
 			"id": "tool_6",
-			"name":"Tool 6"
+			"name":"Tool 6",
+			"objective_id": "call_svs"
 		},
 		{
 			"id": "tool_7",
-			"name":"Tool 7"
+			"name":"Tool 7",
+			"objective_id": "annotate"
 		},
 		{
 			"id": "tool_8",
-			"name":"Tool 8"
+			"name":"Tool 8",
+			"objective_id": "annotate"
 		},
 		{
 			"id": "tool_9",
