@@ -281,7 +281,7 @@
 		    n.width = bbox.width;
 		    n.height = bbox.height;
 		  });
-debugger;
+
 		  dagre.layout()
 		    .nodeSep(this.cfg.nodeSep)
 		    .edgeSep(this.cfg.edgeSep)
@@ -291,7 +291,7 @@ debugger;
 		    .edges(this.edges)
 		    .debugLevel(1)
 		    .run();
-//debugger;
+
 		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
 
 		  edges_paths
