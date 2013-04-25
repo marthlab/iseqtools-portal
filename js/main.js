@@ -206,192 +206,173 @@
   	};
   	Edge.key = function(e) {	return e.source.referent.id + "__" + e.target.referent.id; }
 
+  	function GraphDrawing(graph, svg, use_transitions) {
+  		this.graph = graph;
+  		this.svg = svg;
+  		this.use_transitions = use_transitions;
+  		this.svgGroup = this.svg.append("g").attr("transform", "translate(5, 5)");
+		  this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
+		  this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
+  	}
+  	GraphDrawing.prototype = {
+  		render: function(viewBox) {
+
+			  // handle nodes
+
+		    var nodes_elems = this.nodeGroup.selectAll("g .node")
+			    .data(this.graph.nodes, Node.key);
+
+			  var new_nodes_elems = nodes_elems
+				  .enter()
+			      .append("g")
+				      .attr("class", "node")
+				      .classed("primary", function(n) { return n.type() === 'primary'; })
+							.classed("secondary", function(n) { return n.type() === 'secondary'; })
+
+				var old_nodes_elems = nodes_elems
+					.exit()
+				
+				var updated_nodes_elems = nodes_elems.filter(function(d, i) { return !_(new_nodes_elems[0]).contains(this);});
+
+				var circles = new_nodes_elems.append("circle")
+			  	.attr("cx", 0)
+					.attr("cy", 0)
+					.attr("r", function(n) { return n.cfg.radius; })
+					.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; })	
+
+			  var labels = new_nodes_elems
+			    .append("text")
+		      .attr("text-anchor", "middle")
+		      .attr("x", 0)
+		      .attr("y", function(n) { return -n.cfg.radius; })
+			    .append("tspan")
+			    .attr("x", 0)
+			    .attr("dy", "-0.5em")
+			    .text(function(n) { return n.label; });
+
+				nodes_elems.each(function(n) {
+			    var bbox = this.getBBox();
+			    n.bbox = bbox;
+			    n.width = bbox.width;
+			    n.height = bbox.height;
+			  });
+
+				// handle edges
+
+				var edges_elems = this.edgeGroup
+			    .selectAll("g.edge")
+			    .data(this.graph.edges, Edge.key)
+
+			  var new_edges_elems = edges_elems
+			    .enter()
+			    	.append("g")
+			      .attr("class", "edge")
+
+	     	var old_edges_elems = edges_elems
+	     		.exit()
+
+			  var updated_edges_elems = edges_elems.filter(function(d, i) { return !_(new_edges_elems[0]).contains(this);});
+
+			  // handle paths
+
+			  var edges_paths = edges_elems
+			  	.selectAll("path")
+			    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
+
+			  var new_edges_paths = edges_paths
+			  	.enter()
+		    		.append("path")
+		    		.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
+
+			  var old_edges_paths = edges_paths.exit()
+
+				var updated_edges_paths = edges_paths.filter(function(d, i) {
+					return !new_edges_paths.map(function(nep) { return _(nep).contains(this); }, this).reduce(function(memo, val) {return memo || val;}, false);
+				})
+
+			  dagre.layout()
+			    .nodeSep(this.graph.cfg.nodeSep)
+			    .edgeSep(this.graph.cfg.edgeSep)
+			    .rankSep(this.graph.cfg.rankSep)
+			    .rankDir("LR")
+			    .nodes(this.graph.nodes)
+			    .edges(this.graph.edges)
+			    .debugLevel(1)
+			    .run();
+
+			  (this.use_transitions ? old_nodes_elems.transition().duration(2000) : old_nodes_elems)
+			  	.style("opacity", 0)
+			  	.remove();
+
+			 	(this.use_transitions ? old_edges_paths.transition().duration(2000) : old_edges_paths)
+			  	.style("stroke-opacity", 0)
+			  	.remove();
+
+			  (this.use_transitions ? old_edges_elems.transition().duration(2000) : old_edges_elems)
+			  	.style("opacity", 0)
+			  	.remove();
+
+
+			  var getTransform = function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; };
+
+			  new_nodes_elems.attr("transform", getTransform);
+
+			  (this.use_transitions ? new_nodes_elems.transition().duration(2000) : new_nodes_elems)
+			  	.style("opacity", 1);
+
+			  if(this.use_transitions) {
+			  	updated_nodes_elems
+				  	.transition()
+		      	.duration(2000)
+		      	.attrTween("transform", function tween(d, i, a) {
+				      return d3.interpolateString(this.getAttribute("transform"), getTransform(d) );
+				    });
+			  } else {
+			  	updated_nodes_elems.attr("transform", getTransform);
+			  }
+
+			  (this.use_transitions ? updated_edges_paths.transition().duration(2000) : updated_edges_paths)
+			  	.attr("d", function(path_item) {
+			    	var edge = d3.select(this.parentNode).datum();
+			    	return edge.spline(path_item);
+			    })
+			    
+			  new_edges_paths
+			  	.attr("d", function(path_item) {
+			    	var edge = d3.select(this.parentNode).datum();
+			    	return edge.spline(path_item);
+			    })
+			    .attr("stroke", function(path_item) {
+			    	var edge = d3.select(this.parentNode).datum();
+			    	return edge.graph.pathColors(path_item.id);
+			    });
+
+			  (this.use_transitions ? new_edges_paths.transition().duration(2000) : new_edges_paths)
+			  	.style("stroke-opacity", 1)
+
+		   	if(viewBox) {
+			   	(this.use_transitions ? this.svg.transition().duration(2000) : this.svg)
+			   		.attr("viewBox", viewBox);
+			  }
+
+  		}
+  	}
+
   	app.graph = {
   		cfg: app.cfg.graph,
   		init: function() {
-  			this.svg = d3.select("svg");
-			  this.svgGroup = this.svg.append("g").attr("transform", "translate(5, 5)");
-			  this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
-			  this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
+  			this.drawing_for_layout = new GraphDrawing(this, d3.select("#svg_for_layout"), false);
+  			this.drawing_for_display = new GraphDrawing(this, d3.select("#svg_for_display"), true);
   		}
   	};
 
 
 
   	app.graph.render = function() {
-
-		  // handle nodes
-
-		  var graph = this;
-
-	    var nodes_elems = this.nodeGroup.selectAll("g .node")
-		    .data(this.nodes, Node.key);
-
-		  var new_nodes_elems = nodes_elems
-			  .enter()
-		      .append("g")
-			      .attr("class", "node")
-			      .classed("primary", function(n) { return n.type() === 'primary'; })
-						.classed("secondary", function(n) { return n.type() === 'secondary'; })
-
-			var old_nodes_elems = nodes_elems
-				.exit()
-			
-			var updated_nodes_elems = nodes_elems.filter(function(d, i) { return !_(new_nodes_elems[0]).contains(this);});
-
-			var circles = new_nodes_elems.append("circle")
-		  	.attr("cx", 0)
-				.attr("cy", 0)
-				.attr("r", function(n) { return n.cfg.radius; })
-				.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; })	
-
-		  var labels = new_nodes_elems
-		    .append("text")
-	      .attr("text-anchor", "middle")
-	      .attr("x", 0)
-	      .attr("y", function(n) { return -n.cfg.radius; })
-		    .append("tspan")
-		    .attr("x", 0)
-		    .attr("dy", "-0.5em")
-		    .text(function(n) { return n.label; });
-
-			nodes_elems.each(function(n) {
-		    var bbox = this.getBBox();
-		    n.bbox = bbox;
-		    n.width = bbox.width;
-		    n.height = bbox.height;
-		  });
-
-			// handle edges
-
-			var edges_elems = this.edgeGroup
-		    .selectAll("g.edge")
-		    .data(this.edges, Edge.key)
-
-		  var new_edges_elems = edges_elems
-		    .enter()
-		    	.append("g")
-		      .attr("class", "edge")
-
-     	var old_edges_elems = edges_elems
-     		.exit()
-
-		  var updated_edges_elems = edges_elems.filter(function(d, i) { return !_(new_edges_elems[0]).contains(this);});
-
-		  // handle paths
-
-		  var edges_paths = edges_elems
-		  	.selectAll("path")
-		    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
-
-		  var new_edges_paths = edges_paths
-		  	.enter()
-	    		.append("path")
-	    		.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
-
-		  var old_edges_paths = edges_paths.exit()
-
-		  // var updated_edges_paths = edges_paths.map(function(p_array, i){
-		  // 	return p_array.filter(function(p, j) { return !_(new_edges_paths[i]).contains(p);});
-		  // });
-
-			var updated_edges_paths = edges_paths.filter(function(d, i) {
-				return !new_edges_paths.map(function(nep) { return _(nep).contains(this); }, this).reduce(function(memo, val) {return memo || val;}, false);
-			})
-
-			
-
-
-		  
-
-		  dagre.layout()
-		    .nodeSep(this.cfg.nodeSep)
-		    .edgeSep(this.cfg.edgeSep)
-		    .rankSep(this.cfg.rankSep)
-		    .rankDir("LR")
-		    .nodes(this.nodes)
-		    .edges(this.edges)
-		    .debugLevel(1)
-		    .run();
-
-		  new_nodes_elems.attr("id", function(n) { return n.dagre.id; });
-		  new_edges_elems.attr("id", function(n) { return n.dagre.id; });
-
-			// var svg_dummy = $(this.svg[0][0]).clone().addClass("dummy");
-			// $("#svg_container").append(svg_dummy);
-			// debugger;
-			// old_nodes_ids = old_nodes_elems[0].map(function(e) { return e.id}).filter(function(e) {return typeof e !== "undefined";});
-			// svg_dummy.find("#nodeGroup").children().filter(function() { return _(old_nodes_ids).contains(this.id); }).remove();
-			// old_edges_ids = old_edges_elems[0].map(function(e) { return e.id}).filter(function(e) {return typeof e !== "undefined";});
-			// svg_dummy.find("#edgeGroup").children().filter(function() { return _(old_edges_ids).contains(this.id); }).remove();
-			// debugger;
-
-		  old_nodes_elems
-		  	.transition()
-		  	.duration(2000)
-		  	.style("opacity", 0)
-		  	.remove();
-
-		  old_edges_paths
-		  	.transition()
-		  	.duration(2000)
-		  	.style("stroke-opacity", 0)
-		  	.remove();
-
-		  old_edges_elems
-		  	.transition()
-		  	.duration(2000)
-		  	.style("opacity", 0)
-		  	.remove();
-		  	//.each("end", function(d,i) { if(i == old_edges_elems.length) { }; });
-
-		  new_nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
-
-		  updated_nodes_elems
-			  .transition()
-	      .duration(2000)
-	      .attrTween("transform", tween);
-
-	    new_nodes_elems
-		  	.transition()
-		  	.duration(2000)
-		  	.style("opacity", 1);
-
-      function tween(d, i, a) {
-	      return d3.interpolateString(this.getAttribute("transform"), 'translate('+ d.dagre.x +','+ d.dagre.y +')');
-	    }
-
-		  updated_edges_paths
-		  	.transition()
-		  	.duration(2000)
-		    .attr("d", function(path_item) {
-		    	var edge = d3.select(this.parentNode).datum();
-		    	return edge.spline(path_item);
-		    })
-		    .attr("stroke", function(path_item) {
-		    	var edge = d3.select(this.parentNode).datum();
-		    	return edge.graph.pathColors(path_item.id);
-		    })
-
-		  new_edges_paths
-		  	.transition()
-		  	.duration(2000)
-		  	.style("stroke-opacity", 1)
-		  	.attr("d", function(path_item) {
-		    	var edge = d3.select(this.parentNode).datum();
-		    	return edge.spline(path_item);
-		    })
-		    .attr("stroke", function(path_item) {
-		    	var edge = d3.select(this.parentNode).datum();
-		    	return edge.graph.pathColors(path_item.id);
-		    });
-
-		  var resizeTimer = setInterval(resize, 1);
-			function resize() {
-			  var svgBBox = graph.svg.node().getBBox();
-		  	graph.svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
-			}
-
+  		this.drawing_for_layout.render();
+  		var svgBBox = this.drawing_for_layout.svg.node().getBBox();
+			var viewBox = "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10);
+  		this.drawing_for_display.render(viewBox);
   	}
 
   	app.graph.test = function() {

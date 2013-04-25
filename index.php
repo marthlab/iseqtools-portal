@@ -25,7 +25,9 @@
         <div id="svg_container">
             <!-- <svg >
             </svg> -->
-            <svg preserveAspectRatio="xMidYMid meet">
+            <svg preserveAspectRatio="xMidYMid meet" id="svg_for_display">
+            </svg>
+            <svg preserveAspectRatio="xMidYMid meet" id="svg_for_layout">
             </svg>
         </div>
 
