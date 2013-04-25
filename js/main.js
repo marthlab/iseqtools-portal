@@ -211,8 +211,8 @@
   		init: function() {
   			this.svg = d3.select("svg");
 			  this.svgGroup = this.svg.append("g").attr("transform", "translate(5, 5)");
-			  this.edgeGroup = this.svgGroup.append("g");
-			  this.nodeGroup = this.svgGroup.append("g");
+			  this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
+			  this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
   		}
   	};
 
@@ -230,9 +230,7 @@
 		  var new_nodes_elems = nodes_elems
 			  .enter()
 		      .append("g")
-			      .each(function(n) { console.log("entering: "); console.log(n);})
 			      .attr("class", "node")
-			      .attr("id", function(n) { return "node-" + n.referent.id; })
 			      .classed("primary", function(n) { return n.type() === 'primary'; })
 						.classed("secondary", function(n) { return n.type() === 'secondary'; })
 
@@ -273,7 +271,7 @@
 		  var new_edges_elems = edges_elems
 		    .enter()
 		    	.append("g")
-		      .attr("class", "edge");
+		      .attr("class", "edge")
 
      	var old_edges_elems = edges_elems
      		.exit()
@@ -293,7 +291,18 @@
 
 		  var old_edges_paths = edges_paths.exit()
 
-		  var updated_edges_paths = edges_paths.filter(function(d, i) { return !_(new_edges_paths[0]).contains(this);});
+		  // var updated_edges_paths = edges_paths.map(function(p_array, i){
+		  // 	return p_array.filter(function(p, j) { return !_(new_edges_paths[i]).contains(p);});
+		  // });
+
+			var updated_edges_paths = edges_paths.filter(function(d, i) {
+				return !new_edges_paths.map(function(nep) { return _(nep).contains(this); }, this).reduce(function(memo, val) {return memo || val;}, false);
+			})
+
+			
+
+
+		  
 
 		  dagre.layout()
 		    .nodeSep(this.cfg.nodeSep)
@@ -304,6 +313,18 @@
 		    .edges(this.edges)
 		    .debugLevel(1)
 		    .run();
+
+		  new_nodes_elems.attr("id", function(n) { return n.dagre.id; });
+		  new_edges_elems.attr("id", function(n) { return n.dagre.id; });
+
+			// var svg_dummy = $(this.svg[0][0]).clone().addClass("dummy");
+			// $("#svg_container").append(svg_dummy);
+			// debugger;
+			// old_nodes_ids = old_nodes_elems[0].map(function(e) { return e.id}).filter(function(e) {return typeof e !== "undefined";});
+			// svg_dummy.find("#nodeGroup").children().filter(function() { return _(old_nodes_ids).contains(this.id); }).remove();
+			// old_edges_ids = old_edges_elems[0].map(function(e) { return e.id}).filter(function(e) {return typeof e !== "undefined";});
+			// svg_dummy.find("#edgeGroup").children().filter(function() { return _(old_edges_ids).contains(this.id); }).remove();
+			// debugger;
 
 		  old_nodes_elems
 		  	.transition()
@@ -355,9 +376,7 @@
 		  new_edges_paths
 		  	.transition()
 		  	.duration(2000)
-		  	.style("stroke-opacity", 1);
-
-		  new_edges_paths
+		  	.style("stroke-opacity", 1)
 		  	.attr("d", function(path_item) {
 		    	var edge = d3.select(this.parentNode).datum();
 		    	return edge.spline(path_item);
@@ -365,7 +384,7 @@
 		    .attr("stroke", function(path_item) {
 		    	var edge = d3.select(this.parentNode).datum();
 		    	return edge.graph.pathColors(path_item.id);
-		    })
+		    });
 
 		  var resizeTimer = setInterval(resize, 1);
 			function resize() {
@@ -445,8 +464,8 @@
 		app.initialize_data_structures(app_json);
  		app.graph.init();
  		//app.graph.load_pipeline(app.pipelines[0]);
- 		app.graph.load_workflows();
- 		//app.graph.load_workflows([app.workflows[3]]);
+ 		//app.graph.load_workflows();
+ 		app.graph.load_workflows([app.workflows[3]]);
  		app.graph.render();
  		
 

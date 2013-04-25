@@ -32,7 +32,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="js/vendor/d3.js"></script>
         <script src="js/vendor/dagre.js"></script>
 
         <script>var app_json = <?php echo file_get_contents('./js/app.json'); ?>; var debug = null;</script>
