@@ -32,7 +32,7 @@
 	    	}
     	},
     	edges: {
-    		"stroke-width": 2
+    		"stroke-width": 3
     	}
     }
 
@@ -191,8 +191,8 @@
 
   			var e = this, s = e.source, t = e.target;
 
-  			var start_y = s.dagre.y + e.cfg["stroke-width"]*(s.pathOrder(e, path_item, "out")-s.numPathsOut()/2);
-  			var end_y = t.dagre.y + e.cfg["stroke-width"]*(t.pathOrder(e, path_item, "in")-t.numPathsIn()/2);
+  			var start_y = s.dagre.y + e.cfg["stroke-width"]*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2);
+  			var end_y = t.dagre.y + e.cfg["stroke-width"]*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2);
 	      var points = e.dagre.points;
 	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
 			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
@@ -375,10 +375,6 @@
   		this.drawing_for_display.render(viewBox);
   	}
 
-  	app.graph.test = function() {
-
-  	}
-
   	app.graph.load_workflows = function(workflows) {
 
   		this.workflows = workflows || app.workflows;
@@ -445,8 +441,8 @@
 		app.initialize_data_structures(app_json);
  		app.graph.init();
  		//app.graph.load_pipeline(app.pipelines[0]);
- 		//app.graph.load_workflows();
- 		app.graph.load_workflows([app.workflows[3]]);
+ 		app.graph.load_workflows();
+ 		//app.graph.load_workflows([app.workflows[3]]);
  		app.graph.render();
  		
 
