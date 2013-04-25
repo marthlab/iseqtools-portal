@@ -222,22 +222,24 @@
 
 		  // handle nodes
 
-	    var joined_nodes_elems = this.nodeGroup.selectAll("g .node")
-	    	.each(function(n) { console.log(n); delete n["dagre"]; delete n["width"]; delete n["height"]; delete n["bbox"];})
+		  var graph = this;
+
+	    var nodes_elems = this.nodeGroup.selectAll("g .node")
 		    .data(this.nodes, Node.key);
 
-		  var new_nodes_elems = joined_nodes_elems.enter()
-	      .append("g")
-		      .each(function(n) { console.log("entering: "); console.log(n);})
-		      .attr("class", "node")
-		      .attr("id", function(n) { return "node-" + n.referent.id; })
-		      .classed("primary", function(n) { return n.type() === 'primary'; })
-					.classed("secondary", function(n) { return n.type() === 'secondary'; })
+		  var new_nodes_elems = nodes_elems
+			  .enter()
+		      .append("g")
+			      .each(function(n) { console.log("entering: "); console.log(n);})
+			      .attr("class", "node")
+			      .attr("id", function(n) { return "node-" + n.referent.id; })
+			      .classed("primary", function(n) { return n.type() === 'primary'; })
+						.classed("secondary", function(n) { return n.type() === 'secondary'; })
+
+			var old_nodes_elems = nodes_elems
+				.exit()
 			
-			joined_nodes_elems.exit()
-				.remove()
-				
-			var nodes_elems = this.nodeGroup.selectAll("g .node");
+			var updated_nodes_elems = nodes_elems.filter(function(d, i) { return !_(new_nodes_elems[0]).contains(this);});
 
 			var circles = new_nodes_elems.append("circle")
 		  	.attr("cx", 0)
@@ -264,34 +266,34 @@
 
 			// handle edges
 
-			var joined_edges_elems = this.edgeGroup
+			var edges_elems = this.edgeGroup
 		    .selectAll("g.edge")
 		    .data(this.edges, Edge.key)
 
-		  joined_edges_elems
+		  var new_edges_elems = edges_elems
 		    .enter()
 		    	.append("g")
 		      .attr("class", "edge");
 
-     	joined_edges_elems.exit()
-      	.remove();
+     	var old_edges_elems = edges_elems
+     		.exit()
 
-		  var edges_elems = this.edgeGroup
-		  	.selectAll("g.edge")
+		  var updated_edges_elems = edges_elems.filter(function(d, i) { return !_(new_edges_elems[0]).contains(this);});
 
-		  var joined_edges_paths = edges_elems
-		  	.selectAll("path")
-		    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
-
-		  joined_edges_paths.enter()
-	    	.append("path")
-	    	.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
-
-		  joined_edges_paths.exit()
-	  		.remove();
+		  // handle paths
 
 		  var edges_paths = edges_elems
 		  	.selectAll("path")
+		    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
+
+		  var new_edges_paths = edges_paths
+		  	.enter()
+	    		.append("path")
+	    		.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
+
+		  var old_edges_paths = edges_paths.exit()
+
+		  var updated_edges_paths = edges_paths.filter(function(d, i) { return !_(new_edges_paths[0]).contains(this);});
 
 		  dagre.layout()
 		    .nodeSep(this.cfg.nodeSep)
@@ -303,9 +305,44 @@
 		    .debugLevel(1)
 		    .run();
 
-		  nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
+		  old_nodes_elems
+		  	.transition()
+		  	.duration(2000)
+		  	.style("opacity", 0)
+		  	.remove();
 
-		  edges_paths
+		  old_edges_paths
+		  	.transition()
+		  	.duration(2000)
+		  	.style("stroke-opacity", 0)
+		  	.remove();
+
+		  old_edges_elems
+		  	.transition()
+		  	.duration(2000)
+		  	.style("opacity", 0)
+		  	.remove();
+		  	//.each("end", function(d,i) { if(i == old_edges_elems.length) { }; });
+
+		  new_nodes_elems.attr("transform", function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; });
+
+		  updated_nodes_elems
+			  .transition()
+	      .duration(2000)
+	      .attrTween("transform", tween);
+
+	    new_nodes_elems
+		  	.transition()
+		  	.duration(2000)
+		  	.style("opacity", 1);
+
+      function tween(d, i, a) {
+	      return d3.interpolateString(this.getAttribute("transform"), 'translate('+ d.dagre.x +','+ d.dagre.y +')');
+	    }
+
+		  updated_edges_paths
+		  	.transition()
+		  	.duration(2000)
 		    .attr("d", function(path_item) {
 		    	var edge = d3.select(this.parentNode).datum();
 		    	return edge.spline(path_item);
@@ -315,9 +352,26 @@
 		    	return edge.graph.pathColors(path_item.id);
 		    })
 
-		  // Resize the SVG element
-		  var svgBBox = this.svg.node().getBBox();
-		  this.svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
+		  new_edges_paths
+		  	.transition()
+		  	.duration(2000)
+		  	.style("stroke-opacity", 1);
+
+		  new_edges_paths
+		  	.attr("d", function(path_item) {
+		    	var edge = d3.select(this.parentNode).datum();
+		    	return edge.spline(path_item);
+		    })
+		    .attr("stroke", function(path_item) {
+		    	var edge = d3.select(this.parentNode).datum();
+		    	return edge.graph.pathColors(path_item.id);
+		    })
+
+		  var resizeTimer = setInterval(resize, 1);
+			function resize() {
+			  var svgBBox = graph.svg.node().getBBox();
+		  	graph.svg.attr("viewBox", "0 0 "+ (svgBBox.width + 10)+" "+(svgBBox.height + 10) );
+			}
 
   	}
 
@@ -357,7 +411,7 @@
   		
   	}
 
-  	app.graph.load_pipeline = function(workflows) {
+  	app.graph.load_pipeline = function(pipeline) {
   		this.pipeline = pipeline;
   		this.primary_nodes = this.tool_usages_nodes = pipeline.tool_usages.map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
   		this.secondary_nodes = this.data_format_usages_nodes = pipeline.data_format_usages.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
@@ -390,9 +444,9 @@
   	  
 		app.initialize_data_structures(app_json);
  		app.graph.init();
- 		//app.graph.load_pipeline();
- 		//app.graph.load_workflows();
- 		app.graph.load_workflows([app.workflows[3]]);
+ 		//app.graph.load_pipeline(app.pipelines[0]);
+ 		app.graph.load_workflows();
+ 		//app.graph.load_workflows([app.workflows[3]]);
  		app.graph.render();
  		
 
