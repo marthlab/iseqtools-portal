@@ -18,12 +18,11 @@
     	graph: {
     		nodeSep: 50,
 		    edgeSep: 10,
-		    rankSep: 50
+		    rankSep: 50,
+		    render_duration: 2000
     	},
     	nodes: {
-    		"stroke-width": 2
-    	},
-    	node_types: {
+    		"stroke-width": 2,
     		primary: {
 	    		radius: 30
 	    	},
@@ -137,7 +136,7 @@
   		this.referent = referent;
   		this.label = label;
   		this.graph = graph;
-  		this.cfg = _({}).extend(app.cfg.nodes, app.cfg.node_types[this.type()]);
+  		this.cfg = _({}).extend(app.cfg.nodes, app.cfg.nodes[this.type()]);
   	}
   	Node.prototype = {
   		edges: function(dir) {
@@ -300,15 +299,15 @@
 			    .debugLevel(1)
 			    .run();
 
-			  (this.use_transitions ? old_nodes_elems.transition().duration(2000) : old_nodes_elems)
+			  (this.use_transitions ? old_nodes_elems.transition().duration(this.graph.cfg.render_duration) : old_nodes_elems)
 			  	.style("opacity", 0)
 			  	.remove();
 
-			 	(this.use_transitions ? old_edges_paths.transition().duration(2000) : old_edges_paths)
+			 	(this.use_transitions ? old_edges_paths.transition().duration(this.graph.cfg.render_duration) : old_edges_paths)
 			  	.style("stroke-opacity", 0)
 			  	.remove();
 
-			  (this.use_transitions ? old_edges_elems.transition().duration(2000) : old_edges_elems)
+			  (this.use_transitions ? old_edges_elems.transition().duration(this.graph.cfg.render_duration) : old_edges_elems)
 			  	.style("opacity", 0)
 			  	.remove();
 
@@ -317,13 +316,13 @@
 
 			  new_nodes_elems.attr("transform", getTransform);
 
-			  (this.use_transitions ? new_nodes_elems.transition().duration(2000) : new_nodes_elems)
+			  (this.use_transitions ? new_nodes_elems.transition().duration(this.graph.cfg.render_duration) : new_nodes_elems)
 			  	.style("opacity", 1);
 
 			  if(this.use_transitions) {
 			  	updated_nodes_elems
 				  	.transition()
-		      	.duration(2000)
+		      	.duration(this.graph.cfg.render_duration)
 		      	.attrTween("transform", function tween(d, i, a) {
 				      return d3.interpolateString(this.getAttribute("transform"), getTransform(d) );
 				    });
@@ -331,7 +330,7 @@
 			  	updated_nodes_elems.attr("transform", getTransform);
 			  }
 
-			  (this.use_transitions ? updated_edges_paths.transition().duration(2000) : updated_edges_paths)
+			  (this.use_transitions ? updated_edges_paths.transition().duration(this.graph.cfg.render_duration) : updated_edges_paths)
 			  	.attr("d", function(path_item) {
 			    	var edge = d3.select(this.parentNode).datum();
 			    	return edge.spline(path_item);
@@ -347,11 +346,11 @@
 			    	return edge.graph.pathColors(path_item.id);
 			    });
 
-			  (this.use_transitions ? new_edges_paths.transition().duration(2000) : new_edges_paths)
+			  (this.use_transitions ? new_edges_paths.transition().duration(this.graph.cfg.render_duration) : new_edges_paths)
 			  	.style("stroke-opacity", 1)
 
 		   	if(viewBox) {
-			   	(this.use_transitions ? this.svg.transition().duration(2000) : this.svg)
+			   	(this.use_transitions ? this.svg.transition().duration(this.graph.cfg.render_duration) : this.svg)
 			   		.attr("viewBox", viewBox);
 			  }
 
@@ -440,8 +439,8 @@
   	  
 		app.initialize_data_structures(app_json);
  		app.graph.init();
- 		//app.graph.load_pipeline(app.pipelines[0]);
- 		app.graph.load_workflows();
+ 		app.graph.load_pipeline(app.pipelines[0]);
+ 		//app.graph.load_workflows();
  		//app.graph.load_workflows([app.workflows[3]]);
  		app.graph.render();
  		

@@ -22,14 +22,11 @@
 
         <h2>Graph Visualization</h2>
 
-        <div id="svg_container">
-            <!-- <svg >
-            </svg> -->
-            <svg preserveAspectRatio="xMidYMid meet" id="svg_for_display">
-            </svg>
-            <svg preserveAspectRatio="xMidYMid meet" id="svg_for_layout">
-            </svg>
+        <div id="main">
+            <nav id="main_nav"></nav>
+            <svg preserveAspectRatio="xMidYMid meet" id="svg_for_display"></svg>
         </div>
+        <svg preserveAspectRatio="xMidYMid meet" id="svg_for_layout"></svg>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
