@@ -58,6 +58,7 @@
 
     function DataFormat(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	this.data_type = _(app.objectives).find(by_id(cfg.data_type_id)) || null;
     }
 
     function Tool(cfg) {
@@ -121,6 +122,9 @@
 	    app.data_formats = cfg.data_formats.map(function(df_cfg, order) {
 	    	return new DataFormat(_.extend(df_cfg, {order: order}) );
 	    });
+	    _(app.data_types).each(function(dt) {
+	  		dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
+	  	});
 
 	    app.tools = cfg.tools.map(function(tool_cfg, order) {
 	    	return new Tool(_.extend(tool_cfg, {order: order}) );

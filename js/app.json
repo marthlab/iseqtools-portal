@@ -86,59 +86,73 @@
 	"data_formats": [
 		{
 			"id":"f01",
-			"name":"Format 1"
+			"name":"Format 1",
+			"data_type_id": "reads"
 		},
 		{
 			"id":"f02",
-			"name":"Format 2"
+			"name":"Format 2",
+			"data_type_id": "reads"
 		},
 		{
 			"id":"f03",
-			"name":"Format 3"
+			"name":"Format 3",
+			"data_type_id": "alignments"
 		},
 		{
 			"id":"f04",
-			"name":"Placeholder Format 4"
+			"name":"Placeholder Format 4",
+			"data_type_id": "alignments"
 		},
 		{
 			"id":"f05",
-			"name":"Format 5"
+			"name":"Format 5",
+			"data_type_id": "gene_models"
 		},
 		{
 			"id":"f06",
-			"name":"Format 6"
+			"name":"Format 6",
+			"data_type_id": "gene_models"
 		},
 		{
 			"id":"f07",
-			"name":"Format 7"
+			"name":"Format 7",
+			"data_type_id": "de_genes"
 		},
 		{
 			"id":"f08",
-			"name":"Format 8"
+			"name":"Format 8",
+			"data_type_id": "de_genes"
 		},
 		{
 			"id":"f09",
-			"name":"Format 9"
+			"name":"Format 9",
+			"data_type_id": "variants"
 		},
 		{
 			"id":"f10",
-			"name":"Format 10"
+			"name":"Format 10",
+			"data_type_id": "variants"
 		},
 		{
 			"id":"f11",
-			"name":"Format 11"
+			"name":"Format 11",
+			"data_type_id": "functional_features"
 		},
 		{
 			"id":"f12",
-			"name":"Format 12"
+			"name":"Format 12",
+			"data_type_id": "functional_features"
 		},
 		{
 			"id":"f13",
-			"name":"Format 13"
+			"name":"Format 13",
+			"data_type_id": "annotated_variants"
 		},
 		{
 			"id":"f14",
-			"name":"Format 14"
+			"name":"Format 14",
+			"data_type_id": "annotated_variants"
 		}
 	],
 	"tools": [
