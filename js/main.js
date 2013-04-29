@@ -49,11 +49,20 @@
     }
 
     function Workflow(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	_(this).extend(_(cfg).pick('id', 'order'));
     	this.objectives = cfg.objectives_ids.map(function(obj_id){ return _(app.objectives).find(by_id(obj_id));});
-    	this.data_types = _.union.apply(
+
+    	this.data_types = _.union.apply(this,
     		this.objectives.map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types); })
   		);
+
+    	this.in_data_types = this.data_types.filter(function(dt) { return _(this.objectives.filter(function(obj){ return _(obj.out_data_types).contains(dt); })).isEmpty(); }, this);
+    	this.out_data_types = this.data_types.filter(function(dt) { return _(this.objectives.filter(function(obj){ return _(obj.in_data_types).contains(dt); })).isEmpty(); }, this);
+
+  		this.name = "From: "
+  								+ this.in_data_types.map(function(dt) { return dt.name;}).join(", ")
+  								+ " | To: "
+  								+ this.out_data_types.map(function(dt) { return dt.name;}).join(", ");
     }
 
     function DataFormat(cfg) {
@@ -447,8 +456,8 @@
   	  
 		app.initialize_data_structures(app_json);
  		app.graph.init();
- 		app.graph.load_pipeline(app.pipelines[0]);
- 		//app.graph.load_workflows();
+ 		//app.graph.load_pipeline(app.pipelines[0]);
+ 		app.graph.load_workflows();
  		//app.graph.load_workflows([app.workflows[3]]);
  		app.graph.render();
  		

@@ -69,22 +69,18 @@
 	"workflows": [
 		{
 			"id":"workflow_1",
-			"name": "Workflow 1",
 			"objectives_ids": ["sequence", "map", "call_svs"]
 		},
 		{
 			"id": "workflow_2",
-			"name": "Workflow 2",
-			"objectives_ids": ["sequence", "map", "call_svs"]
+			"objectives_ids": ["sequence", "map"]
 		},
 		{
 			"id": "workflow_3",
-			"name": "Workflow 3",
 			"objectives_ids": ["map", "call_de"]
 		},
 		{
 			"id": "workflow_4",
-			"name": "Workflow 4",
 			"objectives_ids": ["call_svs", "annotate"]
 		}
 	],
@@ -158,6 +154,14 @@
 			"id":"f14",
 			"name":"Format 14",
 			"data_type_id": "annotated_variants"
+		},
+		{
+			"id":"f15",
+			"name":"Format 15"
+		},
+		{
+			"id":"f16",
+			"name":"Format 16"
 		}
 	],
 	"tools": [

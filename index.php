@@ -23,7 +23,9 @@
         <h2>Graph Visualization</h2>
 
         <div id="main">
-            <nav id="main_nav"></nav>
+            <nav id="main_nav">
+                
+            </nav>
             <svg preserveAspectRatio="xMidYMid meet" id="svg_for_display"></svg>
         </div>
         <svg preserveAspectRatio="xMidYMid meet" id="svg_for_layout"></svg>
