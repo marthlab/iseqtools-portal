@@ -42,8 +42,8 @@
     function Objective(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	this.in_data_types = cfg.in_data_types_ids.map(function(dt_id){ return _(app.data_types).find(by_id(dt_id));});
-    	this.out_data_types = cfg.out_data_types_ids.map(function(dt_id){ return _(app.data_types).find(by_id(dt_id));});
-    
+    	this.out_data_types = cfg.out_data_types.map(function(dt_cfg){ return _(app.data_types).find(by_id(dt_cfg.id));});
+
     	// references populated later
     	this.workflows = {};
     }
@@ -63,7 +63,6 @@
 
     function Tool(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.objective = _(app.objectives).find(by_id(cfg.objective_id)) || null;
     }
 
     function Pipeline(cfg) {
@@ -94,6 +93,7 @@
     function ToolUsage(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
     	this.tool = _(app.tools).find(by_id(cfg.tool_id));
+    	this.objective = _(app.objectives).find(by_id(cfg.objective_id)) || null;
 
     	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return _(this.pipeline.data_format_usages).find(by_id(dfu_id));}, this);
     	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return _(this.pipeline.data_format_usages).find(by_id(dfu_cfg.id));}, this);
@@ -104,9 +104,13 @@
 
     app.initialize_data_structures = function(cfg) {
 
-	    app.data_types = cfg.data_types.map(function(dt_cfg, order) {
-	    	return new DataType(_.extend(dt_cfg, {order: order}) );
-	    });
+			var create_dt = function(dt_cfg, order){
+    		return new DataType(_.extend(dt_cfg, {order: order}));
+    	};
+
+	    app.data_types = _.flatten(_(cfg.objectives.map(function(obj_cfg) {
+	    	return obj_cfg.out_data_types.map(create_dt);
+	    })).union(cfg.initial_data_types.map(create_dt)), true);
 	    
 	    app.objectives = cfg.objectives.map(function(obj_cfg, order) {
 	    	return new Objective(_.extend(obj_cfg, {order: order}) );
@@ -416,8 +420,8 @@
   		this.secondary_nodes = this.data_format_usages_nodes = pipeline.data_format_usages.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 
   		this.getEdgeReferents = function(edge) {
-				return [(edge.source.referent.tool && edge.source.referent.tool.objective) || 
-								(edge.target.referent.tool && edge.target.referent.tool.objective) ||
+				return [(edge.source.referent.tool && edge.source.referent.objective) || 
+								(edge.target.referent.tool && edge.target.referent.objective) ||
 								 this.pipeline];
 			}
 

@@ -1,32 +1,8 @@
 {
-	"data_types": [
-		{
-			"id":"reads",
-			"name":"Reads"
-		},
-		{
-			"id":"alignments",
-			"name":"Alignments"
-		},
+	"initial_data_types": [
 		{
 			"id":"gene_models",
 			"name":"Gene Models"
-		},
-		{
-			"id":"de_genes",
-			"name":"DE Genes"
-		},
-		{
-			"id":"variants",
-			"name":"Variants"
-		},
-		{
-			"id":"functional_features",
-			"name":"Functional Features"
-		},
-		{
-			"id":"annotated_variants",
-			"name":"Annotated Variants"
 		}
 	],
 	"objectives": [
@@ -34,31 +10,60 @@
 			"id":"sequence",
 			"name":"Sequence",
 			"in_data_types_ids": [],
-			"out_data_types_ids": ["reads"]
+			"out_data_types": [
+				{
+					"id":"reads",
+					"name":"Reads"
+				}
+			]
 		},
 		{
 			"id":"map",
 			"name":"Map",
 			"in_data_types_ids": ["reads"],
-			"out_data_types_ids": ["alignments"]
+			"out_data_types": [
+				{
+					"id":"alignments",
+					"name":"Alignments"
+				}
+			]
 		},
 		{
 			"id":"call_svs",
 			"name":"Call SVs",
 			"in_data_types_ids": ["alignments"],
-			"out_data_types_ids": ["functional_features", "variants"]
+			"out_data_types": [
+				{
+					"id":"functional_features",
+					"name":"Functional Features"
+				},
+				{
+					"id":"variants",
+					"name":"Variants"
+				}
+			]
 		},
 		{
 			"id":"call_de",
 			"name":"Call Differential Expression",
 			"in_data_types_ids": ["alignments", "gene_models"],
-			"out_data_types_ids": ["de_genes"]
+			"out_data_types": [
+				{
+					"id":"de_genes",
+					"name":"DE Genes"
+				}
+			]
 		},
 		{
 			"id":"annotate",
 			"name":"Annotate",
 			"in_data_types_ids": ["functional_features", "variants"],
-			"out_data_types_ids": ["annotated_variants"]
+			"out_data_types": [
+				{
+					"id":"annotated_variants",
+					"name":"Annotated Variants"
+				}
+			]
 		}
 	],
 	"workflows": [
@@ -158,43 +163,35 @@
 	"tools": [
 		{
 			"id": "tool_1",
-			"name":"Tool 1",
-			"objective_id": "map"
+			"name":"Tool 1"
 		},
 		{
 			"id": "tool_2",
-			"name":"Tool 2",
-			"objective_id": "map"
+			"name":"Tool 2"
 		},
 		{
 			"id": "tool_3",
-			"name":"Placeholder Tool 3",
-			"objective_id": "call_de"
+			"name":"Tool 3"
 		},
 		{
 			"id": "tool_4",
-			"name":"Tool 4",
-			"objective_id": "call_de"
+			"name":"Tool 4"
 		},
 		{
 			"id": "tool_5",
-			"name":"Tool 5",
-			"objective_id": "call_svs"
+			"name":"Tool 5"
 		},
 		{
 			"id": "tool_6",
-			"name":"Tool 6",
-			"objective_id": "call_svs"
+			"name":"Tool 6"
 		},
 		{
 			"id": "tool_7",
-			"name":"Tool 7",
-			"objective_id": "annotate"
+			"name":"Tool 7"
 		},
 		{
 			"id": "tool_8",
-			"name":"Tool 8",
-			"objective_id": "annotate"
+			"name":"Tool 8"
 		},
 		{
 			"id": "tool_9",
@@ -228,6 +225,7 @@
 				{
 					"id": "tool_usage_1",
 					"tool_id": "tool_1",
+					"objective_id": "map",
 					"in_data_format_usages_ids": ["dfu_01", "dfu_03"],
 					"out_data_format_usages": [
 						{
@@ -243,6 +241,7 @@
 				{
 					"id": "tool_usage_3",
 					"tool_id": "tool_3",
+					"objective_id": "map",
 					"in_data_format_usages_ids": ["dfu_01", "dfu_05"],
 					"out_data_format_usages": [
 						{
@@ -258,6 +257,7 @@
 				{
 					"id": "tool_usage_4",
 					"tool_id": "tool_1",
+					"objective_id": "call_svs",
 					"in_data_format_usages_ids": ["dfu_02", "dfu_04", "dfu_06"],
 					"out_data_format_usages": [
 						{
@@ -269,6 +269,7 @@
 				{
 					"id": "tool_usage_5",
 					"tool_id": "tool_2",
+					"objective_id": "call_svs",
 					"in_data_format_usages_ids": ["dfu_04", "dfu_07", "dfu_08"],
 					"out_data_format_usages": [
 						{
@@ -280,6 +281,7 @@
 				{
 					"id": "tool_usage_6",
 					"tool_id": "tool_5",
+					"objective_id": "call_svs",
 					"in_data_format_usages_ids": ["dfu_02", "dfu_09"],
 					"out_data_format_usages": [
 						{
@@ -291,6 +293,7 @@
 				{
 					"id": "tool_usage_7",
 					"tool_id": "tool_4",
+					"objective_id": "annotate",
 					"in_data_format_usages_ids": ["dfu_08", "dfu_09", "dfu_10"],
 					"out_data_format_usages": [
 						{
@@ -306,6 +309,7 @@
 				{
 					"id": "tool_usage_8",
 					"tool_id": "tool_3",
+					"objective_id": "annotate",
 					"in_data_format_usages_ids": ["dfu_09", "dfu_11"],
 					"out_data_format_usages": [
 						{
