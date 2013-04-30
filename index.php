@@ -23,18 +23,45 @@
         <h2>Graph Visualization</h2>
 
         <div id="main">
-            <nav id="main_nav">
-                
-            </nav>
-            <svg preserveAspectRatio="xMidYMid meet" id="svg_for_display"></svg>
+            <div id="left_col">
+                <nav id="breadcrumbs"></nav>
+            </div>
+            <svg preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
         </div>
-        <svg preserveAspectRatio="xMidYMid meet" id="svg_for_layout"></svg>
+        <svg preserveAspectRatio="xMidYMid meet" id="layout_svg"></svg>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
         <script src="js/vendor/d3.js"></script>
         <script src="js/vendor/dagre.js"></script>
+
+        <script type="text/html" id='breadcrumbs-template'>
+            <% var type = app.activeItemType(); %>
+            
+            <% if(type === "global") { %>
+            <span class="global current">HOME</span>
+            <% } else { %>
+            <a href="#" class="global">HOME</a>
+            <% } %>
+
+            <% if(type === "workflow") { %>
+            &nbsp;&gt;&gt;&nbsp;<span class="workflow current"><%= app.current_workflow.name %></span>
+            <% } else if(type === "pipeline" || type === "tool") { %>
+            &nbsp;&gt;&gt;&nbsp;<a href="#" class="workflow"><%= app.current_workflow.name %></a>
+            <% } %>
+
+            <% if(type === "pipeline") { %>
+            &nbsp;&gt;&gt;&nbsp;<span class="pipeline current"><%= app.current_pipeline.name %></span>
+            <% } else if(type === "tool") { %>
+            &nbsp;&gt;&gt;&nbsp;<a href="#" class="pipeline"><%= app.current_pipeline.name %></a>
+            <% } %>
+
+            <% if(type === "tool") { %>
+            &nbsp;&gt;&gt;&nbsp;<span class="tool current"><%= app.current_tool.name %></span>
+            <% } %>
+             
+        </script>
 
         <script>var app_json = <?php echo file_get_contents('./js/app.json'); ?>; var debug = null;</script>
 

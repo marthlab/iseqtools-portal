@@ -63,8 +63,8 @@ textarea {
 html, body { margin:0; padding:0; overflow:hidden; width:100%; height:100%; }
 #main {display:table; margin:0 auto; width:90%; height:100%;}
     #main_nav {display:table-cell; width:20%; height:100%;}
-    #svg_for_display {display:table-cell; height:100%;}
-#svg_for_layout {position:absolute; overflow:hidden; left:-20000px;}
+    #display_svg {display:table-cell; height:100%;}
+#layout_svg {position:absolute; overflow:hidden; left:-20000px;}
 
 .edge path {stroke-opacity:0;}
 .node {opacity:0;}
@@ -89,10 +89,10 @@ html, body { margin:0; padding:0; overflow:hidden; width:100%; height:100%; }
   font: 300 13px "Helvetica Neue";
 }
 
-.node:hover circle, .node:hover text {
+/*.node:hover circle, .node:hover text {
   cursor: pointer;
   opacity: 0.4;
-}
+}*/
 
 .edge path {
   fill: none;

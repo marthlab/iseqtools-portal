@@ -68,12 +68,16 @@
 	],
 	"workflows": [
 		{
+			"id":"workflow_0",
+			"objectives_ids": ["sequence"]
+		},
+		{
 			"id":"workflow_1",
-			"objectives_ids": ["sequence", "map", "call_svs"]
+			"objectives_ids": ["map", "call_svs"]
 		},
 		{
 			"id": "workflow_2",
-			"objectives_ids": ["sequence", "map"]
+			"objectives_ids": ["map"]
 		},
 		{
 			"id": "workflow_3",
@@ -210,7 +214,7 @@
 		{
 			"id": "pipeline_1",
 			"name": "Pipeline 1",
-			"workflows_ids": ["workflow_1", "workflow_2"],
+			"workflow_id": "workflow_1",
 			"initial_data_format_usages": [
 				{
 					"id": "dfu_01",
@@ -331,7 +335,7 @@
 		{
 			"id": "pipeline_2",
 			"name": "Pipeline 2",
-			"workflows_ids": ["workflow_2", "workflow_3"],
+			"workflow_id": "workflow_1",
 			"data_format_usages": [],
 			"tool_usages": []
 		}
