@@ -1,7 +1,7 @@
 
-	  _.sum = function(obj) {
-		  if (!$.isArray(obj) || obj.length == 0) return 0;
-		  return _.reduce(obj, function(sum, n) {
+	  _.sum = function(task) {
+		  if (!$.isArray(task) || task.length == 0) return 0;
+		  return _.reduce(task, function(sum, n) {
 		    return sum += n;
 		  });
 		}
@@ -39,7 +39,7 @@
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     }
 
-    function Objective(cfg) {
+    function Task(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	this.in_data_types = cfg.in_data_types_ids.map(function(dt_id){ return _(app.data_types).find(by_id(dt_id));});
     	this.out_data_types = cfg.out_data_types.map(function(dt_cfg){ return _(app.data_types).find(by_id(dt_cfg.id));});
@@ -50,14 +50,14 @@
 
     function Workflow(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order'));
-    	this.objectives = cfg.objectives_ids.map(function(obj_id){ return _(app.objectives).find(by_id(obj_id));});
+    	this.tasks = cfg.tasks_ids.map(function(task_id){ return _(app.tasks).find(by_id(task_id));});
 
     	this.data_types = _.union.apply(this,
-    		this.objectives.map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types); })
+    		this.tasks.map(function(task) {return _.union(task.in_data_types, task.out_data_types); })
   		);
 
-    	this.in_data_types = this.data_types.filter(function(dt) { return _(this.objectives.filter(function(obj){ return _(obj.out_data_types).contains(dt); })).isEmpty();}, this);
-    	this.out_data_types = this.data_types.filter(function(dt) { return _(this.objectives.filter(function(obj){ return _(obj.in_data_types).contains(dt); })).isEmpty();}, this);
+    	this.in_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.out_data_types).contains(dt); })).isEmpty();}, this);
+    	this.out_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.in_data_types).contains(dt); })).isEmpty();}, this);
 
   		this.name = "From: "
   								+ this.in_data_types.map(function(dt) { return dt.name;}).join(", ")
@@ -67,7 +67,7 @@
 
     function DataFormat(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.data_type = _(app.objectives).find(by_id(cfg.data_type_id)) || null;
+    	this.data_type = _(app.tasks).find(by_id(cfg.data_type_id)) || null;
     }
 
     function Tool(cfg) {
@@ -102,7 +102,7 @@
     function ToolUsage(cfg) {
     	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
     	this.tool = _(app.tools).find(by_id(cfg.tool_id));
-    	this.objective = _(app.objectives).find(by_id(cfg.objective_id)) || null;
+    	this.task = _(app.tasks).find(by_id(cfg.task_id)) || null;
 
     	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return _(this.pipeline.data_format_usages).find(by_id(dfu_id));}, this);
     	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return _(this.pipeline.data_format_usages).find(by_id(dfu_cfg.id));}, this);
@@ -117,19 +117,19 @@
     		return new DataType(_.extend(dt_cfg, {order: order}));
     	};
 
-	    app.data_types = _.flatten(_(cfg.objectives.map(function(obj_cfg) {
-	    	return obj_cfg.out_data_types.map(create_dt);
+	    app.data_types = _.flatten(_(cfg.tasks.map(function(task_cfg) {
+	    	return task_cfg.out_data_types.map(create_dt);
 	    })).union(cfg.initial_data_types.map(create_dt)), true);
 	    
-	    app.objectives = cfg.objectives.map(function(obj_cfg, order) {
-	    	return new Objective(_.extend(obj_cfg, {order: order}) );
+	    app.tasks = cfg.tasks.map(function(task_cfg, order) {
+	    	return new Task(_.extend(task_cfg, {order: order}) );
 	    });
 	    
 	    app.workflows = cfg.workflows.map(function(wf_cfg, order) {
 	    	return new Workflow(_.extend(wf_cfg, {order: order}) );
 	    });
-	    _(app.objectives).each(function(obj) {
-	  		obj.workflows = _(app.workflows).filter(function(wf) {return _(wf.objectives).contains(obj); });
+	    _(app.tasks).each(function(task) {
+	  		task.workflows = _(app.workflows).filter(function(wf) {return _(wf.tasks).contains(task); });
 	  	});
 
 	    app.data_formats = cfg.data_formats.map(function(df_cfg, order) {
@@ -163,7 +163,7 @@
   				return this.graph.edges.filter(function(e){ return e[dir === "in" ? "target" : "source"] === this;}, this);
   		},
   		type: function() {
-  			return _([Objective, ToolUsage]).contains(this.referent.constructor) ? 'primary' : 'secondary';
+  			return _([Task, ToolUsage]).contains(this.referent.constructor) ? 'primary' : 'secondary';
   		},
   		numPathsIn: function() {
   			return _.sum(this.edges("in").map(function(e) {return e.path_items.length;}));
@@ -402,7 +402,7 @@
 			}
 			this.pathColors = d3.scale.category10()
   										 .domain(app.workflows.map(function(w){return w.id}));
-  		this._objectives_shared_init(app.objectives);
+  		this._tasks_shared_init(app.tasks);
   	}
 
   	app.graph._load_workflow = function(workflow) {
@@ -412,7 +412,7 @@
 			}
 			this.pathColors = d3.scale.category10()
   										 .domain(workflow.pipelines.map(function(pl){return pl.id}));
-  		this._objectives_shared_init(workflow.objectives);
+  		this._tasks_shared_init(workflow.tasks);
   	}
 
   	app.graph._load_pipeline = function(pipeline) {
@@ -440,18 +440,18 @@
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
   	}
 
-  	app.graph._objectives_shared_init = function(objectives) {
-  		this.primary_nodes = this.objectives_nodes = objectives.map(function(obj) { return new Node(obj, obj.name, this);}, this);
+  	app.graph._tasks_shared_init = function(tasks) {
+  		this.primary_nodes = this.tasks_nodes = tasks.map(function(task) { return new Node(task, task.name, this);}, this);
 
-  		this.secondary_nodes = this.data_types_nodes = _.union.apply(this, objectives.map(function(obj) {return _.union(obj.in_data_types, obj.out_data_types);}))
+  		this.secondary_nodes = this.data_types_nodes = _.union.apply(this, tasks.map(function(task) {return _.union(task.in_data_types, task.out_data_types);}))
   																										.map(function(dt) { return new Node(dt, dt.name, this);}, this);
 
-  		this.edges = _.union.apply(this, this.objectives_nodes.map(function(obj_node) {
-  			var edges_out = obj_node.referent.out_data_types.map(function(dt) {
-  				return new Edge(obj_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
+  		this.edges = _.union.apply(this, this.tasks_nodes.map(function(task_node) {
+  			var edges_out = task_node.referent.out_data_types.map(function(dt) {
+  				return new Edge(task_node, _(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), this);
   			}, this);
-  			var edges_in = obj_node.referent.in_data_types.map(function(dt) {
-  				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), obj_node, this);
+  			var edges_in = task_node.referent.in_data_types.map(function(dt) {
+  				return new Edge(_(this.data_types_nodes).find(function(dt_node) { return dt_node.referent == dt;}), task_node, this);
   			}, this);
   			return _.union(edges_in, edges_out);
   		}, this));

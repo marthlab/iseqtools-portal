@@ -5,7 +5,7 @@
 			"name":"Gene Models"
 		}
 	],
-	"objectives": [
+	"tasks": [
 		{
 			"id":"sequence",
 			"name":"Sequence",
@@ -69,23 +69,23 @@
 	"workflows": [
 		{
 			"id":"workflow_0",
-			"objectives_ids": ["sequence"]
+			"tasks_ids": ["sequence"]
 		},
 		{
 			"id":"workflow_1",
-			"objectives_ids": ["map", "call_svs"]
+			"tasks_ids": ["map", "call_svs"]
 		},
 		{
 			"id": "workflow_2",
-			"objectives_ids": ["map"]
+			"tasks_ids": ["map"]
 		},
 		{
 			"id": "workflow_3",
-			"objectives_ids": ["map", "call_de"]
+			"tasks_ids": ["map", "call_de"]
 		},
 		{
 			"id": "workflow_4",
-			"objectives_ids": ["call_svs", "annotate"]
+			"tasks_ids": ["call_svs", "annotate"]
 		}
 	],
 	"data_formats": [
@@ -233,7 +233,7 @@
 				{
 					"id": "tool_usage_1",
 					"tool_id": "tool_1",
-					"objective_id": "map",
+					"task_id": "map",
 					"in_data_format_usages_ids": ["dfu_01", "dfu_03"],
 					"out_data_format_usages": [
 						{
@@ -249,7 +249,7 @@
 				{
 					"id": "tool_usage_3",
 					"tool_id": "tool_3",
-					"objective_id": "map",
+					"task_id": "map",
 					"in_data_format_usages_ids": ["dfu_01", "dfu_05"],
 					"out_data_format_usages": [
 						{
@@ -265,7 +265,7 @@
 				{
 					"id": "tool_usage_4",
 					"tool_id": "tool_1",
-					"objective_id": "call_svs",
+					"task_id": "call_svs",
 					"in_data_format_usages_ids": ["dfu_02", "dfu_04", "dfu_06"],
 					"out_data_format_usages": [
 						{
@@ -277,7 +277,7 @@
 				{
 					"id": "tool_usage_5",
 					"tool_id": "tool_2",
-					"objective_id": "call_svs",
+					"task_id": "call_svs",
 					"in_data_format_usages_ids": ["dfu_04", "dfu_07", "dfu_08"],
 					"out_data_format_usages": [
 						{
@@ -289,7 +289,7 @@
 				{
 					"id": "tool_usage_6",
 					"tool_id": "tool_5",
-					"objective_id": "call_svs",
+					"task_id": "call_svs",
 					"in_data_format_usages_ids": ["dfu_02", "dfu_09"],
 					"out_data_format_usages": [
 						{
@@ -301,7 +301,7 @@
 				{
 					"id": "tool_usage_7",
 					"tool_id": "tool_4",
-					"objective_id": "annotate",
+					"task_id": "annotate",
 					"in_data_format_usages_ids": ["dfu_08", "dfu_09", "dfu_10"],
 					"out_data_format_usages": [
 						{
@@ -317,7 +317,7 @@
 				{
 					"id": "tool_usage_8",
 					"tool_id": "tool_3",
-					"objective_id": "annotate",
+					"task_id": "annotate",
 					"in_data_format_usages_ids": ["dfu_09", "dfu_11"],
 					"out_data_format_usages": [
 						{
