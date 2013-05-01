@@ -1,10 +1,19 @@
-
-	  _.sum = function(task) {
-		  if (!$.isArray(task) || task.length == 0) return 0;
-		  return _.reduce(task, function(sum, n) {
-		    return sum += n;
-		  });
-		}
+		_.mixin({
+		  sum : function(arr) {
+		    if (!$.isArray(arr) || arr.length == 0) return 0;
+			  return _.reduce(arr, function(sum, n) {
+			    return sum += n;
+			  });
+		  },
+		  pickStrings : function(obj) {
+		    var copy = {};
+		    var keys = Array.prototype.concat.apply(Array.prototype, Array.prototype.slice.call(arguments, 1));
+		    _.each(keys, function(key) {
+		      if (key in obj) copy[key] = (obj[key]).toString();
+		    });
+		    return copy;
+		  }
+		});
 
 	  function by_id(id) {
 			return function(element) { return element.id === id; }
@@ -36,11 +45,11 @@
     }
 
     function DataType(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	_(this).extend(_(cfg).pickStrings('id', 'name'));
     }
 
     function Task(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	_(this).extend(_(cfg).pickStrings('id', 'name'));
     	this.in_data_types = cfg.in_data_types_ids.map(function(dt_id){ return _(app.data_types).find(by_id(dt_id));});
     	this.out_data_types = cfg.out_data_types.map(function(dt_cfg){ return _(app.data_types).find(by_id(dt_cfg.id));});
 
@@ -49,7 +58,7 @@
     }
 
     function Workflow(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order'));
+    	_(this).extend(_(cfg).pickStrings('id'));
     	this.tasks = cfg.tasks_ids.map(function(task_id){ return _(app.tasks).find(by_id(task_id));});
 
     	this.data_types = _.union.apply(this,
@@ -66,43 +75,47 @@
     }
 
     function DataFormat(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
-    	this.data_type = _(app.tasks).find(by_id(cfg.data_type_id)) || null;
+    	_(this).extend(_(cfg).pickStrings('id'));
+    	this.name = cfg.name || cfg.id;
+    	//this.data_type = _(app.tasks).find(by_id(cfg.data_type_id)) || null;
     }
 
     function Tool(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	_(this).extend(_(cfg).pickStrings('id'));
+    	this.name = cfg.name || cfg.id;
     }
 
     function Pipeline(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'name'));
+    	_(this).extend(_(cfg).pickStrings('id', 'name'));
     	cfg.initial_data_format_usages = cfg.initial_data_format_usages || [];
 
     	this.workflow = _(app.workflows).find(function(wf) {
     		return _.isEqual(_.pluck(wf.tasks, 'id'), cfg.tasks_ids);
     	});
 
-    	var create_dfu = function(dfu_cfg, order){
-    		return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
+    	var create_dfu = function(dfu_cfg){
+    		return new DataFormatUsage(_.extend(dfu_cfg, {pipeline: this}));
     	};
 
 	    this.data_format_usages = _.flatten(_(cfg.tool_usages.map(function(tu_cfg) {
 	    	return tu_cfg.out_data_format_usages.map(create_dfu, this);
 	    }, this)).union(cfg.initial_data_format_usages.map(create_dfu, this)), true);
     	
-    	this.tool_usages = cfg.tool_usages.map(function(tu_cfg, order) {
-	    	return new ToolUsage(_.extend(tu_cfg, {order: order, pipeline: this}));
+    	this.tool_usages = cfg.tool_usages.map(function(tu_cfg) {
+	    	return new ToolUsage(_.extend(tu_cfg, {pipeline: this}));
 	    }, this);
 
     }
 
     function DataFormatUsage(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
+    	_(this).extend(_(cfg).pickStrings('id'));
+    	this.pipeline = cfg.pipeline;
     	this.data_format = _(app.data_formats).find(by_id(cfg.data_format_id));
     }
 
     function ToolUsage(cfg) {
-    	_(this).extend(_(cfg).pick('id', 'order', 'pipeline'));
+    	_(this).extend(_(cfg).pickStrings('id'));
+    	this.pipeline = cfg.pipeline;
     	this.tool = _(app.tools).find(by_id(cfg.tool_id));
     	this.task = _(app.tasks).find(by_id(cfg.task_id)) || null;
 
@@ -115,28 +128,28 @@
 
     app.initialize_data_structures = function(cfg) {
 
-			var create_dt = function(dt_cfg, order){
-    		return new DataType(_.extend(dt_cfg, {order: order}));
+			var create_dt = function(dt_cfg){
+    		return new DataType(dt_cfg);
     	};
 
 	    app.data_types = _.flatten(_(cfg.tasks.map(function(task_cfg) {
 	    	return task_cfg.out_data_types.map(create_dt);
 	    })).union(cfg.initial_data_types.map(create_dt)), true);
 	    
-	    app.tasks = cfg.tasks.map(function(task_cfg, order) {
-	    	return new Task(_.extend(task_cfg, {order: order}) );
+	    app.tasks = cfg.tasks.map(function(task_cfg) {
+	    	return new Task(task_cfg);
 	    });
 
-	    app.data_formats = cfg.data_formats.map(function(df_cfg, order) {
-	    	return new DataFormat(_.extend(df_cfg, {order: order}) );
+	    app.data_formats = cfg.data_formats.map(function(df_cfg) {
+	    	return new DataFormat(df_cfg);
 	    });
 
-	    _(app.data_types).each(function(dt) {
-	  		dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
-	  	});
+	   //  _(app.data_types).each(function(dt) {
+	  	// 	dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
+	  	// });
 
-	    app.tools = cfg.tools.map(function(tool_cfg, order) {
-	    	return new Tool(_.extend(tool_cfg, {order: order}) );
+	    app.tools = cfg.tools.map(function(tool_cfg) {
+	    	return new Tool(tool_cfg);
 	    });
 
 	    app.workflows = _.uniq(cfg.pipelines.map(function(pl_cfg) {
@@ -144,14 +157,14 @@
 	    		return _.pluck(app.tasks, 'id').indexOf(task_id);
 	    	});
 	    }), function(tasks_ids){ return tasks_ids.join("__"); })
-	    .map(function(tasks_ids, i) { return new Workflow({tasks_ids: tasks_ids, id:"workflow_"+i, order: i});});
+	    .map(function(tasks_ids, i) { return new Workflow({tasks_ids: tasks_ids, id:"workflow_"+i});});
 
 	    _(app.tasks).each(function(task) {
 	  		task.workflows = _(app.workflows).filter(function(wf) {return _(wf.tasks).contains(task); });
 	  	});
 
-	    app.pipelines = cfg.pipelines.map(function(pl_cfg, order) {
-	    	return new Pipeline(_.extend(pl_cfg, {order: order}) );
+	    app.pipelines = cfg.pipelines.map(function(pl_cfg) {
+	    	return new Pipeline(pl_cfg);
 	    });
 
 	    _(app.workflows).each(function(wf) {
@@ -431,7 +444,7 @@
 			this.pathColors = d3.scale.category10()
   										 .domain([pipeline.id]);
 
-  		this.primary_nodes = this.tool_usages_nodes = pipeline.tool_usages.map(function(tu) { return new Node(tu, tu.tool.name, this);}, this);
+  		this.primary_nodes = this.tool_usages_nodes = pipeline.tool_usages.map(function(tu) { return new Node(tu, tu.tool.id, this);}, this);
   		this.secondary_nodes = this.data_format_usages_nodes = pipeline.data_format_usages.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
   		
   		this.edges = _.union.apply(this, this.tool_usages_nodes.map(function(tu_node) {

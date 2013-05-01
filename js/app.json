@@ -68,124 +68,228 @@
 	],
 	"data_formats": [
 		{
-			"id":"f01",
-			"name":"Format 1",
-			"data_type_id": "reads"
+			"id":"f01"
 		},
 		{
-			"id":"f02",
-			"name":"Format 2",
-			"data_type_id": "reads"
+			"id":"f02"
 		},
 		{
-			"id":"f03",
-			"name":"Format 3",
-			"data_type_id": "alignments"
+			"id":"f03"
 		},
 		{
-			"id":"f04",
-			"name":"Placeholder Format 4",
-			"data_type_id": "alignments"
+			"id":"f04"
 		},
 		{
-			"id":"f05",
-			"name":"Format 5",
-			"data_type_id": "gene_models"
+			"id":"f05"
 		},
 		{
-			"id":"f06",
-			"name":"Format 6",
-			"data_type_id": "gene_models"
+			"id":"f06"
 		},
 		{
-			"id":"f07",
-			"name":"Format 7",
-			"data_type_id": "de_genes"
+			"id":"f07"
 		},
 		{
-			"id":"f08",
-			"name":"Format 8",
-			"data_type_id": "de_genes"
+			"id":"f08"
 		},
 		{
-			"id":"f09",
-			"name":"Format 9",
-			"data_type_id": "variants"
+			"id":"f09"
 		},
 		{
-			"id":"f10",
-			"name":"Format 10",
-			"data_type_id": "variants"
+			"id":"f10"
 		},
 		{
-			"id":"f11",
-			"name":"Format 11",
-			"data_type_id": "functional_features"
+			"id":"f11"
 		},
 		{
-			"id":"f12",
-			"name":"Format 12",
-			"data_type_id": "functional_features"
+			"id":"f12"
 		},
 		{
-			"id":"f13",
-			"name":"Format 13",
-			"data_type_id": "annotated_variants"
+			"id":"f13"
 		},
 		{
-			"id":"f14",
-			"name":"Format 14",
-			"data_type_id": "annotated_variants"
+			"id":"f14"
 		},
 		{
-			"id":"f15",
-			"name":"Format 15"
+			"id":"f15"
 		},
 		{
-			"id":"f16",
-			"name":"Format 16"
+			"id":"f16"
+		},
+		{
+			"id":"stream"
+		},
+		{
+			"id":"vcf"
+		},
+		{
+			"id":"fasta"
+		},
+		{
+			"id":"dat"
+		},
+		{
+			"id":"jmp"
+		},
+		{
+			"id":"ann"
+		},
+		{
+			"id":"fastq"
+		},
+		{
+			"id":"json"
+		},
+		{
+			"id":"mkb"
+		},
+		{
+			"id":"bam"
+		},
+		{
+			"id":"multiple.bam"
+		},
+		{
+			"id":"bai"
+		},
+		{
+			"id":"csv"
+		},
+		{
+			"id":"dict"
+		},
+		{
+			"id":"fai"
+		},
+		{
+			"id":"metrics"
+		},
+		{
+			"id":"stats"
+		},
+		{
+			"id":"md5"
+		},
+		{
+			"id":"gzip"
+		},
+		{
+			"id":"vcf.gz"
+		},
+		{
+			"id":"tbi"
 		}
 	],
 	"tools": [
 		{
-			"id": "tool_1",
-			"name":"Tool 1"
+			"id": "tool_1"
 		},
 		{
-			"id": "tool_2",
-			"name":"Tool 2"
+			"id": "tool_2"
 		},
 		{
-			"id": "tool_3",
-			"name":"Tool 3"
+			"id": "tool_3"
 		},
 		{
-			"id": "tool_4",
-			"name":"Tool 4"
+			"id": "tool_4"
 		},
 		{
-			"id": "tool_5",
-			"name":"Tool 5"
+			"id": "tool_5"
 		},
 		{
-			"id": "tool_6",
-			"name":"Tool 6"
+			"id": "tool_6"
 		},
 		{
-			"id": "tool_7",
-			"name":"Tool 7"
+			"id": "tool_7"
 		},
 		{
-			"id": "tool_8",
-			"name":"Tool 8"
+			"id": "tool_8"
 		},
 		{
-			"id": "tool_9",
-			"name":"Tool 9"
+			"id": "tool_9"
 		},
 		{
-			"id": "tool_10",
-			"name":"Tool 10"
+			"id": "tool_10"
+		},
+		{
+			"id": "picard-create-sequence-dictionary"
+		},
+		{
+			"id": "mosaik-build-reference"
+		},
+		{
+			"id": "mosaik-jump"
+		},
+		{
+			"id": "premo"
+		},
+		{
+			"id": "samtools-index-fasta"
+		},
+		{
+			"id": "mosaik-build-fastq"
+		},
+		{
+			"id": "mosaik-aligner"
+		},
+		{
+			"id": "bamtools-sort"
+		},
+		{
+			"id": "bamtools-index"
+		},
+		{
+			"id": "gatk-count-covariates"
+		},
+		{
+			"id": "gatk-recalibrate-bq"
+		},
+		{
+			"id": "picard-mark-duplicates"
+		},
+		{
+			"id": "bamtools-index"
+		},
+		{
+			"id": "bamtools-filter"
+		},
+		{
+			"id": "ogap"
+		},
+		{
+			"id": "bamleftalign"
+		},
+		{
+			"id": "samtools-calmd"
+		},
+		{
+			"id": "freebayes"
+		},
+		{
+			"id": "cat"
+		},
+		{
+			"id": "bamtools-merge"
+		},
+		{
+			"id": "generate-md5"
+		},
+		{
+			"id": "bamtools-stats"
+		},
+		{
+			"id": "gzip"
+		},
+		{
+			"id": "merge-vcf-files"
+		},
+		{
+			"id": "vcflib-filter"
+		},
+		{
+			"id": "bgzip"
+		},
+		{
+			"id": "tabix"
 		}
 	],
 	"pipelines": [
@@ -311,74 +415,722 @@
 			]
 		},
 		{
-			"id": "pipeline_2",
-			"name": "Pipeline 2",
-			"tasks_ids": ["sequence"],
-			"data_format_usages": [],
-			"tool_usages": []
-		},
-		{
-			"id": "pipeline_3",
-			"name": "Pipeline 3",
-			"tasks_ids": ["map", "call_svs"],
-			"data_format_usages": [],
-			"tool_usages": []
-		},
-		{
-			"id": "pipeline_4",
-			"name": "Pipeline 4",
-			"tasks_ids": ["map", "call_svs"],
-			"data_format_usages": [],
-			"tool_usages": []
-		},
-		{
-			"id": "pipeline_5",
-			"name": "Pipeline 5",
-			"tasks_ids": ["map"],
-			"data_format_usages": [],
-			"tool_usages": []
-		},
-		{
-			"id": "pipeline_6",
-			"name": "Pipeline 6",
-			"tasks_ids": ["map"],
-			"data_format_usages": [],
-			"tool_usages": []
-		},
-		{
-			"id": "pipeline_7",
-			"name": "Pipeline 7",
-			"tasks_ids": ["map", "call_de"],
-			"data_format_usages": [],
-			"tool_usages": []
-		},
-		{
-			"id": "pipeline_8",
-			"name": "Pipeline 8",
-			"tasks_ids": ["map", "call_de"],
-			"data_format_usages": [],
-			"tool_usages": []
-		},
-		{
 			"id": "pipeline_9",
 			"name": "Pipeline 9",
 			"tasks_ids": ["call_svs", "annotate"],
-			"data_format_usages": [],
+			"initial_data_format_usages": [],
 			"tool_usages": []
 		},
 		{
 			"id": "pipeline_10",
 			"name": "Pipeline 10",
-			"tasks_ids": ["call_svs", "annotate"],
-			"data_format_usages": [],
+			"tasks_ids": ["map", "call_de"],
+			"initial_data_format_usages": [],
 			"tool_usages": []
 		},
 		{
-			"id": "pipeline_10",
-			"name": "Pipeline 10",
-			"tasks_ids": ["call_svs", "annotate"],
-			"data_format_usages": [],
-			"tool_usages": []
+			"id": "fastq-vcf",
+			"name": "fastq-vcf",
+			"tasks_ids": ["map", "call_svs"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "vcf"
+				},
+				{
+					"id": 2,
+					"data_format_id": "fasta"
+				},
+				{
+					"id": 3,
+					"data_format_id": "ann"
+				},
+				{
+					"id": 4,
+					"data_format_id": "fastq"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "picard-create-sequence-dictionary",
+					"in_data_format_usages_ids": [2],
+					"out_data_format_usages": [
+						{
+							"id": "5",
+							"data_format_id": "dict"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "samtools-index-fasta",
+					"in_data_format_usages_ids": [2],
+					"out_data_format_usages": [
+						{
+							"id": "6",
+							"data_format_id": "fai"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "mosaik-build-reference",
+					"in_data_format_usages_ids": [2],
+					"out_data_format_usages": [
+						{
+							"id": "7",
+							"data_format_id": "dat"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "mosaik-jump",
+					"in_data_format_usages_ids": [7],
+					"out_data_format_usages": [
+						{
+							"id": "8",
+							"data_format_id": "jmp"
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "premo",
+					"in_data_format_usages_ids": [3, 4, 7, 8],
+					"out_data_format_usages": [
+						{
+							"id": "9",
+							"data_format_id": "json"
+						}
+					]
+				},
+				{
+					"id": "6",
+					"tool_id": "mosaik-build-fastq",
+					"in_data_format_usages_ids": [4, 9],
+					"out_data_format_usages": [
+						{
+							"id": "10",
+							"data_format_id": "mkb"
+						}
+					]
+				},
+				{
+					"id": "7",
+					"tool_id": "mosaik-aligner",
+					"in_data_format_usages_ids": [3, 4, 7, 8, 9, 10],
+					"out_data_format_usages": [
+						{
+							"id": "11",
+							"data_format_id": "bam"
+						},
+						{
+							"id": "12",
+							"data_format_id": "multiple.bam"
+						}
+					]
+				},
+				{
+					"id": "8",
+					"tool_id": "bamtools-sort",
+					"in_data_format_usages_ids": [12],
+					"out_data_format_usages": [
+						{
+							"id": "13",
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "9",
+					"tool_id": "bamtools-sort",
+					"in_data_format_usages_ids": [11],
+					"out_data_format_usages": [
+						{
+							"id": "14",
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "10",
+					"tool_id": "bamtools-index",
+					"in_data_format_usages_ids": [14],
+					"out_data_format_usages": [
+						{
+							"id": 15,
+							"data_format_id": "bai"
+						}
+					]
+				},
+				{
+					"id": "11",
+					"tool_id": "gatk-count-covariates",
+					"in_data_format_usages_ids": [1, 4, 5, 15],
+					"out_data_format_usages": [
+						{
+							"id": 16,
+							"data_format_id": "csv"
+						}
+					]
+				},
+				{
+					"id": "12",
+					"tool_id": "gatk-recalibrate-bq",
+					"in_data_format_usages_ids": [2, 4, 5, 14, 15, 16],
+					"out_data_format_usages": [
+						{
+							"id": 17,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "13",
+					"tool_id": "picard-mark-duplicates",
+					"in_data_format_usages_ids": [17],
+					"out_data_format_usages": [
+						{
+							"id": 18,
+							"data_format_id": "metrics"
+						},
+						{
+							"id": 19,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "14",
+					"tool_id": "bamtools-index",
+					"in_data_format_usages_ids": [19],
+					"out_data_format_usages": [
+						{
+							"id": 20,
+							"data_format_id": "bai"
+						}
+					]
+				},
+				{
+					"id": "15",
+					"tool_id": "bamtools-filter",
+					"in_data_format_usages_ids": [19, 20],
+					"out_data_format_usages": [
+						{
+							"id": 21,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "16",
+					"tool_id": "ogap",
+					"in_data_format_usages_ids": [2, 21],
+					"out_data_format_usages": [
+						{
+							"id": 22,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "17",
+					"tool_id": "bamleftalign",
+					"in_data_format_usages_ids": [2, 22],
+					"out_data_format_usages": [
+						{
+							"id": 23,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "18",
+					"tool_id": "samtools-calmd",
+					"in_data_format_usages_ids": [2, 23],
+					"out_data_format_usages": [
+						{
+							"id": 24,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "19",
+					"tool_id": "freebayes",
+					"in_data_format_usages_ids": [2, 24],
+					"out_data_format_usages": [
+						{
+							"id": 25,
+							"data_format_id": "vcf"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "build-moblist-reference",
+			"name": "build-moblist-reference",
+			"tasks_ids": ["map"],
+			"initial_data_format_usages": [
+				{
+					"id": "1",
+					"data_format_id": "fasta"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "cat",
+					"in_data_format_usages_ids": ["1"],
+					"out_data_format_usages": [
+						{
+							"id": "2",
+							"data_format_id": "fasta"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "picard-create-sequence-dictionary",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "3",
+							"data_format_id": "dict"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "mosaik-build-reference",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "4",
+							"data_format_id": "dat"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "mosaik-jump",
+					"in_data_format_usages_ids": ["4"],
+					"out_data_format_usages": [
+						{
+							"id": "5",
+							"data_format_id": "jmp"
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "samtools-index-fasta",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "6",
+							"data_format_id": "fai"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "build-reference",
+			"name": "build-reference",
+			"tasks_ids": ["map"],
+			"initial_data_format_usages": [
+				{
+					"id": "1",
+					"data_format_id": "fasta"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "mosaik-build-reference",
+					"in_data_format_usages_ids": ["1"],
+					"out_data_format_usages": [
+						{
+							"id": "2",
+							"data_format_id": "dat"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "mosaik-jump",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "3",
+							"data_format_id": "jmp"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "align-pe",
+			"name": "align-pe",
+			"tasks_ids": ["map"],
+			"initial_data_format_usages": [
+				{
+					"id": "1",
+					"data_format_id": "vcf"
+				},
+				{
+					"id": "2",
+					"data_format_id": "fasta"
+				},
+				{
+					"id": "3",
+					"data_format_id": "dat"
+				},
+				{
+					"id": "4",
+					"data_format_id": "jmp"
+				},
+				{
+					"id": "5",
+					"data_format_id": "ann"
+				},
+				{
+					"id": "6",
+					"data_format_id": "fastq"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "premo",
+					"in_data_format_usages_ids": ["3","5","6"],
+					"out_data_format_usages": [
+						{
+							"id": "7",
+							"data_format_id": "json"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "mosaik-build-fastq",
+					"in_data_format_usages_ids": ["6","7"],
+					"out_data_format_usages": [
+						{
+							"id": "8",
+							"data_format_id": "mkb"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "mosaik-aligner",
+					"in_data_format_usages_ids": ["3","4","5","6","7","8"],
+					"out_data_format_usages": [
+						{
+							"id": "9",
+							"data_format_id": "multiple.bam"
+						},
+						{
+							"id": "10",
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "bamtools-sort",
+					"in_data_format_usages_ids": ["9"],
+					"out_data_format_usages": [
+						{
+							"id": "11",
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "bamtools-sort",
+					"in_data_format_usages_ids": ["10"],
+					"out_data_format_usages": [
+						{
+							"id": "12",
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "6",
+					"tool_id": "bamtools-index",
+					"in_data_format_usages_ids": ["12"],
+					"out_data_format_usages": [
+						{
+							"id": "15",
+							"data_format_id": "bai"
+						}
+					]
+				},
+				{
+					"id": "7",
+					"tool_id": "gatk-count-covariates",
+					"in_data_format_usages_ids": ["1","2","13","14","15"],
+					"out_data_format_usages": [
+						{
+							"id": "16",
+							"data_format_id": "csv"
+						}
+					]
+				},
+				{
+					"id": "8",
+					"tool_id": "gatk-recalibrate-bq",
+					"in_data_format_usages_ids": ["2","12","13","14","15","16"],
+					"out_data_format_usages": [
+						{
+							"id": "17",
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "9",
+					"tool_id": "picard-create-sequence-dictionary",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "13",
+							"data_format_id": "dict"
+						}
+					]
+				},
+				{
+					"id": "10",
+					"tool_id": "samtools-index-fasta",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "14",
+							"data_format_id": "fai"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "merge-bam",
+			"name": "merge-bams",
+			"tasks_ids": ["map"],
+			"initial_data_format_usages": [
+				{
+					"id": "1",
+					"data_format_id": "bam"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "bamtools-merge",
+					"in_data_format_usages_ids": ["1"],
+					"out_data_format_usages": [
+						{
+							"id": "2",
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "bamtools-index",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "3",
+							"data_format_id": "bai"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "picard-mark-duplicates",
+					"in_data_format_usages_ids": ["2", "3"],
+					"out_data_format_usages": [
+						{
+							"id": "4",
+							"data_format_id": "bam"
+						},
+						{
+							"id": "5",
+							"data_format_id": "metrics"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "bamtools-stats",
+					"in_data_format_usages_ids": ["4"],
+					"out_data_format_usages": [
+						{
+							"id": "6",
+							"data_format_id": "stats"
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "generate-md5",
+					"in_data_format_usages_ids": ["4"],
+					"out_data_format_usages": [
+						{
+							"id": "7",
+							"data_format_id": "md5"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "call-short-variants",
+			"name": "call-short-variants",
+			"tasks_ids": ["call_svs"],
+			"initial_data_format_usages": [
+				{
+					"id": "1",
+					"data_format_id": "fasta"
+				},
+				{
+					"id": "2",
+					"data_format_id": "bam"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "bamtools-filter",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "3",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "ogap",
+					"in_data_format_usages_ids": ["1", "3"],
+					"out_data_format_usages": [
+						{
+							"id": "4",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "bamleftalign",
+					"in_data_format_usages_ids": ["1", "4"],
+					"out_data_format_usages": [
+						{
+							"id": "5",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "samtools-calmd",
+					"in_data_format_usages_ids": ["1", "5"],
+					"out_data_format_usages": [
+						{
+							"id": "6",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "freebayes",
+					"in_data_format_usages_ids": ["1", "6"],
+					"out_data_format_usages": [
+						{
+							"id": "7",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "6",
+					"tool_id": "gzip",
+					"in_data_format_usages_ids": ["7"],
+					"out_data_format_usages": [
+						{
+							"id": "8",
+							"data_format_id": "vcf.gz"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "merge-vcf",
+			"name": "merge-vcf",
+			"tasks_ids": ["call_svs"],
+			"initial_data_format_usages": [
+				{
+					"id": "1",
+					"data_format_id": "vcf.gz"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "merge-vcf-files",
+					"in_data_format_usages_ids": ["1"],
+					"out_data_format_usages": [
+						{
+							"id": "2",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "vcflib-filter",
+					"in_data_format_usages_ids": ["2"],
+					"out_data_format_usages": [
+						{
+							"id": "3",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "bgzip",
+					"in_data_format_usages_ids": ["3"],
+					"out_data_format_usages": [
+						{
+							"id": "4",
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "tabix",
+					"in_data_format_usages_ids": ["4"],
+					"out_data_format_usages": [
+						{
+							"id": "5",
+							"data_format_id": "tbi"
+						}
+					]
+				}
+			]
 		}
 	]
 }
