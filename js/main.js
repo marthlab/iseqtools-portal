@@ -202,7 +202,7 @@
   			return paths_in_prior_edges+order_within_edge;
   		}
   	}
-  	Node.key = function(n) {	return n.referent.id; }
+  	Node.key = function(n) {	return n.referent.constructor.name + "__" + n.referent.id; }
 
   	function Edge(source_node, target_node, graph) {
   		this.graph = graph;
@@ -214,7 +214,6 @@
   	}
   	Edge.prototype = {
   		spline: function(path_item) {
-  
   			function diag(source, target) {
   				var diag_points = {source: {x: source.y, y: source.x}, target: {x: target.y, y: target.x}};
   				return d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; })
