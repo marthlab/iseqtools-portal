@@ -66,28 +66,6 @@
 			]
 		}
 	],
-	"workflows": [
-		{
-			"id":"workflow_0",
-			"tasks_ids": ["sequence"]
-		},
-		{
-			"id":"workflow_1",
-			"tasks_ids": ["map", "call_svs"]
-		},
-		{
-			"id": "workflow_2",
-			"tasks_ids": ["map"]
-		},
-		{
-			"id": "workflow_3",
-			"tasks_ids": ["map", "call_de"]
-		},
-		{
-			"id": "workflow_4",
-			"tasks_ids": ["call_svs", "annotate"]
-		}
-	],
 	"data_formats": [
 		{
 			"id":"f01",
@@ -214,7 +192,7 @@
 		{
 			"id": "pipeline_1",
 			"name": "Pipeline 1",
-			"workflow_id": "workflow_1",
+			"tasks_ids": ["sequence"],
 			"initial_data_format_usages": [
 				{
 					"id": "dfu_01",
@@ -335,7 +313,70 @@
 		{
 			"id": "pipeline_2",
 			"name": "Pipeline 2",
-			"workflow_id": "workflow_1",
+			"tasks_ids": ["sequence"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_3",
+			"name": "Pipeline 3",
+			"tasks_ids": ["map", "call_svs"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_4",
+			"name": "Pipeline 4",
+			"tasks_ids": ["map", "call_svs"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_5",
+			"name": "Pipeline 5",
+			"tasks_ids": ["map"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_6",
+			"name": "Pipeline 6",
+			"tasks_ids": ["map"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_7",
+			"name": "Pipeline 7",
+			"tasks_ids": ["map", "call_de"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_8",
+			"name": "Pipeline 8",
+			"tasks_ids": ["map", "call_de"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_9",
+			"name": "Pipeline 9",
+			"tasks_ids": ["call_svs", "annotate"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_10",
+			"name": "Pipeline 10",
+			"tasks_ids": ["call_svs", "annotate"],
+			"data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "pipeline_10",
+			"name": "Pipeline 10",
+			"tasks_ids": ["call_svs", "annotate"],
 			"data_format_usages": [],
 			"tool_usages": []
 		}

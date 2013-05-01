@@ -78,7 +78,9 @@
     	_(this).extend(_(cfg).pick('id', 'order', 'name'));
     	cfg.initial_data_format_usages = cfg.initial_data_format_usages || [];
 
-    	this.workflow = _(app.workflows).find(by_id(cfg.workflow_id));
+    	this.workflow = _(app.workflows).find(function(wf) {
+    		return _.isEqual(_.pluck(wf.tasks, 'id'), cfg.tasks_ids);
+    	});
 
     	var create_dfu = function(dfu_cfg, order){
     		return new DataFormatUsage(_.extend(dfu_cfg, {order: order, pipeline: this}));
@@ -124,17 +126,11 @@
 	    app.tasks = cfg.tasks.map(function(task_cfg, order) {
 	    	return new Task(_.extend(task_cfg, {order: order}) );
 	    });
-	    
-	    app.workflows = cfg.workflows.map(function(wf_cfg, order) {
-	    	return new Workflow(_.extend(wf_cfg, {order: order}) );
-	    });
-	    _(app.tasks).each(function(task) {
-	  		task.workflows = _(app.workflows).filter(function(wf) {return _(wf.tasks).contains(task); });
-	  	});
 
 	    app.data_formats = cfg.data_formats.map(function(df_cfg, order) {
 	    	return new DataFormat(_.extend(df_cfg, {order: order}) );
 	    });
+
 	    _(app.data_types).each(function(dt) {
 	  		dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
 	  	});
@@ -143,9 +139,21 @@
 	    	return new Tool(_.extend(tool_cfg, {order: order}) );
 	    });
 
+	    app.workflows = _.uniq(cfg.pipelines.map(function(pl_cfg) {
+	    	return _.sortBy(pl_cfg.tasks_ids, function(task_id){
+	    		return _.pluck(app.tasks, 'id').indexOf(task_id);
+	    	});
+	    }), function(tasks_ids){ return tasks_ids.join("__"); })
+	    .map(function(tasks_ids, i) { return new Workflow({tasks_ids: tasks_ids, id:"workflow_"+i, order: i});});
+
+	    _(app.tasks).each(function(task) {
+	  		task.workflows = _(app.workflows).filter(function(wf) {return _(wf.tasks).contains(task); });
+	  	});
+
 	    app.pipelines = cfg.pipelines.map(function(pl_cfg, order) {
 	    	return new Pipeline(_.extend(pl_cfg, {order: order}) );
 	    });
+
 	    _(app.workflows).each(function(wf) {
 	  		wf.pipelines = _(app.pipelines).filter(function(pl) {return pl.workflow === wf; });
 	  	});
