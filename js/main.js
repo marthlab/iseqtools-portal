@@ -281,13 +281,25 @@
 
 			  var labels = new_nodes_elems
 			    .append("text")
-		      .attr("text-anchor", "middle")
+		      
+			    // .append("tspan")
+			    // .attr("x", 0)
+			    // .attr("dy", "-0.5em")
+			    // .text(function(n) { return n.label; });
+			    .each(function(n) {
+			    	var text = d3.select(this);
+			    	var label_words = n.label.split(" ");
+			    	label_words.forEach(function(word, word_index) {
+					    text
+					    .append("tspan")
+					    .attr("x", 0)
+					    .attr("dy", "1em")
+					    .text(word);
+			    	});
+			    })
+			    .attr("text-anchor", "middle")
 		      .attr("x", 0)
-		      .attr("y", function(n) { return -n.cfg.radius; })
-			    .append("tspan")
-			    .attr("x", 0)
-			    .attr("dy", "-0.5em")
-			    .text(function(n) { return n.label; });
+		      .attr("y", function(n) { return -this.getBBox().height - n.cfg.radius - 4; })
 
 				nodes_elems.each(function(n) {
 			    var bbox = this.getBBox();
