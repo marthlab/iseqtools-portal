@@ -16,7 +16,7 @@
 		});
 
 	  function by_id(id) {
-			return function(element) { return element.id === id; }
+			return function(element) { return element.id == id; }
 		}
 
     // basic data structures
@@ -451,6 +451,7 @@
   				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
   			}, this);
   			var edges_in = tu_node.referent.in_data_format_usages.map(function(df_usage) {
+  				//debugger;
   				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node, this);
   			}, this);
 
