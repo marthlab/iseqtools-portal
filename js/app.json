@@ -177,6 +177,9 @@
 		},
 		{
 			"id":"tbi"
+		},
+		{
+			"id":"multiple.vcf"
 		}
 	],
 	"tools": [
@@ -290,9 +293,120 @@
 		},
 		{
 			"id": "tabix"
+		},
+		{
+			"id": "alignment"
+		},
+		{
+			"id": "post-alignment QC"
+		},
+		{
+			"id": "many variant detectors"
+		},
+		{
+			"id": "union alleles"
+		},
+		{
+			"id": "graph smith-waterman realignment"
+		},
+		{
+			"id": "genotype integration"
+		},
+		{
+			"id": "imputation frameworks"
 		}
 	],
 	"pipelines": [
+		{
+			"id": "1000g_processing",
+			"name": "1000G Processing",
+			"tasks_ids": ["call_svs", "annotate"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "fastq"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "alignment",
+					"in_data_format_usages_ids": [1],
+					"out_data_format_usages": [
+						{
+							"id": 2,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": 2,
+					"tool_id": "post-alignment QC",
+					"in_data_format_usages_ids": [2],
+					"out_data_format_usages": [
+						{
+							"id": 3,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": 3,
+					"tool_id": "many variant detectors",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": 4,
+							"data_format_id": "multiple.vcf"
+						}
+					]
+				},
+				{
+					"id": 4,
+					"tool_id": "union alleles",
+					"in_data_format_usages_ids": [4],
+					"out_data_format_usages": [
+						{
+							"id": 5,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 5,
+					"tool_id": "graph smith-waterman realignment",
+					"in_data_format_usages_ids": [3,5],
+					"out_data_format_usages": [
+						{
+							"id": 6,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": 6,
+					"tool_id": "genotype integration",
+					"in_data_format_usages_ids": [5,6],
+					"out_data_format_usages": [
+						{
+							"id": 7,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 7,
+					"tool_id": "imputation frameworks",
+					"in_data_format_usages_ids": [7],
+					"out_data_format_usages": [
+						{
+							"id": 8,
+							"data_format_id": "vcf"
+						}
+					]
+				}
+			]
+		},
 		{
 			"id": "pipeline_1",
 			"name": "Pipeline 1",
@@ -413,13 +527,6 @@
 					]
 				}
 			]
-		},
-		{
-			"id": "pipeline_9",
-			"name": "Pipeline 9",
-			"tasks_ids": ["call_svs", "annotate"],
-			"initial_data_format_usages": [],
-			"tool_usages": []
 		},
 		{
 			"id": "pipeline_10",

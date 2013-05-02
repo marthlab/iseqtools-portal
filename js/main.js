@@ -25,9 +25,9 @@
 
     app.cfg = {
     	graph: {
-    		nodeSep: 50,
-		    edgeSep: 10,
-		    rankSep: 50,
+    		nodeSep: 30,
+		    edgeSep: 15,
+		    rankSep: 20,
 		    render_duration: 2000
     	},
     	nodes: {
@@ -448,6 +448,9 @@
   		
   		this.edges = _.union.apply(this, this.tool_usages_nodes.map(function(tu_node) {
   			var edges_out = tu_node.referent.out_data_format_usages.map(function(df_usage) {
+  				if(app.data_formats[df_usage.data_format_id]) {
+
+  				}
   				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
   			}, this);
   			var edges_in = tu_node.referent.in_data_format_usages.map(function(df_usage) {
