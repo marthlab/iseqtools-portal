@@ -236,9 +236,9 @@
 	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
 			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
 
-		  	path_string = line([{x: start.x-s.dagre.width/2+s.cfg.radius, y: start.y}, start])
+		  	path_string = line([{x: start.x-s.dagre.width/2+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(start.y-s.dagre.y, 2)), y: start.y}, start])
 		  							+ (points.length == 1 ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end) )
-		  							+ line([end, {x: end.x+t.dagre.width/2-t.cfg.radius, y: end.y}]);
+		  							+ line([end, {x: end.x+t.dagre.width/2-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(end.y-t.dagre.y, 2)), y: end.y}]);
 
 			  return path_string;
 			}
