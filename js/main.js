@@ -243,7 +243,7 @@
 			  return path_string;
 			}
   	};
-  	Edge.key = function(e) {return e.source.referent.id + "__" + e.target.referent.id; }
+  	Edge.key = function(e) {return  e.source.referent.constructor.name + "__" + e.source.referent.id + "__" + e.target.referent.constructor.name + "__" + e.target.referent.id; }
 
   	function GraphDrawing(graph, svg, use_transitions) {
   		this.graph = graph;
