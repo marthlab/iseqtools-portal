@@ -25,9 +25,9 @@
 
     app.cfg = {
     	graph: {
-    		nodeSep: 30,
+    		nodeSep: 10,
 		    edgeSep: 15,
-		    rankSep: 20,
+		    rankSep: 30,
 		    render_duration: 2000
     	},
     	nodes: {

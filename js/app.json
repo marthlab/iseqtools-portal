@@ -177,9 +177,6 @@
 		},
 		{
 			"id":"tbi"
-		},
-		{
-			"id":"multiple.vcf"
 		}
 	],
 	"tools": [
@@ -314,6 +311,18 @@
 		},
 		{
 			"id": "imputation frameworks"
+		},
+		{
+			"id": "GATK"
+		},
+		{
+			"id": "platypus"
+		},
+		{
+			"id": "SGA"
+		},
+		{
+			"id": "samtools"
 		}
 	],
 	"pipelines": [
@@ -351,20 +360,64 @@
 					]
 				},
 				{
-					"id": 3,
-					"tool_id": "many variant detectors",
+					"id": "3-1",
+					"tool_id": "samtools",
 					"in_data_format_usages_ids": [3],
 					"out_data_format_usages": [
 						{
-							"id": 4,
-							"data_format_id": "multiple.vcf"
+							"id": "4-1",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-2",
+					"tool_id": "GATK",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-2",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-3",
+					"tool_id": "platypus",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-3",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-4",
+					"tool_id": "SGA",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-4",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-5",
+					"tool_id": "freebayes",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-5",
+							"data_format_id": "vcf"
 						}
 					]
 				},
 				{
 					"id": 4,
 					"tool_id": "union alleles",
-					"in_data_format_usages_ids": [4],
+					"in_data_format_usages_ids": ["4-1", "4-2", "4-3", "4-4", "4-5"],
 					"out_data_format_usages": [
 						{
 							"id": 5,
