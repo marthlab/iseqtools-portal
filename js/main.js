@@ -25,9 +25,9 @@
 
     app.cfg = {
     	graph: {
-    		nodeSep: 10,
-		    edgeSep: 15,
-		    rankSep: 30,
+    		nodeSep: 30,
+		    edgeSep: 30,
+		    rankSep: 80,
 		    render_duration: 2000
     	},
     	nodes: {
@@ -36,11 +36,11 @@
 	    		radius: 30
 	    	},
 	    	secondary: {
-	    		radius:8
+	    		radius:11
 	    	}
     	},
     	edges: {
-    		"stroke-width": 3
+    		"stroke-width": 1.5
     	}
     }
 
@@ -249,7 +249,7 @@
   		this.graph = graph;
   		this.svg = svg;
   		this.use_transitions = use_transitions;
-  		this.svgGroup = this.svg.append("g").attr("transform", "translate(5, 5)");
+  		this.svgGroup = this.svg.append("g").attr("transform", "translate(2, 2)");
 		  this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
 		  this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
   	}
@@ -281,11 +281,6 @@
 
 			  var labels = new_nodes_elems
 			    .append("text")
-		      
-			    // .append("tspan")
-			    // .attr("x", 0)
-			    // .attr("dy", "-0.5em")
-			    // .text(function(n) { return n.label; });
 			    .each(function(n) {
 			    	var text = d3.select(this);
 			    	var label_words = n.label.split(" ");

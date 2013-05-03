@@ -298,13 +298,10 @@
 			"id": "post-alignment QC"
 		},
 		{
-			"id": "many variant detectors"
-		},
-		{
 			"id": "union alleles"
 		},
 		{
-			"id": "graph smith-waterman realignment"
+			"id": "graph realignment"
 		},
 		{
 			"id": "genotype integration"
@@ -313,16 +310,34 @@
 			"id": "imputation frameworks"
 		},
 		{
-			"id": "GATK"
+			"id": "snptools"
+		},
+		{
+			"id": "GATK-HC"
+		},
+		{
+			"id": "GATK-UG"
+		},
+		{
+			"id": "lobSTR"
+		},
+		{
+			"id": "repeatSeq"
+		},
+		{
+			"id": "freebayes"
 		},
 		{
 			"id": "platypus"
 		},
 		{
-			"id": "SGA"
+			"id": "samtools"
 		},
 		{
-			"id": "samtools"
+			"id": "SGA/dindel"
+		},
+		{
+			"id": "glfMultiples"
 		}
 	],
 	"pipelines": [
@@ -343,17 +358,6 @@
 					"in_data_format_usages_ids": [1],
 					"out_data_format_usages": [
 						{
-							"id": 2,
-							"data_format_id": "bam"
-						}
-					]
-				},
-				{
-					"id": 2,
-					"tool_id": "post-alignment QC",
-					"in_data_format_usages_ids": [2],
-					"out_data_format_usages": [
-						{
 							"id": 3,
 							"data_format_id": "bam"
 						}
@@ -361,7 +365,7 @@
 				},
 				{
 					"id": "3-1",
-					"tool_id": "samtools",
+					"tool_id": "snptools",
 					"in_data_format_usages_ids": [3],
 					"out_data_format_usages": [
 						{
@@ -372,7 +376,7 @@
 				},
 				{
 					"id": "3-2",
-					"tool_id": "GATK",
+					"tool_id": "GATK-HC",
 					"in_data_format_usages_ids": [3],
 					"out_data_format_usages": [
 						{
@@ -383,7 +387,7 @@
 				},
 				{
 					"id": "3-3",
-					"tool_id": "platypus",
+					"tool_id": "GATK-UG",
 					"in_data_format_usages_ids": [3],
 					"out_data_format_usages": [
 						{
@@ -394,7 +398,7 @@
 				},
 				{
 					"id": "3-4",
-					"tool_id": "SGA",
+					"tool_id": "lobSTR",
 					"in_data_format_usages_ids": [3],
 					"out_data_format_usages": [
 						{
@@ -405,7 +409,7 @@
 				},
 				{
 					"id": "3-5",
-					"tool_id": "freebayes",
+					"tool_id": "repeatSeq",
 					"in_data_format_usages_ids": [3],
 					"out_data_format_usages": [
 						{
@@ -415,9 +419,64 @@
 					]
 				},
 				{
+					"id": "3-6",
+					"tool_id": "freebayes",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-6",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-7",
+					"tool_id": "platypus",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-7",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-8",
+					"tool_id": "samtools",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-8",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-9",
+					"tool_id": "SGA/dindel",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-9",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "3-10",
+					"tool_id": "glfMultiples",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": "4-10",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
 					"id": 4,
 					"tool_id": "union alleles",
-					"in_data_format_usages_ids": ["4-1", "4-2", "4-3", "4-4", "4-5"],
+					"in_data_format_usages_ids": ["4-1", "4-2", "4-3", "4-4", "4-5", "4-6", "4-7", "4-8", "4-9", "4-10"],
 					"out_data_format_usages": [
 						{
 							"id": 5,
@@ -427,7 +486,7 @@
 				},
 				{
 					"id": 5,
-					"tool_id": "graph smith-waterman realignment",
+					"tool_id": "graph realignment",
 					"in_data_format_usages_ids": [3,5],
 					"out_data_format_usages": [
 						{
@@ -437,12 +496,34 @@
 					]
 				},
 				{
-					"id": 6,
-					"tool_id": "genotype integration",
+					"id": "6-2",
+					"tool_id": "snptools",
+					"in_data_format_usages_ids": [5,3],
+					"out_data_format_usages": [
+						{
+							"id": "7-2",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "6-1",
+					"tool_id": "freebayes",
 					"in_data_format_usages_ids": [5,6],
 					"out_data_format_usages": [
 						{
-							"id": 7,
+							"id": "7-1",
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "6-3",
+					"tool_id": "GATK-HC",
+					"in_data_format_usages_ids": [5,3],
+					"out_data_format_usages": [
+						{
+							"id": "7-3",
 							"data_format_id": "vcf"
 						}
 					]
@@ -450,7 +531,7 @@
 				{
 					"id": 7,
 					"tool_id": "imputation frameworks",
-					"in_data_format_usages_ids": [7],
+					"in_data_format_usages_ids": ["7-1", "7-2", "7-3"],
 					"out_data_format_usages": [
 						{
 							"id": 8,

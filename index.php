@@ -20,12 +20,10 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-        <h2>Graph Visualization</h2>
-
+        <!-- <h1>Graph Visualization</h1> -->
+        <nav id="breadcrumbs"></nav>
         <div id="main">
-            <div id="left_col">
-                <nav id="breadcrumbs"></nav>
-            </div>
+            
             <svg preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
         </div>
         <svg preserveAspectRatio="xMidYMid meet" id="layout_svg"></svg>
