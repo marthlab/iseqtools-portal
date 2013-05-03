@@ -23,7 +23,6 @@
         <!-- <h1>Graph Visualization</h1> -->
         <nav id="breadcrumbs"></nav>
         <div id="main">
-            
             <svg preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
         </div>
         <svg preserveAspectRatio="xMidYMid meet" id="layout_svg"></svg>
@@ -33,6 +32,18 @@
         <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
         <script src="js/vendor/d3.js"></script>
         <script src="js/vendor/dagre.js"></script>
+
+          <script type="text/javascript" src="js/vendor/svg-edit/browser.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/svgtransformlist.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/math.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/units.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/svgutils.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/sanitize.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/history.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/select.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/draw.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/path.js"></script>
+          <script type="text/javascript" src="js/vendor/svg-edit/svgcanvas.js"></script>
 
         <script type="text/html" id='breadcrumbs-template'>
             <% var type = app.activeItemType(); %>
