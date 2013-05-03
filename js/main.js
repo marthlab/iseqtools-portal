@@ -40,7 +40,7 @@
 	    	}
     	},
     	edges: {
-    		"stroke-width": 1.5
+    		"stroke-width": 3
     	}
     }
 
