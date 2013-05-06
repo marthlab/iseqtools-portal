@@ -354,8 +354,17 @@
 
 			  // dagre assumes that the node elements are positioned such that the center (visually) is at y-coordinate 0, but we
 			  // need it at height/2. Otherwise we get bad values for getBBox, which disregards content within negative regions.
+
+			  //var max_shift = 0;
 			  nodes_elems.each(function(n) {
-			    n.dagre.y -= (0.5*n.height);
+			    //n.dagre.y -= (0.5*n.height);
+			    var pos = parseFloat($(this).children("circle")[0].getAttribute("cy"));
+			    //max_shift = Math.max(max_shift, pos);
+			    n.dagre.y -= (pos-20);
+			  });
+
+			  nodes_elems.each(function(n) {
+			    //n.dagre.y += max_shift/2;
 			  });
 			  
 
