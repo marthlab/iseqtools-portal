@@ -229,18 +229,16 @@
   			}
 
   			var e = this, s = e.source, t = e.target;
-  			var s_circ = $(s.elem).children("circle")[0];
-  			var t_circ = $(t.elem).children("circle")[0];
 
-  			var start_y = s.dagre.y + parseFloat(s_circ.getAttribute("cy")) + e.cfg["stroke-width"]*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2);
-  			var end_y = t.dagre.y + parseFloat(t_circ.getAttribute("cy")) + e.cfg["stroke-width"]*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2);
+  			var start_y = s.dagre.y + e.cfg["stroke-width"]*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2);
+  			var end_y = t.dagre.y + e.cfg["stroke-width"]*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2);
 	      var points = e.dagre.points;
 	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
 			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
-//debugger;
-		  	path_string = line([{x: start.x-s.dagre.width/2/*+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(start.y-s.dagre.y, 2))*/, y: start.y}, start])
+
+		  	path_string = line([{x: start.x-s.dagre.width/2+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(start.y-s.dagre.y, 2)), y: start.y}, start])
 		  							+ (points.length == 1 ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end) )
-		  							+ line([end, {x: end.x+t.dagre.width/2/*-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(end.y-t.dagre.y, 2))*/, y: end.y}]);
+		  							+ line([end, {x: end.x+t.dagre.width/2-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(end.y-t.dagre.y, 2)), y: end.y}]);
 
 			  return path_string;
 			}
@@ -251,7 +249,7 @@
   		this.graph = graph;
   		this.svg = svg;
   		this.use_transitions = use_transitions;
-  		this.svgGroup = this.svg.append("g").attr("id", "svgGroup");;
+  		this.svgGroup = this.svg.append("g");
 		  this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
 		  this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
   	}
@@ -261,7 +259,7 @@
 			  // handle nodes
 
 		    var nodes_elems = this.nodeGroup.selectAll("g .node")
-			    .data(this.graph.nodes, Node.key)
+			    .data(this.graph.nodes, Node.key);
 
 			  var new_nodes_elems = nodes_elems
 				  .enter()
@@ -275,7 +273,11 @@
 				
 				var updated_nodes_elems = nodes_elems.filter(function(d, i) { return !_(new_nodes_elems[0]).contains(this);});
 
-					
+				var circles = new_nodes_elems.append("circle")
+			  	.attr("cx", 0)
+					.attr("cy", 0)
+					.attr("r", function(n) { return n.cfg.radius; })
+					.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; })	
 
 			  var labels = new_nodes_elems
 			    .append("text")
@@ -292,21 +294,13 @@
 			    })
 			    .attr("text-anchor", "middle")
 		      .attr("x", 0)
-		      .attr("y", function(n) { return 0; });
-
-	      var circles = new_nodes_elems.append("circle")
-			  	.attr("cx", 0)
-					.attr("cy", function(n) { return this.parentNode.getBBox().height + n.cfg.radius + 4;})
-					.attr("r", function(n) { return n.cfg.radius; })
-					.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; })
+		      .attr("y", function(n) { return -this.getBBox().height - n.cfg.radius - 4; })
 
 				nodes_elems.each(function(n) {
-					n.elem = this;
 			    var bbox = this.getBBox();
 			    n.bbox = bbox;
 			    n.width = bbox.width;
 			    n.height = bbox.height;
-			    //console.log(n.height)
 			  });
 
 				// handle edges
@@ -351,13 +345,6 @@
 			    .edges(this.graph.edges)
 			    .debugLevel(1)
 			    .run();
-
-			  // dagre assumes that the node elements are positioned such that the center (visually) is at y-coordinate 0, but we
-			  // need it at height/2. Otherwise we get bad values for getBBox, which disregards content within negative regions.
-			  nodes_elems.each(function(n) {
-			    n.dagre.y -= (0.5*n.height);
-			  });
-			  
 
 			  (this.use_transitions ? old_nodes_elems.transition().duration(this.graph.cfg.render_duration) : old_nodes_elems)
 			  	.style("opacity", 0)
@@ -432,9 +419,9 @@
   		this["_load_"+app.activeItemType()](app.activeItem());
   		this.drawing_for_layout.render();
   		var svgBBox = this.drawing_for_layout.svg.node().getBBox();
-  		// this 2% fudge factor prevents inadvertent cropping due to viewBox imprecision
+  		// TODO: right now this 2% fudge factor effectively prevents inadvertent cropping, but a cleaner solution would be nice
   		var padding_fraction = 0.02;
-			var viewBox = (-svgBBox.width*padding_fraction/2)+" 0 "+ (svgBBox.width*(1+padding_fraction))+" "+(svgBBox.height);
+			var viewBox = (-svgBBox.width*padding_fraction/2)+" "+(-svgBBox.height*padding_fraction/2)+" "+ (svgBBox.width*(1+padding_fraction))+" "+(svgBBox.height*(1+padding_fraction));
   		this.drawing_for_display.render(viewBox);
   	}
 
@@ -477,6 +464,7 @@
   				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
   			}, this);
   			var edges_in = tu_node.referent.in_data_format_usages.map(function(df_usage) {
+  				//debugger;
   				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node, this);
   			}, this);
 
