@@ -399,7 +399,6 @@
 			  	.style("stroke-opacity", 1)
 
 		   	if(viewBox) {
-		   		console.log(viewBox);
 			   	(this.use_transitions ? this.svg.transition().duration(this.graph.cfg.render_duration) : this.svg)
 			   		.attr("viewBox", viewBox);
 			  }
@@ -418,10 +417,19 @@
   	app.graph.update = function() {
   		this["_load_"+app.activeItemType()](app.activeItem());
   		this.drawing_for_layout.render();
-  		var svgBBox = this.drawing_for_layout.svg.node().getBBox();
-  		// TODO: right now this 2% fudge factor effectively prevents inadvertent cropping, but a cleaner solution would be nice
-  		var padding_fraction = 0.02;
-			var viewBox = (-svgBBox.width*padding_fraction/2)+" "+(-svgBBox.height*padding_fraction/2)+" "+ (svgBBox.width*(1+padding_fraction))+" "+(svgBBox.height*(1+padding_fraction));
+  		var rect = this.drawing_for_layout.svgGroup.node().getBoundingClientRect();
+  		// this fudge factor prevents unwanted clipping of content on sides
+			var padding_fraction = 0.04;
+			console.log(rect);
+			//console.log(-parseInt(rect.width*padding_fraction/2));
+			var viewBox = -Math.ceil(rect.width*padding_fraction/2)
+										+" "
+										+Math.floor(rect.top)
+										+" "
+										+Math.ceil(rect.width*(1+padding_fraction))
+										+" "
+										+Math.ceil(rect.height);
+			console.log(viewBox);
   		this.drawing_for_display.render(viewBox);
   	}
 
