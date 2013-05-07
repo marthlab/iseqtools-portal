@@ -636,11 +636,7 @@
 					"out_data_format_usages": [
 						{
 							"id": "dfu_11",
-							"data_format_id": "f06"
-						},
-						{
-							"id": "dfu_12",
-							"data_format_id": "f06"
+							"data_format_id": "stream"
 						}
 					]
 				},
@@ -683,13 +679,14 @@
 					"data_format_id": "fasta"
 				},
 				{
-					"id": 3,
-					"data_format_id": "ann"
-				},
-				{
 					"id": 4,
 					"data_format_id": "fastq"
+				},
+				{
+					"id": 3,
+					"data_format_id": "ann"
 				}
+				
 			],
 			"tool_usages": [
 				{

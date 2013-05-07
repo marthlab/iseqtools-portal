@@ -25,12 +25,13 @@
 
     app.cfg = {
     	graph: {
-    		nodeSep: 20,
+    		nodeSep: 40,
 		    edgeSep: 30,
 		    rankSep: 60,
 		    render_duration: 2000
     	},
     	nodes: {
+    		label_max_width: 110,
     		"stroke-width": 2,
     		primary: {
 	    		radius: 30
@@ -282,14 +283,30 @@
 			  var labels = new_nodes_elems
 			    .append("text")
 			    .each(function(n) {
-			    	var text = d3.select(this);
-			    	var label_words = n.label.split(" ");
-			    	label_words.forEach(function(word, word_index) {
-					    text
-					    .append("tspan")
-					    .attr("x", 0)
-					    .attr("dy", "1em")
-					    .text(word);
+			    	var text_elem = d3.select(this);
+			    	var fragments = _.flatten(n.label.split(" ").map(function(fragment) {
+			    		hypenated_fragments = fragment.split("-");
+			    		return hypenated_fragments.map(function(word, index) {
+			    			return word + (index == hypenated_fragments.length -1 ? "" : "-"); 
+			    		})
+			    	}), true);
+
+			    	var label_lines = [[]];
+						for (var i=0; i<fragments.length; i++) {
+							text_elem.text(label_lines+ " " + fragments[i]);
+						  if (text_elem.node().getBBox().width > app.cfg.nodes.label_max_width) {
+						    label_lines.push([]); 
+						  }
+						  label_lines[label_lines.length-1].push(fragments[i]);
+						}
+
+						text_elem.text("");
+			    	label_lines.forEach(function(line, line_index) {
+					    text_elem
+						    .append("tspan")
+						    .attr("x", 0)
+						    .attr("dy", "1em")
+						    .text(line.join(" "));
 			    	});
 			    })
 			    .attr("text-anchor", "middle")
@@ -419,7 +436,7 @@
   		this.drawing_for_layout.render();
   		var rect = this.drawing_for_layout.svgGroup.node().getBoundingClientRect();
   		// this fudge factor prevents unwanted clipping of content on sides
-			var padding_fraction = 0.04;
+			var padding_fraction = 0.05;
 			var viewBox = -Math.ceil(rect.width*padding_fraction/2)
 										+" "
 										+Math.floor(rect.top)
@@ -459,20 +476,26 @@
   										 .domain([pipeline.id]);
 
   		this.primary_nodes = this.tool_usages_nodes = pipeline.tool_usages.map(function(tu) { return new Node(tu, tu.tool.id, this);}, this);
-  		this.secondary_nodes = this.data_format_usages_nodes = pipeline.data_format_usages.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
-  		
+  		this.secondary_nodes = this.data_format_usages_nodes = pipeline.data_format_usages
+  			.filter(function(dfu){ return dfu.data_format.id !== "stream"})
+  			.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
+  			
   		this.edges = _.union.apply(this, this.tool_usages_nodes.map(function(tu_node) {
-  			var edges_out = tu_node.referent.out_data_format_usages.map(function(df_usage) {
-  				if(app.data_formats[df_usage.data_format_id]) {
+  			var edges_out = tu_node.referent.out_data_format_usages
+  				.filter(function(dfu){ return dfu.data_format.id !== "stream"})
+  				.map(function(dfu) { return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(dfu_node) { return dfu_node.referent == dfu;}), this);
+  				}, this);
+  			var stream_edges_out = tu_node.referent.out_data_format_usages
+  				.filter(function(dfu){ return dfu.data_format.id === "stream"})
+  				.map(function(dfu) { return new Edge(tu_node, _(this.tool_usages_nodes).find(function(tu_node) { return _(tu_node.referent.in_data_format_usages).contains(dfu);}), this);
+  				}, this);
+  			var edges_in = tu_node.referent.in_data_format_usages
+  				.filter(function(dfu){ return dfu.data_format.id !== "stream"})
+  				.map(function(df_usage) {
+	  				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node, this);
+	  			}, this);
 
-  				}
-  				return new Edge(tu_node, _(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), this);
-  			}, this);
-  			var edges_in = tu_node.referent.in_data_format_usages.map(function(df_usage) {
-  				return new Edge(_(this.data_format_usages_nodes).find(function(df_usage_node) { return df_usage_node.referent == df_usage;}), tu_node, this);
-  			}, this);
-
-  			return _.union(edges_in, edges_out);
+  			return _.union(_.union(edges_in, edges_out), stream_edges_out);
   		}, this));
 
   		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
