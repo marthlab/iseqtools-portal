@@ -229,17 +229,58 @@
 		      (line_points)
   			}
 
+  			function cubic(line_points) {
+  				return d3.svg.line()
+		      .x(function(d) { return d.x; })
+		      .y(function(d) { return d.y; })
+		      .interpolate("basis")
+		      (line_points)
+  			}
+
   			var e = this, s = e.source, t = e.target;
 
-  			var start_y = s.dagre.y + e.cfg["stroke-width"]*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2);
-  			var end_y = t.dagre.y + e.cfg["stroke-width"]*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2);
 	      var points = e.dagre.points;
-	      var start = {x: s.dagre.x+s.dagre.width/2, y: start_y};
-			  var end = {x: t.dagre.x-t.dagre.width/2, y: end_y};
+	      var s_exit = {
+	      	x: s.dagre.x+s.dagre.width/2,
+	      	y: s.dagre.y + e.cfg["stroke-width"]*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2)
+	      };
+			  var t_enter = {
+			  	x: t.dagre.x-t.dagre.width/2,
+			  	y: t.dagre.y + e.cfg["stroke-width"]*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2)
+			  };
+			  s_circ_intersect = {
+			  	x: s.dagre.x+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2)),
+			  	y: s_exit.y
+			  };
+			  t_circ_intersect = {
+			  	x: t.dagre.x-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
+			  	y: t_enter.y
+			  };
 
-		  	path_string = line([{x: start.x-s.dagre.width/2+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(start.y-s.dagre.y, 2)), y: start.y}, start])
-		  							+ (points.length == 1 ? diag(start, end) : diag(start, points[0])+line([points[0], points[1]])+diag(points[1], end) )
-		  							+ line([end, {x: end.x+t.dagre.width/2-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(end.y-t.dagre.y, 2)), y: end.y}]);
+			  //var path_points = [];
+			  var path_string = "";
+
+			  console.log(points.length);
+
+			  if(s_circ_intersect.x < s_exit.x) {
+		  		path_string += line([s_circ_intersect, s_exit]);
+		  	}
+
+			  if(points.length == 1) {
+			  	path_string += cubic([s_exit, {x: s_exit.x+20, y:s_exit.y}, {x: t_enter.x-20, y: t_enter.y}, t_enter]);
+			  } else {
+			  	path_string +=
+			  		( cubic([s_exit, {x: s_exit.x+10, y:s_exit.y}, {x: points[0].x-10, y: points[0].y}, points[0]])
+			  		+ line([points[0], points[1]])
+			  		+ cubic([points[1], {x: points[1].x+10, y:points[1].y}, {x: t_enter.x-20, y: t_enter.y}, t_enter])
+			  		);
+		  		
+			  }
+
+			  if(t_enter.x < t_circ_intersect.x) {
+		  		path_string += line([t_enter, t_circ_intersect]);
+		  	}
+		  	
 
 			  return path_string;
 			}
