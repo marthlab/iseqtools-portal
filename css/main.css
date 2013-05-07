@@ -82,11 +82,11 @@ h1 {position:absolute;}
 }
 
 .node.primary text {
-  font: 300 24px "Helvetica Neue";
+  font: 300 26px "Helvetica Neue";
 }
 
 .node.secondary text {
-  font: 300 17px "Helvetica Neue";
+  font: 300 18px "Helvetica Neue";
 }
 
 /*.node:hover circle, .node:hover text {

@@ -25,9 +25,9 @@
 
     app.cfg = {
     	graph: {
-    		nodeSep: 40,
-		    edgeSep: 30,
-		    rankSep: 60,
+    		nodeSep: 65,
+		    edgeSep: 25,
+		    rankSep: 55,
 		    render_duration: 2000
     	},
     	nodes: {
@@ -257,10 +257,7 @@
 			  	y: t_enter.y
 			  };
 
-			  //var path_points = [];
 			  var path_string = "";
-
-			  console.log(points.length);
 
 			  if(s_circ_intersect.x < s_exit.x) {
 		  		path_string += line([s_circ_intersect, s_exit]);
@@ -476,15 +473,16 @@
   		this["_load_"+app.activeItemType()](app.activeItem());
   		this.drawing_for_layout.render();
   		var rect = this.drawing_for_layout.svgGroup.node().getBoundingClientRect();
-  		// this fudge factor prevents unwanted clipping of content on sides
-			var padding_fraction = 0.05;
-			var viewBox = -Math.ceil(rect.width*padding_fraction/2)
+  		// fudge factors prevent unwanted clipping of content on sides
+			var horz_padding_fraction = 0.05;
+			var vert_padding_fraction = 0.01;
+			var viewBox = -Math.ceil(rect.width*horz_padding_fraction/2)
 										+" "
-										+Math.floor(rect.top)
+										+Math.floor(rect.top-rect.height*vert_padding_fraction/2)
 										+" "
-										+Math.ceil(rect.width*(1+padding_fraction))
+										+Math.ceil(rect.width*(1+horz_padding_fraction))
 										+" "
-										+Math.ceil(rect.height);
+										+Math.ceil(rect.height*(1+vert_padding_fraction));
   		this.drawing_for_display.render(viewBox);
   	}
 
