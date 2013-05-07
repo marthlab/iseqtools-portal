@@ -28,6 +28,7 @@
     		nodeSep: 65,
 		    edgeSep: 25,
 		    rankSep: 55,
+		    edge_curvature: 0.29,
 		    render_duration: 2000
     	},
     	nodes: {
@@ -258,26 +259,28 @@
 			  };
 
 			  var path_string = "";
+			  var offset = app.cfg.graph.rankSep*app.cfg.graph.edge_curvature;
 
 			  if(s_circ_intersect.x < s_exit.x) {
 		  		path_string += line([s_circ_intersect, s_exit]);
 		  	}
 
-			  if(points.length == 1) {
-			  	path_string += cubic([s_exit, {x: s_exit.x+20, y:s_exit.y}, {x: t_enter.x-20, y: t_enter.y}, t_enter]);
+			  if(Math.abs(s.dagre.rank-t.dagre.rank) == 2) {
+			  	path_string += cubic([s_exit, {x: s_exit.x+offset, y:s_exit.y}, {x: t_enter.x-offset, y: t_enter.y}, t_enter]);
+			  	//path_string += line([s_exit, points[0], t_enter]);
 			  } else {
+					points[0].x = s_exit.x + app.cfg.graph.rankSep;
+					points[1].x = t_enter.x - app.cfg.graph.rankSep;
 			  	path_string +=
-			  		( cubic([s_exit, {x: s_exit.x+10, y:s_exit.y}, {x: points[0].x-10, y: points[0].y}, points[0]])
+			  		( cubic([s_exit, {x: s_exit.x+offset, y:s_exit.y}, {x: points[0].x-offset, y: points[0].y}, points[0]])
 			  		+ line([points[0], points[1]])
-			  		+ cubic([points[1], {x: points[1].x+10, y:points[1].y}, {x: t_enter.x-20, y: t_enter.y}, t_enter])
+			  		+ cubic([points[1], {x: points[1].x+offset, y:points[1].y}, {x: t_enter.x-offset, y: t_enter.y}, t_enter])
 			  		);
-		  		
 			  }
 
 			  if(t_enter.x < t_circ_intersect.x) {
 		  		path_string += line([t_enter, t_circ_intersect]);
 		  	}
-		  	
 
 			  return path_string;
 			}
