@@ -111,6 +111,7 @@
 
     function DataFormatUsage(cfg) {
     	_(this).extend(_(cfg).pickStrings('id'));
+    	this.multiple = cfg.multiple || false;
     	this.pipeline = cfg.pipeline;
     	this.data_format = _(app.data_formats).find(by_id(cfg.data_format_id));
     }
@@ -314,11 +315,24 @@
 				
 				var updated_nodes_elems = nodes_elems.filter(function(d, i) { return !_(new_nodes_elems[0]).contains(this);});
 
-				var circles = new_nodes_elems.append("circle")
-			  	.attr("cx", 0)
-					.attr("cy", 0)
-					.attr("r", function(n) { return n.cfg.radius; })
-					.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; })	
+				var circle_groups = new_nodes_elems
+					.append("g")
+						.attr("class", "circles");
+
+				circle_groups.each(function(n) {
+					var circles = d3.select(this);
+					function addCircles(num_circles) {
+						for(var i=0; i<num_circles; i++) {
+							circles
+								.append("circle")
+								.attr("cx", 0)
+								.attr("cy", 5*((num_circles-1)/2 - (num_circles-i-1)))
+								.attr("r", function(n) { return n.cfg.radius; })
+								.attr("stroke-width", function(e) { return d3.select(this.parentNode).datum().cfg["stroke-width"]; });
+						}
+					}
+					addCircles(n.referent.multiple ? 3 : 1);
+				});
 
 			  var labels = new_nodes_elems
 			    .append("text")
@@ -351,7 +365,7 @@
 			    })
 			    .attr("text-anchor", "middle")
 		      .attr("x", 0)
-		      .attr("y", function(n) { return -this.getBBox().height - n.cfg.radius - 4; })
+		      .attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; })
 
 				nodes_elems.each(function(n) {
 			    var bbox = this.getBBox();

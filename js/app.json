@@ -3,6 +3,10 @@
 		{
 			"id":"gene_models",
 			"name":"Gene Models"
+		},
+		{
+			"id":"reference_genomes",
+			"name":"Reference Genomes"
 		}
 	],
 	"tasks": [
@@ -20,7 +24,7 @@
 		{
 			"id":"map",
 			"name":"Map",
-			"in_data_types_ids": ["reads"],
+			"in_data_types_ids": ["reads","reference_genomes"],
 			"out_data_types": [
 				{
 					"id":"alignments",
@@ -71,13 +75,16 @@
 			"id":"stream"
 		},
 		{
-			"id":"vcf"
+			"id":"vcf",
+			"data_type_id":"variants"
 		},
 		{
-			"id":"fasta"
+			"id":"fasta",
+			"data_type_id":"reference_genomes"
 		},
 		{
-			"id":"dat"
+			"id":"dat",
+			"data_type_id":"reference_genomes"
 		},
 		{
 			"id":"jmp"
@@ -86,7 +93,8 @@
 			"id":"ann"
 		},
 		{
-			"id":"fastq"
+			"id":"fastq",
+			"data_type_id":"reads"
 		},
 		{
 			"id":"json"
@@ -95,7 +103,8 @@
 			"id":"mkb"
 		},
 		{
-			"id":"bam"
+			"id":"bam",
+			"data_type_id":"alignments"
 		},
 		{
 			"id":"multiple.bam"
@@ -215,206 +224,6 @@
 		}
 	],
 	"pipelines": [
-		{
-			"id": "1000g_processing",
-			"name": "1000G Processing",
-			"tasks_ids": ["call_svs", "annotate"],
-			"initial_data_format_usages": [
-				{
-					"id": 1,
-					"data_format_id": "fastq"
-				}
-			],
-			"tool_usages": [
-				{
-					"id": 1,
-					"tool_id": "alignment",
-					"in_data_format_usages_ids": [1],
-					"out_data_format_usages": [
-						{
-							"id": 3,
-							"data_format_id": "bam"
-						}
-					]
-				},
-				{
-					"id": "3-1",
-					"tool_id": "snptools",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-1",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-2",
-					"tool_id": "GATK-HC",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-2",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-3",
-					"tool_id": "GATK-UG",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-3",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-4",
-					"tool_id": "lobSTR",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-4",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-5",
-					"tool_id": "repeatSeq",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-5",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-6",
-					"tool_id": "freebayes",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-6",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-7",
-					"tool_id": "platypus",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-7",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-8",
-					"tool_id": "samtools",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-8",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-9",
-					"tool_id": "SGA/dindel",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-9",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "3-10",
-					"tool_id": "glfMultiples",
-					"in_data_format_usages_ids": [3],
-					"out_data_format_usages": [
-						{
-							"id": "4-10",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": 4,
-					"tool_id": "union alleles",
-					"in_data_format_usages_ids": ["4-1", "4-2", "4-3", "4-4", "4-5", "4-6", "4-7", "4-8", "4-9", "4-10"],
-					"out_data_format_usages": [
-						{
-							"id": 5,
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": 5,
-					"tool_id": "graph realignment",
-					"in_data_format_usages_ids": [3,5],
-					"out_data_format_usages": [
-						{
-							"id": 6,
-							"data_format_id": "bam"
-						}
-					]
-				},
-				{
-					"id": "6-2",
-					"tool_id": "snptools",
-					"in_data_format_usages_ids": [5,3],
-					"out_data_format_usages": [
-						{
-							"id": "7-2",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "6-1",
-					"tool_id": "freebayes",
-					"in_data_format_usages_ids": [5,6],
-					"out_data_format_usages": [
-						{
-							"id": "7-1",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": "6-3",
-					"tool_id": "GATK-HC",
-					"in_data_format_usages_ids": [5,3],
-					"out_data_format_usages": [
-						{
-							"id": "7-3",
-							"data_format_id": "vcf"
-						}
-					]
-				},
-				{
-					"id": 7,
-					"tool_id": "imputation frameworks",
-					"in_data_format_usages_ids": ["7-1", "7-2", "7-3"],
-					"out_data_format_usages": [
-						{
-							"id": 8,
-							"data_format_id": "vcf"
-						}
-					]
-				}
-			]
-		},
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
@@ -665,7 +474,8 @@
 			"initial_data_format_usages": [
 				{
 					"id": "1",
-					"data_format_id": "fasta"
+					"data_format_id": "fasta",
+					"multiple": true
 				}
 			],
 			"tool_usages": [
@@ -788,7 +598,8 @@
 				},
 				{
 					"id": "6",
-					"data_format_id": "fastq"
+					"data_format_id": "fastq",
+					"multiple": true
 				}
 			],
 			"tool_usages": [
@@ -915,7 +726,8 @@
 			"initial_data_format_usages": [
 				{
 					"id": "1",
-					"data_format_id": "bam"
+					"data_format_id": "bam",
+					"multiple": true
 				}
 			],
 			"tool_usages": [
@@ -991,7 +803,8 @@
 				},
 				{
 					"id": "2",
-					"data_format_id": "bam"
+					"data_format_id": "bam",
+					"multiple": true
 				}
 			],
 			"tool_usages": [
@@ -1070,7 +883,8 @@
 			"initial_data_format_usages": [
 				{
 					"id": "1",
-					"data_format_id": "vcf.gz"
+					"data_format_id": "vcf.gz",
+					"multiple": true
 				}
 			],
 			"tool_usages": [
