@@ -68,54 +68,6 @@
 	],
 	"data_formats": [
 		{
-			"id":"f01"
-		},
-		{
-			"id":"f02"
-		},
-		{
-			"id":"f03"
-		},
-		{
-			"id":"f04"
-		},
-		{
-			"id":"f05"
-		},
-		{
-			"id":"f06"
-		},
-		{
-			"id":"f07"
-		},
-		{
-			"id":"f08"
-		},
-		{
-			"id":"f09"
-		},
-		{
-			"id":"f10"
-		},
-		{
-			"id":"f11"
-		},
-		{
-			"id":"f12"
-		},
-		{
-			"id":"f13"
-		},
-		{
-			"id":"f14"
-		},
-		{
-			"id":"f15"
-		},
-		{
-			"id":"f16"
-		},
-		{
 			"id":"stream"
 		},
 		{
@@ -180,36 +132,6 @@
 		}
 	],
 	"tools": [
-		{
-			"id": "tool_1"
-		},
-		{
-			"id": "tool_2"
-		},
-		{
-			"id": "tool_3"
-		},
-		{
-			"id": "tool_4"
-		},
-		{
-			"id": "tool_5"
-		},
-		{
-			"id": "tool_6"
-		},
-		{
-			"id": "tool_7"
-		},
-		{
-			"id": "tool_8"
-		},
-		{
-			"id": "tool_9"
-		},
-		{
-			"id": "tool_10"
-		},
 		{
 			"id": "picard-create-sequence-dictionary"
 		},
@@ -290,54 +212,6 @@
 		},
 		{
 			"id": "tabix"
-		},
-		{
-			"id": "alignment"
-		},
-		{
-			"id": "post-alignment QC"
-		},
-		{
-			"id": "union alleles"
-		},
-		{
-			"id": "graph realignment"
-		},
-		{
-			"id": "genotype integration"
-		},
-		{
-			"id": "imputation frameworks"
-		},
-		{
-			"id": "snptools"
-		},
-		{
-			"id": "GATK-HC"
-		},
-		{
-			"id": "GATK-UG"
-		},
-		{
-			"id": "lobSTR"
-		},
-		{
-			"id": "repeatSeq"
-		},
-		{
-			"id": "freebayes"
-		},
-		{
-			"id": "platypus"
-		},
-		{
-			"id": "samtools"
-		},
-		{
-			"id": "SGA/dindel"
-		},
-		{
-			"id": "glfMultiples"
 		}
 	],
 	"pipelines": [
@@ -540,130 +414,6 @@
 					]
 				}
 			]
-		},
-		{
-			"id": "pipeline_1",
-			"name": "Pipeline 1",
-			"tasks_ids": ["sequence"],
-			"initial_data_format_usages": [
-				{
-					"id": "dfu_01",
-					"data_format_id": "f01"
-				},
-				{
-					"id": "dfu_03",
-					"data_format_id": "f02"
- 		  	},
-				{
-					"id": "dfu_05",
-					"data_format_id": "f03"
-				}
-			],
-			"tool_usages": [
-				{
-					"id": "tool_usage_1",
-					"tool_id": "tool_1",
-					"task_id": "map",
-					"in_data_format_usages_ids": ["dfu_01", "dfu_03"],
-					"out_data_format_usages": [
-						{
-							"id": "dfu_02",
-							"data_format_id": "f01"
-						},
-						{
-							"id": "dfu_06",
-							"data_format_id": "f03"
-						}
-					]
-				},
-				{
-					"id": "tool_usage_3",
-					"tool_id": "tool_3",
-					"task_id": "map",
-					"in_data_format_usages_ids": ["dfu_01", "dfu_05"],
-					"out_data_format_usages": [
-						{
-							"id": "dfu_04",
-							"data_format_id": "f02"
-						},
-						{
-							"id": "dfu_07",
-							"data_format_id": "f04"
-						}
-					]
-				},
-				{
-					"id": "tool_usage_4",
-					"tool_id": "tool_1",
-					"task_id": "call_svs",
-					"in_data_format_usages_ids": ["dfu_02", "dfu_04", "dfu_06"],
-					"out_data_format_usages": [
-						{
-							"id": "dfu_08",
-							"data_format_id": "f04"
-						}
-					]
-				},
-				{
-					"id": "tool_usage_5",
-					"tool_id": "tool_2",
-					"task_id": "call_svs",
-					"in_data_format_usages_ids": ["dfu_04", "dfu_07", "dfu_08"],
-					"out_data_format_usages": [
-						{
-							"id": "dfu_09",
-							"data_format_id": "f05"
-						}
-					]
-				},
-				{
-					"id": "tool_usage_6",
-					"tool_id": "tool_5",
-					"task_id": "call_svs",
-					"in_data_format_usages_ids": ["dfu_02", "dfu_09"],
-					"out_data_format_usages": [
-						{
-							"id": "dfu_10",
-							"data_format_id": "f05"
-						}
-					]
-				},
-				{
-					"id": "tool_usage_7",
-					"tool_id": "tool_4",
-					"task_id": "annotate",
-					"in_data_format_usages_ids": ["dfu_08", "dfu_09", "dfu_10"],
-					"out_data_format_usages": [
-						{
-							"id": "dfu_11",
-							"data_format_id": "stream"
-						}
-					]
-				},
-				{
-					"id": "tool_usage_8",
-					"tool_id": "tool_3",
-					"task_id": "annotate",
-					"in_data_format_usages_ids": ["dfu_09", "dfu_11"],
-					"out_data_format_usages": [
-						{
-							"id": "dfu_13",
-							"data_format_id": "f07"
-						},
-						{
-							"id": "dfu_14",
-							"data_format_id": "f07"
-						}
-					]
-				}
-			]
-		},
-		{
-			"id": "pipeline_10",
-			"name": "Pipeline 10",
-			"tasks_ids": ["map", "call_de"],
-			"initial_data_format_usages": [],
-			"tool_usages": []
 		},
 		{
 			"id": "fastq-vcf",
