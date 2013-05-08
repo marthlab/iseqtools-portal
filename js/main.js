@@ -19,6 +19,8 @@
 			return function(element) { return element.id == id; }
 		}
 
+		function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
+
     // basic data structures
     
     var app = {};
@@ -217,31 +219,9 @@
   	}
   	Edge.prototype = {
   		spline: function(path_item) {
-  			function diag(source, target) {
-  				var diag_points = {source: {x: source.y, y: source.x}, target: {x: target.y, y: target.x}};
-  				return d3.svg.diagonal().projection(function(d) { return [d.y, d.x]; })
-		      (diag_points);
-  			}
-
-  			function line(line_points) {
-  				return d3.svg.line()
-		      .x(function(d) { return d.x; })
-		      .y(function(d) { return d.y; })
-		      .interpolate("linear")
-		      (line_points)
-  			}
-
-  			function cubic(line_points) {
-  				return d3.svg.line()
-		      .x(function(d) { return d.x; })
-		      .y(function(d) { return d.y; })
-		      .interpolate("basis")
-		      (line_points)
-  			}
 
   			var e = this, s = e.source, t = e.target;
-
-	      var points = e.dagre.points;
+  			
 	      var s_exit = {
 	      	x: s.dagre.x+s.dagre.width/2,
 	      	y: s.dagre.y + e.cfg["stroke-width"]*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2)
@@ -259,27 +239,52 @@
 			  	y: t_enter.y
 			  };
 
-			  var path_string = "";
-			  var offset = app.cfg.graph.rankSep*app.cfg.graph.edge_curvature;
+			  function line(start, end) {
+  				return d3.svg.line()
+			      .x(function(d) { return d.x; })
+			      .y(function(d) { return d.y; })
+			      .interpolate("linear")
+			      ([start, end])
+  			}
 
+  			function cubic(start, end) {
+
+  				var base_offset = (end.x-start.x)*app.cfg.graph.edge_curvature;
+  				var order_within_edge = e.path_items.indexOf(path_item);
+  				var slope = (end.y-start.y)/(end.x-start.x);
+  				var path_offset = (order_within_edge+1)*-Math.min(Math.abs(slope)*1.8, 2.5)*sign(slope);  //-slope*1.3;
+
+  				return d3.svg.line(start, end)
+			      .x(function(d) { return d.x; })
+			      .y(function(d) { return d.y; })
+			      .interpolate("basis")
+			      ([start,
+			      	{x: start.x + base_offset + path_offset, y: start.y},
+			      	{x: end.x - base_offset + path_offset, y: end.y},
+			      	end])
+  			}
+
+			  // construct path string
+			  var path_string = "";
+			  
 			  if(s_circ_intersect.x < s_exit.x) {
-		  		path_string += line([s_circ_intersect, s_exit]);
+		  		path_string += line(s_circ_intersect, s_exit);
 		  	}
 
 			  if(Math.abs(s.dagre.rank-t.dagre.rank) == 2) {
-			  	path_string += cubic([s_exit, {x: s_exit.x+offset, y:s_exit.y}, {x: t_enter.x-offset, y: t_enter.y}, t_enter]);
+			  	path_string += cubic(s_exit, t_enter);
 			  } else {
-					points[0].x = s_exit.x + app.cfg.graph.rankSep;
-					points[1].x = t_enter.x - app.cfg.graph.rankSep;
+			  	var points = [{x: s_exit.x + app.cfg.graph.rankSep, y: e.dagre.points[0].y},
+		  								{x: t_enter.x - app.cfg.graph.rankSep, y: e.dagre.points[1].y}];
 			  	path_string +=
-			  		( cubic([s_exit, {x: s_exit.x+offset, y:s_exit.y}, {x: points[0].x-offset, y: points[0].y}, points[0]])
-			  		+ line([points[0], points[1]])
-			  		+ cubic([points[1], {x: points[1].x+offset, y:points[1].y}, {x: t_enter.x-offset, y: t_enter.y}, t_enter])
+			  		( cubic(s_exit, points[0])
+			  		+ line(points[0], points[1])
+			  		+ cubic(points[1], t_enter)
 			  		);
 			  }
 
 			  if(t_enter.x < t_circ_intersect.x) {
-		  		path_string += line([t_enter, t_circ_intersect]);
+		  		path_string += line(t_enter, t_circ_intersect);
 		  	}
 
 			  return path_string;

@@ -225,6 +225,33 @@
 	],
 	"pipelines": [
 		{
+			"id": "test",
+			"name": "test",
+			"tasks_ids": ["sequence", "map", "call_svs", "annotate", "call_de"],
+			"initial_data_format_usages": [
+			],
+			"tool_usages": [
+			]
+		},
+		{
+			"id": "test2",
+			"name": "test2",
+			"tasks_ids": ["map", "call_svs", "annotate", "call_de"],
+			"initial_data_format_usages": [
+			],
+			"tool_usages": [
+			]
+		},
+		{
+			"id": "test3",
+			"name": "test3",
+			"tasks_ids": ["sequence", "map", "call_de"],
+			"initial_data_format_usages": [
+			],
+			"tool_usages": [
+			]
+		},
+		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
 			"tasks_ids": ["map", "call_svs"],
