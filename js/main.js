@@ -250,9 +250,10 @@
   			function cubic(start, end) {
 
   				var base_offset = (end.x-start.x)*app.cfg.graph.edge_curvature;
-  				var order_within_edge = e.path_items.indexOf(path_item);
+  				var order = e.path_items.indexOf(path_item);
   				var slope = (end.y-start.y)/(end.x-start.x);
-  				var path_offset = (order_within_edge+1)*-Math.min(Math.abs(slope)*1.8, 2.5)*sign(slope);  //-slope*1.3;
+  				// FIXME: there MUST be a more theoretically sound way of calculating path_offset
+  				var path_offset = (order+1)*-Math.min(Math.abs(slope)*1.5, 2.5)*sign(slope);
 
   				return d3.svg.line(start, end)
 			      .x(function(d) { return d.x; })
