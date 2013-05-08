@@ -350,7 +350,6 @@
 			    	});
 			    })
 			    .attr("text-anchor", "middle")
-			    //.attr("transform", function(n) { return "rotate(-30 "+(this.getBBox().x+this.getBBox().width/2)+" "+(this.getBBox().y+this.getBBox().height/2)+")"; })
 		      .attr("x", 0)
 		      .attr("y", function(n) { return -this.getBBox().height - n.cfg.radius - 4; })
 
