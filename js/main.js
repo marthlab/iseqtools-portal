@@ -249,11 +249,11 @@
 			  	x: t.dagre.x-t.dagre.width/2,
 			  	y: t.dagre.y + e.cfg["stroke-width"]*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2)
 			  };
-			  s_circ_intersect = {
+			  var s_circ_intersect = {
 			  	x: s.dagre.x+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2)),
 			  	y: s_exit.y
 			  };
-			  t_circ_intersect = {
+			  var t_circ_intersect = {
 			  	x: t.dagre.x-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
 			  	y: t_enter.y
 			  };
@@ -267,7 +267,6 @@
 
 			  if(Math.abs(s.dagre.rank-t.dagre.rank) == 2) {
 			  	path_string += cubic([s_exit, {x: s_exit.x+offset, y:s_exit.y}, {x: t_enter.x-offset, y: t_enter.y}, t_enter]);
-			  	//path_string += line([s_exit, points[0], t_enter]);
 			  } else {
 					points[0].x = s_exit.x + app.cfg.graph.rankSep;
 					points[1].x = t_enter.x - app.cfg.graph.rankSep;
@@ -351,6 +350,7 @@
 			    	});
 			    })
 			    .attr("text-anchor", "middle")
+			    //.attr("transform", function(n) { return "rotate(-30 "+(this.getBBox().x+this.getBBox().width/2)+" "+(this.getBBox().y+this.getBBox().height/2)+")"; })
 		      .attr("x", 0)
 		      .attr("y", function(n) { return -this.getBBox().height - n.cfg.radius - 4; })
 
