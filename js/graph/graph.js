@@ -6,6 +6,9 @@
   	Graph.prototype = {
   		update: function() {
 	  		this["_load_"+app.activeItemType()](app.activeItem());
+	  		this.edges.forEach(function(edge){
+	  			edge.path_items = this.getEdgeReferents(edge);
+	  		}, this);
 	  		this.drawing_for_layout.render();
 	  		var rect = this.drawing_for_layout.svgGroup.node().getBoundingClientRect();
 	  		// fudge factors prevent unwanted clipping of content on sides
@@ -32,7 +35,19 @@
 	  	_load_workflow: function(workflow) {
 				this.graph_type = "workflow";
 				this.getEdgeReferents = function(edge) {
-					return workflow.pipelines;
+					return workflow.pipelines.filter(function(pl) {
+						var e = edge, s = edge.source, t = edge.target;
+						debugger;
+						var to_intermediate_task = _(pl.data_types).contains(s.referent)
+							&& this.edges.some(function(e2){
+								return e2.source === t && _(pl.data_types).contains(e2.target.referent);
+							});
+						var from_intermediate_task = _(pl.data_types).contains(t.referent)
+							&& this.edges.some(function(e2){
+								return e2.target === s && _(pl.data_types).contains(e2.source.referent);
+							});
+						return to_intermediate_task || from_intermediate_task;
+					}, this);
 				}
 				this.pathColors = d3.scale.category10()
 	  										 .domain(workflow.pipelines.map(function(pl){return pl.id}));
@@ -51,6 +66,8 @@
 	  			.filter(function(dfu){ return dfu.data_format.id !== "stream"})
 	  			.map(function(dfu) { return new Node(dfu, dfu.data_format.name, this);}, this);
 	  			
+	  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
+
 	  		this.edges = _.union.apply(this, this.tool_usages_nodes.map(function(tu_node) {
 	  			var edges_out = tu_node.referent.out_data_format_usages
 	  				.filter(function(dfu){ return dfu.data_format.id !== "stream"})
@@ -69,13 +86,14 @@
 	  			return _.union(_.union(edges_in, edges_out), stream_edges_out);
 	  		}, this));
 
-	  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
 	  	},
 	  	_tasks_shared_init: function(tasks) {
 	  		this.primary_nodes = this.tasks_nodes = tasks.map(function(task) { return new Node(task, task.name, this);}, this);
 
 	  		this.secondary_nodes = this.data_types_nodes = _.union.apply(this, tasks.map(function(task) {return _.union(task.in_data_types, task.out_data_types);}))
 	  																										.map(function(dt) { return new Node(dt, dt.name, this);}, this);
+
+	  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
 
 	  		this.edges = _.union.apply(this, this.tasks_nodes.map(function(task_node) {
 	  			var edges_out = task_node.referent.out_data_types.map(function(dt) {
@@ -87,6 +105,5 @@
 	  			return _.union(edges_in, edges_out);
 	  		}, this));
 
-	  		this.nodes = _.union(this.primary_nodes, this.secondary_nodes);
 	  	}
   	}

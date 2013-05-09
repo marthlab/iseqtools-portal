@@ -2,7 +2,6 @@ function Edge(source_node, target_node, graph) {
 	this.graph = graph;
 	this.source = source_node;
 	this.target = target_node;
-	this.path_items = this.graph.getEdgeReferents(this);
 
 	this.cfg = app.cfg.edges;
 }

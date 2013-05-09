@@ -47,7 +47,7 @@ function Pipeline(cfg) {
 		return _.isEqual(_.pluck(wf.tasks, 'id'), cfg.tasks_ids);
 	});
 
-	this.data_types = cfg.data_types_ids.map(function(dt_id){ return _(this.workflow.data_types).find(by_id(dt_id));});
+	this.data_types = cfg.data_types_ids.map(function(dt_id){ return _(this.workflow.data_types).find(by_id(dt_id));}, this);
 
 	var create_dfu = function(dfu_cfg){
 		return new DataFormatUsage(_.extend(dfu_cfg, {pipeline: this}));
