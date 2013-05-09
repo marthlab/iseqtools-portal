@@ -17,7 +17,7 @@ function Workflow(cfg) {
 
 	this.data_types = _.union.apply(this,
 		this.tasks.map(function(task) {return _.union(task.in_data_types, task.out_data_types); })
-		);
+	);
 
 	this.in_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.out_data_types).contains(dt); })).isEmpty();}, this);
 	this.out_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.in_data_types).contains(dt); })).isEmpty();}, this);
@@ -47,13 +47,15 @@ function Pipeline(cfg) {
 		return _.isEqual(_.pluck(wf.tasks, 'id'), cfg.tasks_ids);
 	});
 
+	this.data_types = cfg.data_types_ids.map(function(dt_id){ return _(this.workflow.data_types).find(by_id(dt_id));});
+
 	var create_dfu = function(dfu_cfg){
 		return new DataFormatUsage(_.extend(dfu_cfg, {pipeline: this}));
 	};
 
-    this.data_format_usages = _.flatten(_(cfg.tool_usages.map(function(tu_cfg) {
-    	return tu_cfg.out_data_format_usages.map(create_dfu, this);
-    }, this)).union(cfg.initial_data_format_usages.map(create_dfu, this)), true);
+  this.data_format_usages = _.flatten(_(cfg.tool_usages.map(function(tu_cfg) {
+  	return tu_cfg.out_data_format_usages.map(create_dfu, this);
+  }, this)).union(cfg.initial_data_format_usages.map(create_dfu, this)), true);
 	
 	this.tool_usages = cfg.tool_usages.map(function(tu_cfg) {
     	return new ToolUsage(_.extend(tu_cfg, {pipeline: this}));

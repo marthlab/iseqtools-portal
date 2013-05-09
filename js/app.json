@@ -224,37 +224,38 @@
 		}
 	],
 	"pipelines": [
-		{
-			"id": "test",
-			"name": "test",
-			"tasks_ids": ["sequence", "map", "call_svs", "annotate", "call_de"],
-			"initial_data_format_usages": [
-			],
-			"tool_usages": [
-			]
-		},
-		{
-			"id": "test2",
-			"name": "test2",
-			"tasks_ids": ["map", "call_svs", "annotate", "call_de"],
-			"initial_data_format_usages": [
-			],
-			"tool_usages": [
-			]
-		},
-		{
-			"id": "test3",
-			"name": "test3",
-			"tasks_ids": ["sequence", "map", "call_de"],
-			"initial_data_format_usages": [
-			],
-			"tool_usages": [
-			]
-		},
+		// {
+		// 	"id": "test",
+		// 	"name": "test",
+		// 	"tasks_ids": ["sequence", "map", "call_svs", "annotate", "call_de"],
+		// 	"initial_data_format_usages": [
+		// 	],
+		// 	"tool_usages": [
+		// 	]
+		// },
+		// {
+		// 	"id": "test2",
+		// 	"name": "test2",
+		// 	"tasks_ids": ["map", "call_svs", "annotate", "call_de"],
+		// 	"initial_data_format_usages": [
+		// 	],
+		// 	"tool_usages": [
+		// 	]
+		// },
+		// {
+		// 	"id": "test3",
+		// 	"name": "test3",
+		// 	"tasks_ids": ["sequence", "map", "call_de"],
+		// 	"initial_data_format_usages": [
+		// 	],
+		// 	"tool_usages": [
+		// 	]
+		// },
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
 			"tasks_ids": ["map", "call_svs"],
+			"data_types_ids": ["reads", "reference_genomes", "alignments", "variants"],
 			"initial_data_format_usages": [
 				{
 					"id": 1,
@@ -498,6 +499,7 @@
 			"id": "build-moblist-reference",
 			"name": "build-moblist-reference",
 			"tasks_ids": ["map"],
+			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",
@@ -567,6 +569,7 @@
 			"id": "build-reference",
 			"name": "build-reference",
 			"tasks_ids": ["map"],
+			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",
@@ -602,6 +605,7 @@
 			"id": "align-pe",
 			"name": "align-pe",
 			"tasks_ids": ["map"],
+			"data_types_ids": ["reads", "reference_genomes", "alignments"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",
@@ -750,6 +754,7 @@
 			"id": "merge-bam",
 			"name": "merge-bams",
 			"tasks_ids": ["map"],
+			"data_types_ids": ["alignments"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",
@@ -823,6 +828,7 @@
 			"id": "call-short-variants",
 			"name": "call-short-variants",
 			"tasks_ids": ["call_svs"],
+			"data_types_ids": ["alignments", "variants"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",
@@ -907,6 +913,7 @@
 			"id": "merge-vcf",
 			"name": "merge-vcf",
 			"tasks_ids": ["call_svs"],
+			"data_types_ids": ["variants"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",

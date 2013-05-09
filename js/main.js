@@ -17,9 +17,9 @@
 	    	return new DataFormat(df_cfg);
 	    });
 
-	   //  _(app.data_types).each(function(dt) {
-	  	// 	dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
-	  	// });
+	    // _(app.data_types).each(function(dt) {
+  		// 	dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
+  	  // });
 
 	    app.tools = cfg.tools.map(function(tool_cfg) {
 	    	return new Tool(tool_cfg);
