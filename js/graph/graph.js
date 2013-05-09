@@ -5,28 +5,40 @@
 		}
   	Graph.prototype = {
   		update: function() {
+	  		this._updateData();
+	  		this.drawing_for_layout.render();
+	  		var viewBox = this._getViewBox();
+	  		this.drawing_for_display.render(viewBox);
+	  	},
+	  	_updateData: function() {
 	  		this["_load_"+app.activeItemType()](app.activeItem());
 	  		this.edges.forEach(function(edge){
-	  			edge.path_items = this.getEdgeReferents(edge);
+	  			edge.path_items = this.getEdgePathItems(edge);
 	  		}, this);
-	  		this.drawing_for_layout.render();
+	  		this.nodes.forEach(function(node){
+	  			node.path_items = this.getNodePathItems(node);
+	  		}, this);
+	  	},
+	  	_getViewBox: function() {
 	  		var rect = this.drawing_for_layout.svgGroup.node().getBoundingClientRect();
 	  		// fudge factors prevent unwanted clipping of content on sides
 				var horz_padding_fraction = 0.05;
 				var vert_padding_fraction = 0.01;
-				var viewBox = -Math.ceil(rect.width*horz_padding_fraction/2)
-											+" "
-											+Math.floor(rect.top-rect.height*vert_padding_fraction/2)
-											+" "
-											+Math.ceil(rect.width*(1+horz_padding_fraction))
-											+" "
-											+Math.ceil(rect.height*(1+vert_padding_fraction));
-	  		this.drawing_for_display.render(viewBox);
+				return	-Math.ceil(rect.width*horz_padding_fraction/2)
+								+" "
+								+Math.floor(rect.top-rect.height*vert_padding_fraction/2)
+								+" "
+								+Math.ceil(rect.width*(1+horz_padding_fraction))
+								+" "
+								+Math.ceil(rect.height*(1+vert_padding_fraction));
 	  	},
 	  	_load_global: function() {
 				this.graph_type = "global";
-				this.getEdgeReferents = function(edge) {
+				this.getEdgePathItems = function(edge) {
 					return _.union(edge.source.referent.workflows || [], edge.target.referent.workflows || []);
+				}
+				this.getNodePathItems = function(node) {
+					return [];
 				}
 				this.pathColors = d3.scale.category10()
 	  										 .domain(app.workflows.map(function(w){return w.id}));
@@ -34,10 +46,9 @@
 	  	},
 	  	_load_workflow: function(workflow) {
 				this.graph_type = "workflow";
-				this.getEdgeReferents = function(edge) {
+				this.getEdgePathItems = function(edge) {
 					return workflow.pipelines.filter(function(pl) {
 						var e = edge, s = edge.source, t = edge.target;
-						debugger;
 						var to_intermediate_task = _(pl.data_types).contains(s.referent)
 							&& this.edges.some(function(e2){
 								return e2.source === t && _(pl.data_types).contains(e2.target.referent);
@@ -49,14 +60,20 @@
 						return to_intermediate_task || from_intermediate_task;
 					}, this);
 				}
+				this.getNodePathItems = function(node) {
+					return workflow.pipelines.filter(function(pl){ return pl.data_types.length === 1 && node.referent === pl.data_types[0];});
+				}
 				this.pathColors = d3.scale.category10()
 	  										 .domain(workflow.pipelines.map(function(pl){return pl.id}));
 	  		this._tasks_shared_init(workflow.tasks);
 	  	},
 	  	_load_pipeline: function(pipeline) {
 	  		this.graph_type = "pipeline";
-	  		this.getEdgeReferents = function(edge) {
+	  		this.getEdgePathItems = function(edge) {
 					return [pipeline];
+				}
+				this.getNodePathItems = function(node) {
+					return [];
 				}
 				this.pathColors = d3.scale.category10()
 	  										 .domain([pipeline.id]);
