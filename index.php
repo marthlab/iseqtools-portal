@@ -62,8 +62,18 @@
              
         </script>
 
-        <script>var app_json = <?php echo file_get_contents('./js/app.json'); ?>; var debug = null;</script>
+        <script>
+        var app_json = <?php echo file_get_contents('./js/app.json'); ?>;
+        var app = {};
+        </script>
 
+        <script src="js/utils.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/domain_objects.js"></script>
+        <script src="js/graph/graph.js"></script>
+        <script src="js/graph/node.js"></script>
+        <script src="js/graph/edge.js"></script>
+        <script src="js/graph/graph_drawing.js"></script>
         <script src="js/main.js"></script>
 
         <script>
