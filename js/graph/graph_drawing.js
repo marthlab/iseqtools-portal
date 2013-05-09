@@ -84,7 +84,7 @@ GraphDrawing.prototype = {
 		var self = this;
 
 	  // handle nodes
-
+		console.log(this.graph.nodes)
     var nodes_elems = this.nodeGroup.selectAll("g .node")
 	    .data(this.graph.nodes, Node.key);
 
@@ -105,19 +105,62 @@ GraphDrawing.prototype = {
 				.attr("class", "circles");
 
 		circle_groups.each(function(n) {
-			var circles = d3.select(this);
-			function addCircles(num_circles) {
-				for(var i=0; i<num_circles; i++) {
-					circles
-						.append("circle")
+			var num_circles = n.referent.multiple ? 3 : 1;
+			var circle_group;
+			for(var i=0; i<num_circles; i++) {
+				circle_group = d3.select(this);
+
+				circle_group
+					.append("circle")
 						.attr("cx", 0)
 						.attr("cy", 5*((num_circles-1)/2 - (num_circles-i-1)))
 						.attr("r", function(n) { return n.cfg.radius; })
-						.attr("stroke-width", app.cfg.graph.path_width);
-				}
+						.attr("stroke-width", app.cfg.graph.path_width)
+						
 			}
-			addCircles(n.referent.multiple ? 3 : 1);
 		});
+
+		// var circle_path_groups = circle_groups
+		// 	.append("g")
+		// 		.attr("class", "circle_paths");
+
+		// var circle_paths = circle_path_groups
+		// 	.selectAll('circle.circle_path')
+		// 	.data(function(n) { return n.path_items; }, function(r) {return r.id;});
+
+		// var new_circle_paths = circle_paths
+		//   .enter()
+	 //      .append("circle")
+		//       .attr("class", "circle_path")
+		//       .attr("cx", 0)
+		// 			.attr("cy", 0)
+		// 			.attr("r", function(path_item) {
+		// 				var node = d3.select(this.parentNode).datum();
+		// 				return node.cfg.radius+app.cfg.graph.path_width*node.path_items.indexOf(path_item);
+		// 			})
+		// 			.attr("stroke-width", app.cfg.graph.path_width)
+		// 			.attr("stroke", function(path_item) {
+		// 				var node = d3.select(this.parentNode).datum();
+		// 	    	return node.graph.pathColors(path_item.id);
+		// 	    })
+
+
+		// circle_path_groups.each(function(n) {
+		// 	var circle_path_group = d3.select(this);
+		// 	num_paths = n.path_items.length;
+		// 	n.path_items.forEach(function(pi, index){
+		// 		circle_path_group
+		// 			.append("circle")
+		// 				.attr("cx", 0)
+		// 				.attr("cy", 0)
+		// 				.attr("r", function(n) { return n.cfg.radius+app.cfg.graph.path_width*index; })
+		// 				.attr("stroke-width", app.cfg.graph.path_width)
+		// 				.attr("class", "path_item");
+
+		// 	});
+		// });
+
+
 
 	  var labels = new_nodes_elems
 	    .append("text")
