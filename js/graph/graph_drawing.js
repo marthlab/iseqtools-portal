@@ -100,36 +100,33 @@ GraphDrawing.prototype = {
 		
 		var updated_nodes_elems = nodes_elems.filter(function(d, i) { return !_(new_nodes_elems[0]).contains(this);});
 
-		var new_circle_groups = new_nodes_elems
+		new_nodes_elems
 			.append("g")
-				.attr("class", "circles");
+				.attr("class", "circles")
+				.each(function(n) {
+					var num_circles = n.referent.multiple ? 3 : 1;
+					var circle_group;
+					for(var i=0; i<num_circles; i++) {
+						circle_group = d3.select(this);
 
-		new_circle_groups.each(function(n) {
-			var num_circles = n.referent.multiple ? 3 : 1;
-			var circle_group;
-			for(var i=0; i<num_circles; i++) {
-				circle_group = d3.select(this);
+						circle_group
+							.append("circle")
+								.attr("cx", 0)
+								.attr("cy", 5*((num_circles-1)/2 - (num_circles-i-1)))
+								.attr("r", function(n) { return n.cfg.radius; })
+								.attr("stroke-width", app.cfg.graph.path_width)
+								.attr("stroke", app.cfg.nodes.stroke)
+								
+					}
+				})
+				.append("g")
+					.attr("class", "circle_paths");
 
-				circle_group
-					.append("circle")
-						.attr("cx", 0)
-						.attr("cy", 5*((num_circles-1)/2 - (num_circles-i-1)))
-						.attr("r", function(n) { return n.cfg.radius; })
-						.attr("stroke-width", app.cfg.graph.path_width)
-						.attr("stroke", app.cfg.nodes.stroke)
-						
-			}
-		});
+		var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
+			.selectAll("circle.circle_path")
+			.data(function(n) { return n.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;});
 
-		var new_circle_paths_groups = new_nodes_elems.select("g.circles")
-			.append("g")
-				.attr("class", "circle_paths");
-
-
-		nodes_elems.each(function(n) {
-			d3.select(this).select("g.circles").select("g.circle_paths")
-				.selectAll("circle.circle_path")
-				.data(function(n) { return n.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;})
+		var new_circle_paths = circle_paths
 	  		.enter()
 	    		.append("circle")
 	  			.attr("class", "circle_path")
@@ -144,7 +141,9 @@ GraphDrawing.prototype = {
 	    			return node.graph.pathColors(path_item.id);
 	  			})
 	  			.attr("stroke-width", app.cfg.graph.path_width);
-		});
+
+		var old_circle_paths = circle_paths
+			.exit();
 
 	  var new_labels = new_nodes_elems
 	    .append("text")
@@ -176,10 +175,11 @@ GraphDrawing.prototype = {
 	    	});
 	    })
 	    .attr("text-anchor", "middle")
-      .attr("x", 0);
+      .attr("x", 0)
+      .attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; });
 
-    var labels = nodes_elems.select(".node text")
-    	.attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; })
+    var labels = nodes_elems.select(".node text");
+    	
 
 		nodes_elems.each(function(n) {
 	    var bbox = this.getBBox();
@@ -235,9 +235,11 @@ GraphDrawing.prototype = {
 	  	.style("opacity", 0)
 	  	.remove();
 
-	  // (this.use_transitions ? old_circles_paths.transition().duration(this.graph.cfg.render_duration) : old_circles_paths)
-	  // 	.style("opacity", 0)
-	  // 	.remove();
+
+	  (this.use_transitions ? old_circle_paths.transition().duration(this.graph.cfg.render_duration) : old_circle_paths)
+			.style("stroke-opacity", 0)
+  		.remove();
+	 
 
 	 	(this.use_transitions ? old_edges_paths.transition().duration(this.graph.cfg.render_duration) : old_edges_paths)
 	  	.style("stroke-opacity", 0)
@@ -265,6 +267,12 @@ GraphDrawing.prototype = {
 	  } else {
 	  	updated_nodes_elems.attr("transform", getTransform);
 	  }
+
+	  (this.use_transitions ? new_circle_paths.transition().duration(this.graph.cfg.render_duration) : new_circle_paths)
+			.style("stroke-opacity", 1);
+
+	  (this.use_transitions ? labels.transition().duration(this.graph.cfg.render_duration) : labels)
+	  	.attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; });
 
 	  (this.use_transitions ? updated_edges_paths.transition().duration(this.graph.cfg.render_duration) : updated_edges_paths)
 	  	.attr("d", function(path_item) {
