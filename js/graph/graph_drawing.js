@@ -85,7 +85,6 @@ GraphDrawing.prototype = {
 		var self = this;
 
 	  // handle nodes
-		console.log(this.graph.nodes)
     var nodes_elems = this.nodeGroup.selectAll("g .node")
 	    .data(this.graph.nodes, Node.key);
 
@@ -101,11 +100,11 @@ GraphDrawing.prototype = {
 		
 		var updated_nodes_elems = nodes_elems.filter(function(d, i) { return !_(new_nodes_elems[0]).contains(this);});
 
-		var circle_groups = new_nodes_elems
+		var new_circle_groups = new_nodes_elems
 			.append("g")
 				.attr("class", "circles");
 
-		circle_groups.each(function(n) {
+		new_circle_groups.each(function(n) {
 			var num_circles = n.referent.multiple ? 3 : 1;
 			var circle_group;
 			for(var i=0; i<num_circles; i++) {
@@ -117,9 +116,86 @@ GraphDrawing.prototype = {
 						.attr("cy", 5*((num_circles-1)/2 - (num_circles-i-1)))
 						.attr("r", function(n) { return n.cfg.radius; })
 						.attr("stroke-width", app.cfg.graph.path_width)
+						.attr("stroke", app.cfg.nodes.stroke)
 						
 			}
 		});
+
+		var new_circle_paths_groups = new_nodes_elems
+			.append("g")
+				.attr("class", "circle_paths");
+
+
+		nodes_elems.each(function(n) {
+			var circle_paths_group = d3.select(this).select("g.circle_paths");
+			circle_paths_group
+				.selectAll("circle.circle_path")
+				.data(function(n) { return n.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;})
+	  		.enter()
+	    		.append("circle")
+	  			.attr("class", "circle_path")
+	  			.attr("cx", 0)
+					.attr("cy", 0)
+					.attr("r", function(pi) { return 5; })
+	  			.attr("stroke", function(path_item) {
+	  				var node = d3.select(this.parentNode).datum();
+	    			return node.graph.pathColors(path_item.id);
+	  			})
+	  			.attr("stroke-width", app.cfg.graph.path_width);
+		});
+
+		// var old_circles_paths = circles_paths
+// 			.exit();
+
+		// var circles_paths_groups = new_circles_paths_groups
+		// 	.selectAll("g.circle_paths")
+		// 		.data(function(d) { return d; });
+
+
+// 		var new_circles_paths_groups =	circles_paths_groups
+// 				.enter()
+// 			 		.append("g")
+// 			 		.attr("class", "circle_paths");
+
+// // 		nodes_elems.each(function(n){
+// // 			var circle_paths_group = d3.select('this');
+// // 		});
+
+// var circles_paths = circles_paths_groups
+// 	  	.selectAll("circle.circle_path")
+// 	  	.data(function(n) { /*debugger; */return n.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;});
+
+// var new_circles_paths = circles_paths
+//   		.enter()
+//     		.append("circle")
+//   			.attr("class", "circle_path")
+//   			.attr("cx", 0)
+// 				.attr("cy", 0)
+// 				.attr("r", function(pi) { return 5; })
+//   			.attr("stroke-width", app.cfg.graph.path_width);
+
+// var old_circles_paths = circles_paths
+// 			.exit();
+
+// 			.selectAll("g.circle_paths")
+// 	  	.selectAll("circle.circle_path")
+
+// 		// var circle_path_groups = nodes_elems
+// 		// 	.selectAll("g.circle_paths")
+
+// 		var circle_paths = nodes_elems
+// 			//.selectAll("g.circle_paths")
+// 	  	.selectAll("circle.circle_path")
+// 	    .data(function(n) { console.log(n); if(n.label == "Reference Genomes"){ debugger; } return n.path_items; }, function(r) {return r.id;})
+
+// 	  var new_circle_paths = circle_paths
+// 	  	.enter()
+//     		.append("circle")
+//     			.attr("class", "circle_path")
+//     			.attr("cx", 0)
+// 					.attr("cy", 0)
+// 					.attr("r", function(pi) { return 5; })
+//     			.attr("stroke-width", app.cfg.graph.path_width);
 
 		// var circle_path_groups = circle_groups
 		// 	.append("g")
@@ -223,7 +299,7 @@ GraphDrawing.prototype = {
 
 	  var edges_paths = edges_elems
 	  	.selectAll("path")
-	    .data(function(e) { return e.path_items; }, function(r) {return r.id;})
+	    .data(function(e) { return e.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;})
 
 	  var new_edges_paths = edges_paths
 	  	.enter()
@@ -249,6 +325,10 @@ GraphDrawing.prototype = {
 	  (this.use_transitions ? old_nodes_elems.transition().duration(this.graph.cfg.render_duration) : old_nodes_elems)
 	  	.style("opacity", 0)
 	  	.remove();
+
+	  // (this.use_transitions ? old_circles_paths.transition().duration(this.graph.cfg.render_duration) : old_circles_paths)
+	  // 	.style("opacity", 0)
+	  // 	.remove();
 
 	 	(this.use_transitions ? old_edges_paths.transition().duration(this.graph.cfg.render_duration) : old_edges_paths)
 	  	.style("stroke-opacity", 0)

@@ -8,6 +8,7 @@ app.cfg = {
     render_duration: 2000
 	},
 	nodes: {
+		stroke: "#000",
 		label_max_width: 110,
 		primary: {
     		radius: 30

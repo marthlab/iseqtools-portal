@@ -69,10 +69,6 @@ h1 {position:absolute;}
 .edge path {stroke-opacity:0;}
 .node {opacity:0;}
 
-.node circle {
-  stroke: #333;
-}
-
 .node.primary circle {
   fill: #fff;
 }
