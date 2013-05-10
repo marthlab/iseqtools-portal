@@ -62,7 +62,8 @@ GraphDrawing.prototype = {
   	}
 
 	  if(Math.abs(s.dagre.rank-t.dagre.rank) == 2) {
-	  	path_string += cubic(s_exit, t_enter);
+	  	//path_string += cubic(s_exit, t_enter);
+	  	path_string += (cubic(s_exit, {x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}) + line({x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}, t_enter))
 	  } else {
 	  	var points = [{x: s_exit.x + app.cfg.graph.rankSep, y: e.dagre.points[0].y},
   								{x: t_enter.x - app.cfg.graph.rankSep, y: e.dagre.points[1].y}];
