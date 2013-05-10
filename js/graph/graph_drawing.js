@@ -121,14 +121,13 @@ GraphDrawing.prototype = {
 			}
 		});
 
-		var new_circle_paths_groups = new_nodes_elems
+		var new_circle_paths_groups = new_nodes_elems.select("g.circles")
 			.append("g")
 				.attr("class", "circle_paths");
 
 
 		nodes_elems.each(function(n) {
-			var circle_paths_group = d3.select(this).select("g.circle_paths");
-			circle_paths_group
+			d3.select(this).select("g.circles").select("g.circle_paths")
 				.selectAll("circle.circle_path")
 				.data(function(n) { return n.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;})
 	  		.enter()
@@ -136,7 +135,10 @@ GraphDrawing.prototype = {
 	  			.attr("class", "circle_path")
 	  			.attr("cx", 0)
 					.attr("cy", 0)
-					.attr("r", function(pi) { return 5; })
+					.attr("r", function(path_item) {
+						var node = d3.select(this.parentNode).datum();
+	    			return node.cfg.radius+(node.path_items.indexOf(path_item)+1)*app.cfg.graph.path_width;
+					})
 	  			.attr("stroke", function(path_item) {
 	  				var node = d3.select(this.parentNode).datum();
 	    			return node.graph.pathColors(path_item.id);
@@ -144,102 +146,7 @@ GraphDrawing.prototype = {
 	  			.attr("stroke-width", app.cfg.graph.path_width);
 		});
 
-		// var old_circles_paths = circles_paths
-// 			.exit();
-
-		// var circles_paths_groups = new_circles_paths_groups
-		// 	.selectAll("g.circle_paths")
-		// 		.data(function(d) { return d; });
-
-
-// 		var new_circles_paths_groups =	circles_paths_groups
-// 				.enter()
-// 			 		.append("g")
-// 			 		.attr("class", "circle_paths");
-
-// // 		nodes_elems.each(function(n){
-// // 			var circle_paths_group = d3.select('this');
-// // 		});
-
-// var circles_paths = circles_paths_groups
-// 	  	.selectAll("circle.circle_path")
-// 	  	.data(function(n) { /*debugger; */return n.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;});
-
-// var new_circles_paths = circles_paths
-//   		.enter()
-//     		.append("circle")
-//   			.attr("class", "circle_path")
-//   			.attr("cx", 0)
-// 				.attr("cy", 0)
-// 				.attr("r", function(pi) { return 5; })
-//   			.attr("stroke-width", app.cfg.graph.path_width);
-
-// var old_circles_paths = circles_paths
-// 			.exit();
-
-// 			.selectAll("g.circle_paths")
-// 	  	.selectAll("circle.circle_path")
-
-// 		// var circle_path_groups = nodes_elems
-// 		// 	.selectAll("g.circle_paths")
-
-// 		var circle_paths = nodes_elems
-// 			//.selectAll("g.circle_paths")
-// 	  	.selectAll("circle.circle_path")
-// 	    .data(function(n) { console.log(n); if(n.label == "Reference Genomes"){ debugger; } return n.path_items; }, function(r) {return r.id;})
-
-// 	  var new_circle_paths = circle_paths
-// 	  	.enter()
-//     		.append("circle")
-//     			.attr("class", "circle_path")
-//     			.attr("cx", 0)
-// 					.attr("cy", 0)
-// 					.attr("r", function(pi) { return 5; })
-//     			.attr("stroke-width", app.cfg.graph.path_width);
-
-		// var circle_path_groups = circle_groups
-		// 	.append("g")
-		// 		.attr("class", "circle_paths");
-
-		// var circle_paths = circle_path_groups
-		// 	.selectAll('circle.circle_path')
-		// 	.data(function(n) { return n.path_items; }, function(r) {return r.id;});
-
-		// var new_circle_paths = circle_paths
-		//   .enter()
-	 //      .append("circle")
-		//       .attr("class", "circle_path")
-		//       .attr("cx", 0)
-		// 			.attr("cy", 0)
-		// 			.attr("r", function(path_item) {
-		// 				var node = d3.select(this.parentNode).datum();
-		// 				return node.cfg.radius+app.cfg.graph.path_width*node.path_items.indexOf(path_item);
-		// 			})
-		// 			.attr("stroke-width", app.cfg.graph.path_width)
-		// 			.attr("stroke", function(path_item) {
-		// 				var node = d3.select(this.parentNode).datum();
-		// 	    	return node.graph.pathColors(path_item.id);
-		// 	    })
-
-
-		// circle_path_groups.each(function(n) {
-		// 	var circle_path_group = d3.select(this);
-		// 	num_paths = n.path_items.length;
-		// 	n.path_items.forEach(function(pi, index){
-		// 		circle_path_group
-		// 			.append("circle")
-		// 				.attr("cx", 0)
-		// 				.attr("cy", 0)
-		// 				.attr("r", function(n) { return n.cfg.radius+app.cfg.graph.path_width*index; })
-		// 				.attr("stroke-width", app.cfg.graph.path_width)
-		// 				.attr("class", "path_item");
-
-		// 	});
-		// });
-
-
-
-	  var labels = new_nodes_elems
+	  var new_labels = new_nodes_elems
 	    .append("text")
 	    .each(function(n) {
 	    	var text_elem = d3.select(this);
@@ -269,8 +176,10 @@ GraphDrawing.prototype = {
 	    	});
 	    })
 	    .attr("text-anchor", "middle")
-      .attr("x", 0)
-      .attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; })
+      .attr("x", 0);
+
+    var labels = nodes_elems.select(".node text")
+    	.attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; })
 
 		nodes_elems.each(function(n) {
 	    var bbox = this.getBBox();
