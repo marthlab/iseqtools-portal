@@ -13,11 +13,11 @@ GraphDrawing.prototype = {
 		
     var s_exit = {
     	x: s.dagre.x+s.dagre.width/2,
-    	y: s.dagre.y + app.cfg.graph.path_width*1.5*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2)
+    	y: s.dagre.y + app.cfg.graph.path_width*(1+app.cfg.graph.path_gap)*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2)
     };
 	  var t_enter = {
 	  	x: t.dagre.x-t.dagre.width/2,
-	  	y: t.dagre.y + app.cfg.graph.path_width*1.5*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2)
+	  	y: t.dagre.y + app.cfg.graph.path_width*(1+app.cfg.graph.path_gap)*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2)
 	  };
 	  var s_circ_intersect = {
 	  	x: s.dagre.x+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2)),

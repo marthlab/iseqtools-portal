@@ -4,6 +4,7 @@ app.cfg = {
     edgeSep: 20,
     rankSep: 60,
     path_width:3,
+    path_gap:.5,
     edge_curvature: 0.29,
     render_duration: 2000
 	},

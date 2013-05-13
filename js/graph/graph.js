@@ -22,7 +22,7 @@
 	  	_getViewBox: function() {
 	  		var rect = this.drawing_for_layout.svgGroup.node().getBoundingClientRect();
 	  		// fudge factors prevent unwanted clipping of content on sides
-				var horz_padding_fraction = 0.05;
+				var horz_padding_fraction = 0.06;
 				var vert_padding_fraction = 0.01;
 				return	-Math.ceil(rect.width*horz_padding_fraction/2)
 								+" "
