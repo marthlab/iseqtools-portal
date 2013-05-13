@@ -279,7 +279,7 @@ GraphDrawing.prototype = {
 	    	var edge = d3.select(this.parentNode).datum();
 	    	return self._edgePathSpline(edge, path_item);
 	    })
-	    
+	  
 	  new_edges_paths
 	  	.attr("d", function(path_item) {
 	    	var edge = d3.select(this.parentNode).datum();
@@ -289,6 +289,11 @@ GraphDrawing.prototype = {
 	    	var edge = d3.select(this.parentNode).datum();
 	    	return edge.graph.pathColors(path_item.id);
 	    }).each(function(path_item) {
+	    	this.addEventListener("click", app.activateItem.bind(app, path_item));
+	    });
+
+	  new_circle_paths
+	    .each(function(path_item) {
 	    	this.addEventListener("click", app.activateItem.bind(app, path_item));
 	    });
 

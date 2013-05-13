@@ -82,6 +82,11 @@ h1 {position:absolute;}
   fill: none;
 }
 
+.node.secondary circle.circle_path:hover {
+  cursor: pointer;
+  opacity: 0.4;
+}
+
 .node.primary text {
   font: 300 26px "Helvetica Neue";
 }
