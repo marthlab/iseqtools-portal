@@ -299,7 +299,7 @@ dagre.layout = function() {
     // we add edges. Also copy relevant dimension information.
     config.nodes.forEach(function(u) {
       var id = "id" in u ? u.id : "_N" + nextId++;
-      u.dagre = { id: id, width: u.width, height: u.height };
+      u.dagre = { id: id, width: u.width, height: u.height, offsetwidth: u.offsetwidth || u.width/2, offsetheight: u.offsetheight || u.height/2};
       g.addNode(id, u.dagre);
     });
 
@@ -396,6 +396,8 @@ dagre.layout = function() {
           var node = {
             width: a.width,
             height: a.height,
+            offsetwidth: a.width/2,
+            offsetheight: a.height/2,
             edge: { id: e, source: s, target: t, attrs: a },
             rank: rank,
             dummy: true
@@ -1004,7 +1006,7 @@ dagre.layout.position = function() {
    */
   function deltaX(g, u) {
     var sep = g.node(u).dummy ? config.edgeSep : config.nodeSep;
-    return width(g, u) / 2 + sep / 2;
+    return offsetWidth(g, u) + sep / 2;
   }
 
   // This function deviates from the standard BK algorithm in two ways. First
@@ -1135,6 +1137,14 @@ dagre.layout.position = function() {
     switch (config.rankDir) {
       case "LR": return g.node(u).height;
       default:   return g.node(u).width;
+    }
+  }
+
+  function offsetWidth(g, u) {
+    //console.log(g.node(u));
+    switch (config.rankDir) {
+      case "LR": return g.node(u).offsetheight;
+      default:   return g.node(u).offsetwidth;
     }
   }
 

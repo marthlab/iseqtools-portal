@@ -1,8 +1,8 @@
 app.cfg = {
 	graph: {
-		nodeSep: 65,
-    edgeSep: 25,
-    rankSep: 55,
+		nodeSep: 0,
+    edgeSep: 20,
+    rankSep: 40,
     path_width:3,
     edge_curvature: 0.29,
     render_duration: 2000

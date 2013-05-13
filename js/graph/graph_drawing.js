@@ -36,7 +36,7 @@ GraphDrawing.prototype = {
 	      ([start, end])
 		}
 
-		function cubic(start, end) {
+		function curve(start, end) {
 
 			var base_offset = (end.x-start.x)*app.cfg.graph.edge_curvature;
 			var order = e.path_items.indexOf(path_item);
@@ -63,14 +63,14 @@ GraphDrawing.prototype = {
 
 	  if(Math.abs(s.dagre.rank-t.dagre.rank) == 2) {
 	  	//path_string += cubic(s_exit, t_enter);
-	  	path_string += (cubic(s_exit, {x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}) + line({x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}, t_enter))
+	  	path_string += (curve(s_exit, {x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}) + line({x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}, t_enter))
 	  } else {
 	  	var points = [{x: s_exit.x + app.cfg.graph.rankSep, y: e.dagre.points[0].y},
   								{x: t_enter.x - app.cfg.graph.rankSep, y: e.dagre.points[1].y}];
 	  	path_string +=
-	  		( cubic(s_exit, points[0])
+	  		( curve(s_exit, points[0])
 	  		+ line(points[0], points[1])
-	  		+ cubic(points[1], t_enter)
+	  		+ curve(points[1], t_enter)
 	  		);
 	  }
 
@@ -185,6 +185,8 @@ GraphDrawing.prototype = {
 	    var bbox = this.getBBox();
 	    n.bbox = bbox;
 	    n.width = bbox.width;
+	    debugger;
+	    n.offsetheight = -$(this).children('text')[0].getBBox().y;
 	    n.height = bbox.height;
 	  });
 
