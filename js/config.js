@@ -2,7 +2,7 @@ app.cfg = {
 	graph: {
 		nodeSep: 0,
     edgeSep: 20,
-    rankSep: 40,
+    rankSep: 60,
     path_width:3,
     edge_curvature: 0.29,
     render_duration: 2000
@@ -14,7 +14,7 @@ app.cfg = {
     		radius: 30
     	},
     	secondary: {
-    		radius:11
+    		radius:15
     	}
 	}
 }
