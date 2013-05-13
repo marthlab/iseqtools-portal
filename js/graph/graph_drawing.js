@@ -50,7 +50,7 @@ GraphDrawing.prototype = {
 			var order = e.path_items.indexOf(path_item);
 			var slope = (end.y-start.y)/(end.x-start.x);
 			// FIXME: there MUST be a more theoretically sound way of calculating path_offset
-			var path_offset = (order)*-Math.min(Math.abs(slope), 1)*1.3*app.cfg.graph.path_width*sign(slope);
+			var path_offset = order*Math.min(Math.abs(slope), 1)*1.3*app.cfg.graph.path_width*-sign(slope);
 
 			return d3.svg.line(start, end)
 	      .x(function(d) { return d.x; })
