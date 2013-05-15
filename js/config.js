@@ -1,6 +1,6 @@
 app.cfg = {
 	graph: {
-		nodeSep: 0,
+		nodeSep: 50,
     edgeSep: 20,
     rankSep: 60,
     path_width:3,
@@ -10,7 +10,7 @@ app.cfg = {
 	},
 	nodes: {
 		stroke: "#000",
-		label_max_width: 110,
+		label_max_width: 170,
 		primary: {
     		radius: 30
     	},

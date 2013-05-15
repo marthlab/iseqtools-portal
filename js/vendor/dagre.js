@@ -891,6 +891,11 @@ dagre.layout.position = function() {
       balance(g, layering, xss);
     }
 
+    balance(g, layering, xss);
+
+    //g.eachNode(function(u) { x(g, u, x(g, u) + offsetWidth(g, u) - width(g,u)/2); });
+
+
     // Translate layout so left edge of bounding rectangle has coordinate 0
     var minX = min(g.nodes().map(function(u) { return x(g, u) - width(g, u) / 2; }));
     g.eachNode(function(u) { x(g, u, x(g, u) - minX); });
@@ -1006,7 +1011,7 @@ dagre.layout.position = function() {
    */
   function deltaX(g, u) {
     var sep = g.node(u).dummy ? config.edgeSep : config.nodeSep;
-    return offsetWidth(g, u) + sep / 2;
+    return width(g, u) / 2 + sep / 2;
   }
 
   // This function deviates from the standard BK algorithm in two ways. First

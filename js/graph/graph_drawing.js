@@ -27,14 +27,6 @@ GraphDrawing.prototype = {
 	  	x: t.dagre.x-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
 	  	y: t_enter.y
 	  };
-	  // var s_exit = {
-   //  	x: s_circ_intersect.x+s.dagre.width/2-s.cfg.radius,
-   //  	y: s_exit.y
-   //  };
-   //  var t_enter = {
-	  // 	x: t_circ_intersect.x-t.dagre.width/2+t.cfg.radius,
-	  // 	y: t_enter.y
-	  // };
 
 	  function line(start, end) {
 			return d3.svg.line()
@@ -70,8 +62,7 @@ GraphDrawing.prototype = {
   	}
 
 	  if(Math.abs(s.dagre.rank-t.dagre.rank) == 2) {
-	  	path_string += curve(s_exit, t_enter)
-	  	//path_string += (curve(s_exit, {x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}) + line({x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}, t_enter))
+	  	path_string += (curve(s_exit, {x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}) + line({x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}, t_enter))
 	  } else {
 	  	var points = [{x: s_exit.x + app.cfg.graph.rankSep, y: e.dagre.points[0].y},
   								{x: t_enter.x - app.cfg.graph.rankSep, y: e.dagre.points[1].y}];
@@ -157,16 +148,17 @@ GraphDrawing.prototype = {
 	    .append("text")
 	    .each(function(n) {
 	    	var text_elem = d3.select(this);
-	    	var fragments = _.flatten(n.label.split(" ").map(function(fragment) {
+	    	var split_by_spaces = n.label.split(" ");
+	    	var fragments = _.flatten(split_by_spaces.map(function(fragment) {
 	    		hypenated_fragments = fragment.split("-");
 	    		return hypenated_fragments.map(function(word, index) {
-	    			return word + (index == hypenated_fragments.length -1 ? "" : "-"); 
+	    			return word + (index == hypenated_fragments.length-1 ? " " : "-"); 
 	    		})
 	    	}), true);
 
 	    	var label_lines = [[]];
 				for (var i=0; i<fragments.length; i++) {
-					text_elem.text(label_lines+ " " + fragments[i]);
+					text_elem.text(label_lines[label_lines.length-1].join("") + fragments[i].trim());
 				  if (text_elem.node().getBBox().width > app.cfg.nodes.label_max_width) {
 				    label_lines.push([]); 
 				  }
@@ -179,7 +171,7 @@ GraphDrawing.prototype = {
 				    .append("tspan")
 				    .attr("x", 0)
 				    .attr("dy", "1em")
-				    .text(line.join(" "));
+				    .text(line.join("").trim());
 	    	});
 	    })
 	    .attr("text-anchor", "middle")

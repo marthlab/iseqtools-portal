@@ -224,36 +224,36 @@
 		}
 	],
 	"pipelines": [
-		{
-			"id": "test",
-			"name": "test",
-			"tasks_ids": ["sequence", "map", "call_svs", "annotate", "call_de"],
-			"data_types_ids": [],
-			"initial_data_format_usages": [
-			],
-			"tool_usages": [
-			]
-		},
-		{
-			"id": "test2",
-			"name": "test2",
-			"tasks_ids": ["map", "call_svs", "annotate", "call_de"],
-			"data_types_ids": [],
-			"initial_data_format_usages": [
-			],
-			"tool_usages": [
-			]
-		},
-		{
-			"id": "test3",
-			"name": "test3",
-			"tasks_ids": ["sequence", "map", "call_de"],
-			"data_types_ids": [],
-			"initial_data_format_usages": [
-			],
-			"tool_usages": [
-			]
-		},
+		// {
+		// 	"id": "test",
+		// 	"name": "test",
+		// 	"tasks_ids": ["sequence", "map", "call_svs", "annotate", "call_de"],
+		// 	"data_types_ids": [],
+		// 	"initial_data_format_usages": [
+		// 	],
+		// 	"tool_usages": [
+		// 	]
+		// },
+		// {
+		// 	"id": "test2",
+		// 	"name": "test2",
+		// 	"tasks_ids": ["map", "call_svs", "annotate", "call_de"],
+		// 	"data_types_ids": [],
+		// 	"initial_data_format_usages": [
+		// 	],
+		// 	"tool_usages": [
+		// 	]
+		// },
+		// {
+		// 	"id": "test3",
+		// 	"name": "test3",
+		// 	"tasks_ids": ["sequence", "map", "call_de"],
+		// 	"data_types_ids": [],
+		// 	"initial_data_format_usages": [
+		// 	],
+		// 	"tool_usages": [
+		// 	]
+		// },
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
@@ -356,7 +356,8 @@
 						},
 						{
 							"id": "12",
-							"data_format_id": "multiple.bam"
+							"data_format_id": "bam",
+							"multiple": true
 						}
 					]
 				},
