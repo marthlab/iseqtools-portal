@@ -27,6 +27,15 @@ GraphDrawing.prototype = {
 	  	x: t.dagre.x-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
 	  	y: t_enter.y
 	  };
+	  var rank_exit = {
+	  	x: Math.max.apply(this, app.graph.nodes.filter(function(n){ return n.dagre.rank === s.dagre.rank}).map(function(n){ return n.dagre.x+n.dagre.width/2;})),
+	  	y: s_exit.y
+	  };
+	  var rank_enter = {
+	  	x: Math.min.apply(this, app.graph.nodes.filter(function(n){ return n.dagre.rank === t.dagre.rank}).map(function(n){ return n.dagre.x-n.dagre.width/2;})),
+	  	y: t_enter.y
+	  }
+
 
 	  function line(start, end) {
 			return d3.svg.line()
@@ -61,17 +70,20 @@ GraphDrawing.prototype = {
   		path_string += line(s_circ_intersect, s_exit);
   	}
 
-	  if(Math.abs(s.dagre.rank-t.dagre.rank) == 2) {
-	  	path_string += (curve(s_exit, {x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}) + line({x: s_exit.x + app.cfg.graph.rankSep, y: t_enter.y}, t_enter))
+  	path_string += line(s_exit, rank_exit)
+
+	  if(Math.abs(t.dagre.rank-s.dagre.rank) == 2) {
+	  	path_string += curve(rank_exit, rank_enter)
 	  } else {
-	  	var points = [{x: s_exit.x + app.cfg.graph.rankSep, y: e.dagre.points[0].y},
-  								{x: t_enter.x - app.cfg.graph.rankSep, y: e.dagre.points[1].y}];
-	  	path_string +=
-	  		( curve(s_exit, points[0])
-	  		+ line(points[0], points[1])
-	  		+ curve(points[1], t_enter)
-	  		);
+	  	//var connection_y = e.dagre.points[0].y; // same as e.dagre.points[1].y
+	  	var points = [{x: rank_exit.x + app.cfg.graph.rankSep, y: e.dagre.points[0].y},
+  								{x: rank_enter.x - app.cfg.graph.rankSep, y: e.dagre.points[1].y}];
+	  	path_string += curve(rank_exit, points[0])
+	  	path_string += line(points[0], points[1])
+	  	path_string += curve(points[1], rank_enter)
 	  }
+
+	  path_string += line(rank_enter, t_enter)
 
 	  if(t_enter.x < t_circ_intersect.x) {
   		path_string += line(t_enter, t_circ_intersect);
