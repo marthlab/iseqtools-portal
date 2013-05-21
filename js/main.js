@@ -25,13 +25,9 @@
 	    	return new Tool(tool_cfg);
 	    });
 
-	    app.workflows = _.uniq(cfg.pipelines.map(function(pl_cfg) {
-	    	return _.sortBy(pl_cfg.tasks_ids, function(task_id){
-	    		return _.pluck(app.tasks, 'id').indexOf(task_id);
-	    	});
-	    }), function(tasks_ids){ return tasks_ids.join("__"); })
-	    .map(function(tasks_ids, i) { return new Workflow({tasks_ids: tasks_ids, id:"workflow_"+i});});
-
+	    app.workflows = cfg.workflows.map(function(wf_cfg) {
+	    	return new Workflow(wf_cfg);
+	    });
 	    _(app.tasks).each(function(task) {
 	  		task.workflows = _(app.workflows).filter(function(wf) {return _(wf.tasks).contains(task); });
 	  	});
@@ -39,7 +35,6 @@
 	    app.pipelines = cfg.pipelines.map(function(pl_cfg) {
 	    	return new Pipeline(pl_cfg);
 	    });
-
 	    _(app.workflows).each(function(wf) {
 	  		wf.pipelines = _(app.pipelines).filter(function(pl) {return pl.workflow === wf; });
 	  	});

@@ -223,6 +223,23 @@
 			"id": "tabix"
 		}
 	],
+	"workflows": [
+		{
+			"id": 1,
+			"name": "What is a good question for the Map workflow?",
+			"tasks_ids": ["map"]
+		},
+		{
+			"id": 2,
+			"name": "What is a good question for the Call SVs workflow?",
+			"tasks_ids": ["call_svs"]
+		},
+		{
+			"id": 3,
+			"name": "What is a good question for the Map-Call SVs workflow?",
+			"tasks_ids": ["map", "call_svs"]
+		}
+	],
 	"pipelines": [
 		// {
 		// 	"id": "test",
@@ -257,7 +274,7 @@
 		{
 			"id": "test-a",
 			"name": "test-a",
-			"tasks_ids": ["map"],
+			"workflow_id": 1,
 			"data_types_ids": ["reads", "reference_genomes", "alignments"],
 			"initial_data_format_usages": [
 			],
@@ -267,7 +284,7 @@
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
-			"tasks_ids": ["map", "call_svs"],
+			"workflow_id": 3,
 			"data_types_ids": ["reads", "reference_genomes", "alignments", "variants"],
 			"initial_data_format_usages": [
 				{
@@ -512,7 +529,7 @@
 		{
 			"id": "build-moblist-reference",
 			"name": "build-moblist-reference",
-			"tasks_ids": ["map"],
+			"workflow_id": 2,
 			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
 				{
@@ -582,7 +599,7 @@
 		{
 			"id": "build-reference",
 			"name": "build-reference",
-			"tasks_ids": ["map"],
+			"workflow_id": 1,
 			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
 				{
@@ -618,7 +635,7 @@
 		{
 			"id": "align-pe",
 			"name": "align-pe",
-			"tasks_ids": ["map"],
+			"workflow_id": 1,
 			"data_types_ids": ["reads", "reference_genomes", "alignments"],
 			"initial_data_format_usages": [
 				{
@@ -767,7 +784,7 @@
 		{
 			"id": "merge-bam",
 			"name": "merge-bams",
-			"tasks_ids": ["map"],
+			"workflow_id": 1,
 			"data_types_ids": ["alignments"],
 			"initial_data_format_usages": [
 				{
@@ -841,7 +858,7 @@
 		{
 			"id": "call-short-variants",
 			"name": "call-short-variants",
-			"tasks_ids": ["call_svs"],
+			"workflow_id": 2,
 			"data_types_ids": ["alignments", "variants"],
 			"initial_data_format_usages": [
 				{
@@ -926,7 +943,7 @@
 		{
 			"id": "merge-vcf",
 			"name": "merge-vcf",
-			"tasks_ids": ["call_svs"],
+			"workflow_id": 2,
 			"data_types_ids": ["variants"],
 			"initial_data_format_usages": [
 				{

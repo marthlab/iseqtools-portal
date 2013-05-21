@@ -13,6 +13,7 @@ function Task(cfg) {
 
 function Workflow(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
+	this.name = cfg.name || cfg.id;
 	this.tasks = cfg.tasks_ids.map(function(task_id){ return _(app.tasks).find(by_id(task_id));});
 
 	this.data_types = _.union.apply(this,
@@ -22,10 +23,6 @@ function Workflow(cfg) {
 	this.in_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.out_data_types).contains(dt); })).isEmpty();}, this);
 	this.out_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.in_data_types).contains(dt); })).isEmpty();}, this);
 
-		this.name = "From: "
-								+ this.in_data_types.map(function(dt) { return dt.name;}).join(", ")
-								+ " | To: "
-								+ this.out_data_types.map(function(dt) { return dt.name;}).join(", ");
 }
 
 function DataFormat(cfg) {
@@ -43,11 +40,8 @@ function Pipeline(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
 	cfg.initial_data_format_usages = cfg.initial_data_format_usages || [];
 
-	this.workflow = _(app.workflows).find(function(wf) {
-		return _.isEqual(_.pluck(wf.tasks, 'id'), cfg.tasks_ids);
-	});
-
-	this.data_types = cfg.data_types_ids.map(function(dt_id){ return _(this.workflow.data_types).find(by_id(dt_id));}, this);
+	this.workflow = _(app.workflows).find(by_id(cfg.workflow_id));
+	this.data_types = cfg.data_types_ids.map(function(dt_id){ return _(app.data_types).find(by_id(dt_id));});
 
 	var create_dfu = function(dfu_cfg){
 		return new DataFormatUsage(_.extend(dfu_cfg, {pipeline: this}));
