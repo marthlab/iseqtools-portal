@@ -20,7 +20,12 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-        <!-- <h1>Graph Visualization</h1> -->
+        <h1 id="logo"><a href="#">iSeqTools</a></h1>
+
+        <ul id="main_nav"></ul>
+
+        <div id="info"></div>
+
         <nav id="breadcrumbs"></nav>
         <div id="main">
             <svg preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
@@ -29,11 +34,60 @@
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-        <script src="js/vendor/jquery.svg.min.js"></script> 
-        <script src="js/vendor/jquery.svgdom.min.js"></script>
+        <script src="js/vendor/underscore-min.js"></script>
+        <!-- <script src="js/vendor/jquery.svg.min.js"></script> 
+        <script src="js/vendor/jquery.svgdom.min.js"></script> -->
         <script src="js/vendor/d3.js"></script>
         <script src="js/vendor/dagre.js"></script>
+
+        <script type="text/html" id='main_nav_template'>
+          <li data-type="workflows">
+            <h2>Workflows</h2>
+            <ul>
+              <% _(t.workflows).each(function(wf){ %>
+                <li data-id="<%= wf.id %>"><a href="/workflows/<%= wf.id %>"><%= wf.name %></a></li>
+              <% }); %>
+            </ul>
+          </li>
+          <li data-type="pipelines">
+            <h2>Pipelines</h2>
+            <ul>
+              <% _(t.pipelines).each(function(pl){ %>
+                <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
+              <% }); %>
+            </ul>
+          </li>
+          <li data-type="tools">
+            <h2>Tools</h2>
+            <ul>
+              <% _(t.tools).each(function(tool){ %>
+                <li data-id="<%= tool.id %>"><a href="/tools/<%= tool.id %>"><%= tool.name %></a></li>
+              <% }); %>
+            </ul>
+          </li>
+        </script>
+
+        <script type="text/html" id='info_global_template'>
+          <div>Global view informational content</div>
+        </script>
+
+        <script type="text/html" id='info_workflow_template'>
+          <div>Workflow informational content</div>
+          <p>Workflow ID: <%= t.id %></p>
+          <p>Workflow Name: <%= t.name %></p>
+        </script>
+
+        <script type="text/html" id='info_pipeline_template'>
+          <div>Pipeline informational content</div>
+          <p>Pipeline ID: <%= t.id %></p>
+          <p>Pipeline Name: <%= t.name %></p>
+        </script>
+
+        <script type="text/html" id='info_tool_template'>
+          <div>Tool informational content</div>
+          <p>Tool ID: <%= t.id %></p>
+          <p>Tool Name: <%= t.name %></p>
+        </script>
 
         <script type="text/html" id='breadcrumbs-template'>
             <% var type = app.activeItemType(); %>

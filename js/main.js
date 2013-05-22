@@ -1,117 +1,247 @@
+//(function() {
 
-    app.initialize_domain_objects = function(cfg) {
+  _.templateSettings.variable = "t";
 
-			var create_dt = function(dt_cfg){
-    		return new DataType(dt_cfg);
-    	};
+  var data = {
+    init: function(cfg) {
+      var create_dt = function(dt_cfg){ return new DataType(dt_cfg);};
 
-	    app.data_types = _.flatten(_(cfg.tasks.map(function(task_cfg) {
-	    	return task_cfg.out_data_types.map(create_dt);
-	    })).union(cfg.initial_data_types.map(create_dt)), true);
-	    
-	    app.tasks = cfg.tasks.map(function(task_cfg) {
-	    	return new Task(task_cfg);
-	    });
+      this.data_types = _.flatten(_(cfg.tasks.map(function(task_cfg) {
+        return task_cfg.out_data_types.map(create_dt);
+      })).union(cfg.initial_data_types.map(create_dt)), true);
 
-	    app.data_formats = cfg.data_formats.map(function(df_cfg) {
-	    	return new DataFormat(df_cfg);
-	    });
+      this.tasks = cfg.tasks.map(function(task_cfg) {
+        return new Task(task_cfg);
+      });
 
-	    // _(app.data_types).each(function(dt) {
-  		// 	dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
-  	  // });
+      this.data_formats = cfg.data_formats.map(function(df_cfg) {
+        return new DataFormat(df_cfg);
+      });
 
-	    app.tools = cfg.tools.map(function(tool_cfg) {
-	    	return new Tool(tool_cfg);
-	    });
+      // _(app.data_types).each(function(dt) {
+      //  dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
+      // });
 
-	    app.workflows = cfg.workflows.map(function(wf_cfg) {
-	    	return new Workflow(wf_cfg);
-	    });
-	    _(app.tasks).each(function(task) {
-	  		task.workflows = _(app.workflows).filter(function(wf) {return _(wf.tasks).contains(task); });
-	  	});
+      this.tools = cfg.tools.map(function(tool_cfg) {
+        return new Tool(tool_cfg);
+      });
 
-	    app.pipelines = cfg.pipelines.map(function(pl_cfg) {
-	    	return new Pipeline(pl_cfg);
-	    });
-	    _(app.workflows).each(function(wf) {
-	  		wf.pipelines = _(app.pipelines).filter(function(pl) {return pl.workflow === wf; });
-	  	});
+      this.workflows = cfg.workflows.map(function(wf_cfg) {
+        return new Workflow(wf_cfg);
+      });
+      _(this.tasks).each(function(task) {
+        task.workflows = _(this.workflows).filter(function(wf) {return _(wf.tasks).contains(task); }, this);
+      });
 
-  	}
+      this.pipelines = cfg.pipelines.map(function(pl_cfg) {
+        return new Pipeline(pl_cfg);
+      });
+      _(this.workflows).each(function(wf) {
+        wf.pipelines = _(this.pipelines).filter(function(pl) {return pl.workflow === wf; }, this);
+      });
+    }
+  }
 
-  	app.breadcrumbs = {
-  		init: function(element, options) {
-  			this.element = element;
-  			//bind event handlers
-  			$(this.element).on("click", "a", function(event){
-				  var $t = $(event.target);
-				  if($t.hasClass("global") ) {
-				  	app.activateItem(app);
-				  } else if($t.hasClass("workflow") ) {
-				  	app.activateItem(app.current_workflow);
-				  } else if($t.hasClass("pipeline") ) {
-				  	app.activateItem(app.current_pipeline);
-				  }
-				});
-  		},
-  		update: function() {
-  			$(this.element).html(app.templates.breadcrumbs(app));
-  		}
-  	}
+  var widgets = {
+    logo: {
+      init: function() {
+        this.$link = $('#logo a');
+      },
+      enableInteractivity: function() {
+        $link.on("click", function(e) {
+          e.preventDefault();
+          app.showContent(null);
+        });
+      },
+      disableInteractivity: function() {
+        this.$link.off("click");
+      },
+      transition: function() {
+        
+      }
+    },
+    main_nav: {
+      template: _.template($('#main_nav_template').html()),
+      init: function() {
+        this.$el = $('#main_nav'); 
+        this.$el.html(this.template({workflows: data.workflows, pipelines: data.pipelines, tools: data.tools}));
+        this.$links = this.$el.find("li ul a");
+      },
+      enableInteractivity: function() {
+        _(this.$links).each(function(link) {
+          $(link).on("click", function(e) {
+            e.preventDefault();
+            var item_id = $(this).parent().data("id");
+            var item_type = $(this).parents("li[data-type]").data("type");
+            showContent(_(data[item_type]).find(by_id(item_id)));
+          });
+        });
+      },
+      disableInteractivity: function() {
+        this.$links.off("click");
+      },
+      transition: function() {
+        var def = $.Deferred();
 
-  	app.activateItem = function(item) {
-  		if(item == app) {
-  			this.current_workflow = this.current_pipeline = this.current_tool = null;
-  		} else if (item instanceof Workflow) {
-  			this.current_pipeline = this.current_tool = null;
-  			this.current_workflow = item;
-  		} else if (item instanceof Pipeline) {
-  			this.current_tool = null;
-  			this.current_pipeline = item;
-  			//this.current_workflow = pipeline.workflow;
-  		} else if (item instanceof Tool) {
-  			this.current_tool = item;
-  		}
-  		this.graph.update();
-  		this.breadcrumbs.update();
-  	}
+        window.setTimeout(function() {
+          console.log("main nav transition");
+          def.resolve();
+        }, 2000);
 
-  	app.activeItemType = function() {
-  		if(this.current_tool) {return 'tool';}
-  		else if(this.current_pipeline) {return 'pipeline';}
-  		else if(this.current_workflow) {return 'workflow';}
-  		else {return 'global';}
-  	}
+        return def;
+      }
+    },
+    info: {
+      templates: {
+        'global': _.template($('#info_global_template').html()),
+        'workflow': _.template($('#info_workflow_template').html()),
+        'pipeline': _.template($('#info_pipeline_template').html()),
+        'tool': _.template($('#info_tool_template').html()),
+      },
+      init: function() {
+        this.$el = $('#info'); 
+      },
+      enableInteractivity: function() {
 
-  	app.activeItem = function() {
-  		switch(this.activeItemType() ) {
-  			case 'tool':
-  				return this.current_tool;
-  			case 'pipeline':
-  				return this.current_pipeline;
-  			case 'workflow':
-  				return this.current_workflow;
-  			case 'global':
-  				return this;
-  		}
-  	}
+      },
+      disableInteractivity: function() {
 
-  	// app.templates.nav.global = _.template($('#nav-template-global').html(), null, {variable: 'workflows'});
-  	// app.templates.nav.workflow = _.template($('#nav-template-workflow').html(), null, {variable: 'pipelines'});
-  	// app.templates.nav.pipeline = _.template($('#nav-template-pipeline').html(), null, {variable: 'tools'});
-  	app.templates = {
-  		breadcrumbs: _.template($('#breadcrumbs-template').html(), null, {variable: 'app'})
-  	};
-		
-		app.initialize_domain_objects(app_json);
+      },
+      transition: function() {
+        console.log("grr");
+        console.log(this.templates[app.viewType(app.content)](app.content));
+        this.$el.html(this.templates[app.viewType(app.content)](app.content));
 
- 		app.graph = new Graph({display_svg: document.getElementById('display_svg'), layout_svg: document.getElementById('layout_svg')});
- 		app.breadcrumbs.init(document.getElementById('breadcrumbs'));
- 		app.activateItem(app);
- 		//app.graph.load_pipeline(app.pipelines[0]);
- 		
- 		//app.graph.load_workflows([app.workflows[3]]);
- 		
+      }
+    }
+  }
+
+  // app object exists mainly to distinguish app-level data and methods
+  var app = {};
+
+  app.showContent = function(item) {
+    console.log(item);
+    this.old_content = this.content;
+    this.content = item || null;
+
+    this.disableInteractivity();
+    this.transition(
+      this.enableInteractivity
+    );
+  }
+
+  app.viewType = function(item) {
+    return !item ? 'global' : item.constructor.name.toLowerCase();
+  }
+
+  app.disableInteractivity = function() {
+    widgets.logo.disableInteractivity();
+    widgets.main_nav.disableInteractivity();
+    widgets.info.disableInteractivity();
+  }
+
+  app.transition = function(onTransitionEnd) {
+    
+    $.when( widgets.logo.transition(),
+            widgets.main_nav.transition(),
+            widgets.info.transition() )
+    .then(function() {
+      onTransitionEnd();
+    });
+    
+  }
+
+  app.enableInteractivity = function() {
+    widgets.main_nav.enableInteractivity();
+  }
+
+  // initialize data
+  data.init(app_json);
+
+  // start in global view
+  app.old_content = undefined;
+  app.content = null;
+
+  // initialize widgets
+  widgets.logo.init();
+  widgets.main_nav.init();
+  widgets.info.init();
+
+  app.showContent();
+
+//})();
+
+    // app.breadcrumbs = {
+    //   init: function(element, options) {
+    //     this.element = element;
+    //     //bind event handlers
+    //     $(this.element).on("click", "a", function(event){
+    //       var $t = $(event.target);
+    //       if($t.hasClass("global") ) {
+    //         app.activateItem(app);
+    //       } else if($t.hasClass("workflow") ) {
+    //         app.activateItem(app.current_workflow);
+    //       } else if($t.hasClass("pipeline") ) {
+    //         app.activateItem(app.current_pipeline);
+    //       }
+    //     });
+    //   },
+    //   update: function() {
+    //     $(this.element).html(app.templates.breadcrumbs(app));
+    //   }
+    // }
+
+    // app.activateItem = function(item) {
+    //   if(item == app) {
+    //     this.current_workflow = this.current_pipeline = this.current_tool = null;
+    //   } else if (item instanceof Workflow) {
+    //     this.current_pipeline = this.current_tool = null;
+    //     this.current_workflow = item;
+    //   } else if (item instanceof Pipeline) {
+    //     this.current_tool = null;
+    //     this.current_pipeline = item;
+    //     //this.current_workflow = pipeline.workflow;
+    //   } else if (item instanceof Tool) {
+    //     this.current_tool = item;
+    //   }
+    //   this.graph.update();
+    //   this.breadcrumbs.update();
+    // }
+
+    // app.activeItemType = function() {
+    //   if(this.current_tool) {return 'tool';}
+    //   else if(this.current_pipeline) {return 'pipeline';}
+    //   else if(this.current_workflow) {return 'workflow';}
+    //   else {return 'global';}
+    // }
+
+    // app.activeItem = function() {
+    //   switch(this.activeItemType() ) {
+    //     case 'tool':
+    //       return this.current_tool;
+    //     case 'pipeline':
+    //       return this.current_pipeline;
+    //     case 'workflow':
+    //       return this.current_workflow;
+    //     case 'global':
+    //       return this;
+    //   }
+    // }
+
+    // app.templates.nav.global = _.template($('#nav-template-global').html(), null, {variable: 'workflows'});
+    // app.templates.nav.workflow = _.template($('#nav-template-workflow').html(), null, {variable: 'pipelines'});
+    // app.templates.nav.pipeline = _.template($('#nav-template-pipeline').html(), null, {variable: 'tools'});
+    // app.templates = {
+    //   breadcrumbs: _.template($('#breadcrumbs-template').html(), null, {variable: 'app'})
+    // };
+ 
+
+    // app.graph = new Graph({display_svg: document.getElementById('display_svg'), layout_svg: document.getElementById('layout_svg')});
+    // app.breadcrumbs.init(document.getElementById('breadcrumbs'));
+    // app.activateItem(app);
+    //app.graph.load_pipeline(app.pipelines[0]);
+
+    //app.graph.load_workflows([app.workflows[3]]);
+    
+    
 
