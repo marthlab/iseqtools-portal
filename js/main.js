@@ -46,18 +46,10 @@
     logo: {
       init: function() {
         this.$link = $('#logo a');
-      },
-      enableInteractivity: function() {
-        $link.on("click", function(e) {
+        this.$link.on("click", function(e) {
           e.preventDefault();
-          app.showContent(null);
+          app.showContent('global');
         });
-      },
-      disableInteractivity: function() {
-        this.$link.off("click");
-      },
-      transition: function() {
-        
       }
     },
     main_nav: {
@@ -66,29 +58,21 @@
         this.$el = $('#main_nav'); 
         this.$el.html(this.template({workflows: data.workflows, pipelines: data.pipelines, tools: data.tools}));
         this.$links = this.$el.find("li ul a");
-      },
-      enableInteractivity: function() {
-        _(this.$links).each(function(link) {
-          $(link).on("click", function(e) {
-            e.preventDefault();
-            var item_id = $(this).parent().data("id");
-            var item_type = $(this).parents("li[data-type]").data("type");
-            showContent(_(data[item_type]).find(by_id(item_id)));
-          });
+        this.$links.on("click", function(e) {
+          e.preventDefault();
+          var item_id = $(e.target).parent().data("id");
+          var item_type = $(e.target).parents("li[data-type]").data("type");
+          app.showContent(_(data[item_type]).find(by_id(item_id)));
         });
       },
-      disableInteractivity: function() {
-        this.$links.off("click");
-      },
       transition: function() {
-        var def = $.Deferred();
+        var complete = $.Deferred();
 
         window.setTimeout(function() {
-          console.log("main nav transition");
-          def.resolve();
+          complete.resolve();
         }, 2000);
 
-        return def;
+        return complete.promise();
       }
     },
     info: {
@@ -96,20 +80,12 @@
         'global': _.template($('#info_global_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
         'pipeline': _.template($('#info_pipeline_template').html()),
-        'tool': _.template($('#info_tool_template').html()),
+        'tool': _.template($('#info_tool_template').html())
       },
       init: function() {
         this.$el = $('#info'); 
       },
-      enableInteractivity: function() {
-
-      },
-      disableInteractivity: function() {
-
-      },
       transition: function() {
-        console.log("grr");
-        console.log(this.templates[app.viewType(app.content)](app.content));
         this.$el.html(this.templates[app.viewType(app.content)](app.content));
 
       }
@@ -120,30 +96,30 @@
   var app = {};
 
   app.showContent = function(item) {
-    console.log(item);
-    this.old_content = this.content;
-    this.content = item || null;
-
-    this.disableInteractivity();
-    this.transition(
-      this.enableInteractivity
-    );
+    if(this.is_transitioning) {
+      this.queued_content = item;
+    } else {
+      console.log(item);
+      this.queued_content = null;
+      this.old_content = this.content;
+      this.content = item;
+      this.is_transitioning = true;
+      this.transition((function() {
+        this.is_transitioning = false;
+        if(this.queued_content) {
+          this.showContent(this.queued_content);
+        }
+      }).bind(this));
+    }
   }
 
   app.viewType = function(item) {
-    return !item ? 'global' : item.constructor.name.toLowerCase();
-  }
-
-  app.disableInteractivity = function() {
-    widgets.logo.disableInteractivity();
-    widgets.main_nav.disableInteractivity();
-    widgets.info.disableInteractivity();
+    return typeof item == "string" ? item : item.constructor.name.toLowerCase();
   }
 
   app.transition = function(onTransitionEnd) {
     
-    $.when( widgets.logo.transition(),
-            widgets.main_nav.transition(),
+    $.when( widgets.main_nav.transition(),
             widgets.info.transition() )
     .then(function() {
       onTransitionEnd();
@@ -159,15 +135,17 @@
   data.init(app_json);
 
   // start in global view
-  app.old_content = undefined;
+  app.old_content = null;
   app.content = null;
+  app.queued_content = null;
+  app.is_transitioning = false;
 
   // initialize widgets
   widgets.logo.init();
   widgets.main_nav.init();
   widgets.info.init();
 
-  app.showContent();
+  app.showContent('global');
 
 //})();
 
