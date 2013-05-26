@@ -20,3 +20,8 @@ function by_id(id) {
 }
 
 function sign(x) { return x ? x < 0 ? -1 : 1 : 0; }
+
+String.prototype.toUnderscore = function(){
+  return this.replace(/\W+/g, '_')
+                .replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase();
+};

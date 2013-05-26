@@ -1,4 +1,34 @@
 {
+	"teams": [
+		{
+			"id": "broad",
+			"name": "Broad Institute"
+		},
+		{
+			"id": "bc",
+			"name": "Boston College"
+		},
+		{
+			"id": "umich",
+			"name": "University of Michigan"
+		},
+		{
+			"id": "washu",
+			"name": "Washington University"
+		},
+		{
+			"id": "scripps",
+			"name": "The Scripps Research Institute"
+		},
+		{
+			"id": "usc",
+			"name": "University of Southern California"
+		},
+		{
+			"id": "harvard",
+			"name": "Harvard University"
+		}
+	],
 	"initial_data_types": [
 		{
 			"id":"gene_models",
@@ -193,7 +223,8 @@
 			"id": "samtools-calmd"
 		},
 		{
-			"id": "freebayes"
+			"id": "freebayes",
+			"team_id": "bc"
 		},
 		{
 			"id": "cat"
@@ -226,17 +257,20 @@
 	"workflows": [
 		{
 			"id": 1,
-			"name": "What is a good question for the Map workflow?",
+			"name": "WF 1 Name",
+			"question": "What is a good question for the Map workflow?",
 			"tasks_ids": ["map"]
 		},
 		{
 			"id": 2,
-			"name": "What is a good question for the Call SVs workflow?",
+			"name": "WF 2 Name",
+			"question": "What is a good question for the Call SVs workflow?",
 			"tasks_ids": ["call_svs"]
 		},
 		{
 			"id": 3,
-			"name": "What is a good question for the Map-Call SVs workflow?",
+			"name": "WF 3 Name",
+			"question": "What is a good question for the Map-Call SVs workflow?",
 			"tasks_ids": ["map", "call_svs"]
 		}
 	],
@@ -274,6 +308,7 @@
 		{
 			"id": "test-a",
 			"name": "test-a",
+			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["reads", "reference_genomes", "alignments"],
 			"initial_data_format_usages": [
@@ -284,6 +319,7 @@
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
+			"team_id": "bc",
 			"workflow_id": 3,
 			"data_types_ids": ["reads", "reference_genomes", "alignments", "variants"],
 			"initial_data_format_usages": [
@@ -529,6 +565,7 @@
 		{
 			"id": "build-moblist-reference",
 			"name": "build-moblist-reference",
+			"team_id": "bc",
 			"workflow_id": 2,
 			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
@@ -599,6 +636,7 @@
 		{
 			"id": "build-reference",
 			"name": "build-reference",
+			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
@@ -635,6 +673,7 @@
 		{
 			"id": "align-pe",
 			"name": "align-pe",
+			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["reads", "reference_genomes", "alignments"],
 			"initial_data_format_usages": [
@@ -784,6 +823,7 @@
 		{
 			"id": "merge-bam",
 			"name": "merge-bams",
+			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["alignments"],
 			"initial_data_format_usages": [
@@ -858,6 +898,7 @@
 		{
 			"id": "call-short-variants",
 			"name": "call-short-variants",
+			"team_id": "bc",
 			"workflow_id": 2,
 			"data_types_ids": ["alignments", "variants"],
 			"initial_data_format_usages": [
@@ -943,6 +984,7 @@
 		{
 			"id": "merge-vcf",
 			"name": "merge-vcf",
+			"team_id": "bc",
 			"workflow_id": 2,
 			"data_types_ids": ["variants"],
 			"initial_data_format_usages": [

@@ -2,9 +2,15 @@
 
   _.templateSettings.variable = "t";
 
-  var data = {
+  var app = {};
+
+  app.data = {
     init: function(cfg) {
       var create_dt = function(dt_cfg){ return new DataType(dt_cfg);};
+
+      this.teams = cfg.teams.map(function(team_cfg) {
+        return new Team(team_cfg);
+      });
 
       this.data_types = _.flatten(_(cfg.tasks.map(function(task_cfg) {
         return task_cfg.out_data_types.map(create_dt);
@@ -25,45 +31,47 @@
       this.tools = cfg.tools.map(function(tool_cfg) {
         return new Tool(tool_cfg);
       });
+      
 
       this.workflows = cfg.workflows.map(function(wf_cfg) {
         return new Workflow(wf_cfg);
-      });
-      _(this.tasks).each(function(task) {
-        task.workflows = _(this.workflows).filter(function(wf) {return _(wf.tasks).contains(task); }, this);
       });
 
       this.pipelines = cfg.pipelines.map(function(pl_cfg) {
         return new Pipeline(pl_cfg);
       });
+
+      _(this.tools).each(function(tool) {
+        tool.pipelines = _(this.pipelines).filter(function(pl) {return _(pl.tools).contains(tool); }, this);
+      }, this);
+
+      _(this.tasks).each(function(task) {
+        task.workflows = _(this.workflows).filter(function(wf) {return _(wf.tasks).contains(task); }, this);
+      }, this);
+
+      _(this.teams).each(function(team) {
+        team.tools = _(this.tools).filter(function(tool) {return tool.team === team; }, this);
+        team.pipelines = _(this.pipelines).filter(function(pl) {return pl.team === team; }, this);
+      }, this);
+
       _(this.workflows).each(function(wf) {
         wf.pipelines = _(this.pipelines).filter(function(pl) {return pl.workflow === wf; }, this);
-      });
+      }, this);
+
     }
   }
 
-  var widgets = {
+  app.widgets = {
     logo: {
       init: function() {
-        this.$link = $('#logo a');
-        this.$link.on("click", function(e) {
-          e.preventDefault();
-          app.showContent('global');
-        });
+
       }
     },
     main_nav: {
       template: _.template($('#main_nav_template').html()),
       init: function() {
         this.$el = $('#main_nav'); 
-        this.$el.html(this.template({workflows: data.workflows, pipelines: data.pipelines, tools: data.tools}));
-        this.$links = this.$el.find("li ul a");
-        this.$links.on("click", function(e) {
-          e.preventDefault();
-          var item_id = $(e.target).parent().data("id");
-          var item_type = $(e.target).parents("li[data-type]").data("type");
-          app.showContent(_(data[item_type]).find(by_id(item_id)));
-        });
+        this.$el.html(this.template(_(app.data).pick('workflows', 'pipelines', 'tools', 'teams')));
       },
       transition: function() {
         var complete = $.Deferred();
@@ -75,64 +83,106 @@
         return complete.promise();
       }
     },
+    workflows: {
+      template: _.template($('#workflows_template').html()),
+      init: function() {
+        this.$el = $('#workflows');
+        this.$el.html(this.template({workflows: app.data.workflows, start_index: 0}));
+      },
+      transition: function() {
+        
+
+      }
+    },
+    graph_nav: {
+      //template: _.template($('#teams_template').html()),
+      init: function() {
+        this.$el = $('#teams'); 
+      },
+      transition: function() {
+
+
+      }
+    },
+    graph: {
+      //template: _.template($('#teams_template').html()),
+      init: function() {
+        this.$el = $('#teams'); 
+      },
+      transition: function() {
+
+
+      }
+    },
     info: {
       templates: {
         'global': _.template($('#info_global_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
         'pipeline': _.template($('#info_pipeline_template').html()),
+        'team': _.template($('#info_team_template').html()),
         'tool': _.template($('#info_tool_template').html())
       },
       init: function() {
         this.$el = $('#info'); 
       },
       transition: function() {
-        this.$el.html(this.templates[app.viewType(app.content)](app.content));
+        var content = (app.contentType(app.content) == 'tool_usage' ? app.content.tool : app.content);
+        this.$el.html(this.templates[app.contentType(content)](content));
+
+      }
+    },
+    teams: {
+      template: _.template($('#teams_template').html()),
+      init: function() {
+        this.$el = $('#teams');
+        this.$el.html(this.template({teams: app.data.teams}));
+      },
+      transition: function() {
+
 
       }
     }
   }
 
-  // app object exists mainly to distinguish app-level data and methods
-  var app = {};
+  
 
   app.showContent = function(item) {
+    item = item || null;
     if(this.is_transitioning) {
       this.queued_content = item;
     } else {
       console.log(item);
-      this.queued_content = null;
       this.old_content = this.content;
       this.content = item;
       this.is_transitioning = true;
       this.transition((function() {
         this.is_transitioning = false;
         if(this.queued_content) {
-          this.showContent(this.queued_content);
+          var next = this.queued_content;
+          this.queued_content = null;
+          this.showContent(next);
         }
       }).bind(this));
     }
   }
-
-  app.viewType = function(item) {
-    return typeof item == "string" ? item : item.constructor.name.toLowerCase();
+  
+  app.contentType = function(item) {
+    return item ? item.constructor.name.toUnderscore() : 'global';
   }
 
   app.transition = function(onTransitionEnd) {
     
-    $.when( widgets.main_nav.transition(),
-            widgets.info.transition() )
+    $.when( app.widgets.main_nav.transition(),
+            app.widgets.info.transition(),
+            app.widgets.workflows.transition() )
     .then(function() {
       onTransitionEnd();
     });
     
   }
 
-  app.enableInteractivity = function() {
-    widgets.main_nav.enableInteractivity();
-  }
-
   // initialize data
-  data.init(app_json);
+  app.data.init(app_json);
 
   // start in global view
   app.old_content = null;
@@ -140,12 +190,26 @@
   app.queued_content = null;
   app.is_transitioning = false;
 
-  // initialize widgets
-  widgets.logo.init();
-  widgets.main_nav.init();
-  widgets.info.init();
+  //initialize router
+  app.router = Davis(function () {
+    this.get('/:type/:id', function (req) {
+      var data = app.data[req.params['type']];
+      if(data) {
+        app.showContent(_(data).find(by_id(req.params['id'])));
+      }
+    })
+  })
 
-  app.showContent('global');
+  app.router.start();
+      
+  // initialize widgets
+  app.widgets.logo.init();
+  app.widgets.main_nav.init();
+  app.widgets.workflows.init();
+  app.widgets.info.init();
+  app.widgets.teams.init();
+
+  app.showContent();
 
 //})();
 
