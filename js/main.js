@@ -62,11 +62,6 @@
   }
 
   var widgets = {
-    logo: {
-      init: function() {
-
-      }
-    },
     main_nav: {
       template: _.template($('#main_nav_template').html()),
       init: function() {
@@ -77,7 +72,6 @@
         var complete = $.Deferred();
 
         window.setTimeout(function() {
-          console.log("test");
           complete.resolve();
         }, 2000);
 
@@ -98,7 +92,7 @@
     graph_nav: {
       //template: _.template($('#teams_template').html()),
       init: function() {
-        this.$el = $('#teams'); 
+        this.$el = $('#graph_nav'); 
       },
       transition: function() {
 
@@ -108,12 +102,44 @@
     graph: {
       //template: _.template($('#teams_template').html()),
       init: function() {
-        this.$el = $('#teams'); 
+        this.$el = $('#graph');
+        this.visible = false;
+        // create new graph object
       },
       transition: function() {
 
+        var trans_completion = $.Deferred();
+        var updater = _.partial(this._update, trans_completion.resolve);
 
+        if(!this.visible && app.content.graphable) {
+          this._show(updater);
+        } else if(this.visible && !app.content.graphable) {
+          this._hide(updater);
+        } else { // this covers 2 distinct cases: both true and both false
+          updater();
+        }
+
+        return trans_completion.promise();
+
+      },
+      _update: function(on_complete) {
+        console.log("test update");
+        //when complete
+        on_complete();
+      },
+      _hide: function(on_complete) {
+        this.visible = false;
+        console.log("test hide");
+        //when complete
+        on_complete();
+      },
+      _show: function(on_complete) {
+        this.visible = true;
+        console.log("test show");
+        //when complete
+        on_complete();
       }
+      
     },
     info: {
       templates: {
@@ -147,6 +173,8 @@
   var app = {};
 
   app.showContent = function(item) {
+    console.log("showContent: ");
+    console.log(item);
     item = item || null;
     if(this.is_transitioning) {
       this.queued_content = item;
@@ -172,11 +200,12 @@
 
   app.transition = function(onTransitionEnd) {
     
-    $.when( widgets.main_nav.transition(),
-            widgets.info.transition(),
-            widgets.workflows.transition() )
+    var widget_transitions = Object.keys(widgets).map(function(w_name) {
+      widgets[w_name].transition();
+    });
+
+    $.when.apply(null, widget_transitions)
     .then(function() {
-      console.log("then");
       onTransitionEnd();
     });
     
@@ -191,26 +220,28 @@
   app.queued_content = null;
   app.is_transitioning = false;
 
+  // initialize widgets
+  Object.keys(widgets).forEach(function(w_name) {
+    widgets[w_name].init();
+  });
+
   //initialize router
   app.router = Davis(function () {
+    this.configure(function(){
+      this.generateRequestOnPageLoad = true;
+    });
     this.get('/:type/:id', function (req) {
       var data = gdata[req.params['type']];
       if(data) {
         app.showContent(_(data).find(by_id(req.params['id'])));
       }
     });
+    this.get('/', function (req) {
+      app.showContent(gdata.summary);
+    });
   })
 
   app.router.start();
-      
-  // initialize widgets
-  widgets.logo.init();
-  widgets.main_nav.init();
-  widgets.workflows.init();
-  widgets.info.init();
-  widgets.teams.init();
-
-  app.showContent(gdata.summary);
 
 //})();
 

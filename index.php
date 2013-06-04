@@ -12,11 +12,11 @@
 
         <!-- <link rel="stylesheet" href="css/normalize.min.css">
         <link rel="stylesheet" href="css/main.css"> -->
-        <link href="css/bootstrap.css" rel="stylesheet">
-        <link href="css/bootstrap-responsive.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
+        <link href="/css/bootstrap.css" rel="stylesheet">
+        <link href="/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
 
-        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
       <div class="navbar navbar-inverse navbar-fixed-top">
@@ -70,14 +70,14 @@
         <svg preserveAspectRatio="xMidYMid meet" id="layout_svg"></svg> -->
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-        <script src="js/vendor/davis.min.js"></script>
-        <script src="js/vendor/bootstrap.js"></script>
-        <script src="js/vendor/underscore-min.js"></script>
+        <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+        <script src="/js/vendor/davis.min.js"></script>
+        <script src="/js/vendor/bootstrap.js"></script>
+        <script src="/js/vendor/underscore-min.js"></script>
         <!-- <script src="js/vendor/jquery.svg.min.js"></script> 
         <script src="js/vendor/jquery.svgdom.min.js"></script> -->
-        <script src="js/vendor/d3.js"></script>
-        <script src="js/vendor/dagre.js"></script>
+        <script src="/js/vendor/d3.js"></script>
+        <script src="/js/vendor/dagre.js"></script>
 
         <script type="text/html" id='main_nav_template'>
           <li data-type="workflows" class="dropdown">
@@ -228,14 +228,14 @@
         var app = {};
         </script>
 
-        <script src="js/utils.js"></script>
-        <script src="js/config.js"></script>
-        <script src="js/domain_objects.js"></script>
-        <script src="js/graph/graph.js"></script>
-        <script src="js/graph/node.js"></script>
-        <script src="js/graph/edge.js"></script>
-        <script src="js/graph/graph_drawing.js"></script>
-        <script src="js/main.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/config.js"></script>
+        <script src="/js/domain_objects.js"></script>
+        <script src="/js/graph/graph.js"></script>
+        <script src="/js/graph/node.js"></script>
+        <script src="/js/graph/edge.js"></script>
+        <script src="/js/graph/graph_drawing.js"></script>
+        <script src="/js/main.js"></script>
 
         <script>
             var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];

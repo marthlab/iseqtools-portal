@@ -1,14 +1,17 @@
 function Summary(cfg) {
 	_(this).extend(_(cfg).pickStrings('description'));
 }
+Summary.prototype.graphable = false;
 
 function Team(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
 }
+Team.prototype.graphable = false;
 
 function DataType(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
 }
+DataType.prototype.graphable = false;
 
 function Task(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
@@ -18,6 +21,7 @@ function Task(cfg) {
 	// references populated later
 	this.workflows = {};
 }
+Task.prototype.graphable = false;
 
 function Workflow(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name', 'question'));
@@ -29,20 +33,22 @@ function Workflow(cfg) {
 
 	this.in_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.out_data_types).contains(dt); })).isEmpty();}, this);
 	this.out_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.in_data_types).contains(dt); })).isEmpty();}, this);
-
 }
+Workflow.prototype.graphable = true;
 
 function DataFormat(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
 	this.name = cfg.name || cfg.id;
 	//this.data_type = _(gdata.tasks).find(by_id(cfg.data_type_id)) || null;
 }
+DataFormat.prototype.graphable = false;
 
 function Tool(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
 	this.name = cfg.name || cfg.id;
 	this.team = _(gdata.teams).find(by_id(cfg.team_id)) || null;
 }
+Tool.prototype.graphable = false;
 
 function Pipeline(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
@@ -65,8 +71,8 @@ function Pipeline(cfg) {
   }, this);
 
   this.tools = _.uniq(this.tool_usages.map(function(tu) { return tu.tool;}));
-
 }
+Pipeline.prototype.graphable = true;
 
 function DataFormatUsage(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
@@ -74,6 +80,7 @@ function DataFormatUsage(cfg) {
 	this.pipeline = cfg.pipeline;
 	this.data_format = _(gdata.data_formats).find(by_id(cfg.data_format_id));
 }
+DataFormatUsage.prototype.graphable = false;
 
 function ToolUsage(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
@@ -84,3 +91,4 @@ function ToolUsage(cfg) {
 	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return _(this.pipeline.data_format_usages).find(by_id(dfu_id));}, this);
 	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return _(this.pipeline.data_format_usages).find(by_id(dfu_cfg.id));}, this);
 }
+ToolUsage.prototype.graphable = true;
