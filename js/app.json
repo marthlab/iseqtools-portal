@@ -175,55 +175,97 @@
 	],
 	"tools": [
 		{
-			"id": "picard-create-sequence-dictionary"
+			"id": "picard",
+			"subtools": [
+				{
+					"id": "picard-create-sequence-dictionary"
+				},
+				{
+					"id": "picard-mark-duplicates"
+				}
+			]
 		},
 		{
-			"id": "mosaik-build-reference"
-		},
-		{
-			"id": "mosaik-jump"
+			"id": "mosaik",
+			"subtools": [
+				{
+					"id": "mosaik-build-reference"
+				},
+				{
+					"id": "mosaik-jump"
+				},
+				{
+					"id": "mosaik-build-fastq"
+				},
+				{
+					"id": "mosaik-aligner"
+				}
+			]
 		},
 		{
 			"id": "premo"
 		},
 		{
-			"id": "samtools-index-fasta"
+			"id": "samtools",
+			"subtools": [
+				{
+					"id": "samtools-index-fasta"
+				}
+			]
 		},
 		{
-			"id": "mosaik-build-fastq"
+			"id": "bamtools",
+			"team_id": "bc",
+			"subtools": [
+				{
+					"id": "bamtools-sort"
+				},
+				{
+					"id": "bamtools-index"
+				},
+				{
+					"id": "bamtools-filter"
+				},
+				{
+					"id": "bamtools-merge"
+				},
+				{
+					"id": "bamtools-stats"
+				}
+			]
 		},
 		{
-			"id": "mosaik-aligner"
+			"id": "gatk",
+			"subtools": [
+				{
+					"id": "gatk-count-covariates"
+				},
+				{
+					"id": "gatk-recalibrate-bq"
+				}
+			]
 		},
 		{
-			"id": "bamtools-sort"
+			"id": "samtools",
+			"subtools": [
+				{
+					"id": "samtools-calmd"
+				}
+			]
 		},
 		{
-			"id": "bamtools-index"
-		},
-		{
-			"id": "gatk-count-covariates"
-		},
-		{
-			"id": "gatk-recalibrate-bq"
-		},
-		{
-			"id": "picard-mark-duplicates"
-		},
-		{
-			"id": "bamtools-index"
-		},
-		{
-			"id": "bamtools-filter"
+			"id": "vcflib",
+			"subtools": [
+				{
+					"id": "vcflib-filter"
+				}
+			]
 		},
 		{
 			"id": "ogap"
 		},
 		{
 			"id": "bamleftalign"
-		},
-		{
-			"id": "samtools-calmd"
 		},
 		{
 			"id": "freebayes",
@@ -233,22 +275,13 @@
 			"id": "cat"
 		},
 		{
-			"id": "bamtools-merge"
-		},
-		{
 			"id": "generate-md5"
-		},
-		{
-			"id": "bamtools-stats"
 		},
 		{
 			"id": "gzip"
 		},
 		{
 			"id": "merge-vcf-files"
-		},
-		{
-			"id": "vcflib-filter"
 		},
 		{
 			"id": "bgzip"

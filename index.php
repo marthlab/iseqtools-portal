@@ -179,12 +179,21 @@
         <script type="text/html" id='info_tool_template'>
           <h1>Tool: <%= t.name %></h1>
           <% if(t.team) { %><p>Developed by: <a href="/teams/<%= t.team.id %>"><%= t.team.name %></a></p><% } %>
-          <p>This tool is part of the following pipelines:</p>
-          <ul>
-          <% _(t.pipelines).each(function(pl){ %>
-            <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
-          <% }); %>
-          </ul>
+          <% if(t.parent_tool) { %><p>Part of: <a href="/tools/<%= t.parent_tool.id %>"><%= t.parent_tool.name %></a></p><% } %>
+          <% if(t.subtools.length > 0) { %>
+            <p>This tool includes the following subtools:</p>
+            <% _(t.subtools).each(function(subtool){ %>
+              <li data-id="<%= subtool.id %>"><a href="/tools/<%= subtool.id %>"><%= subtool.name %></a></li>
+            <% }); %>
+          <% } %>
+          <% if(t.pipelines.length > 0) { %>
+            <p>This tool is part of the following pipelines:</p>
+            <ul>
+            <% _(t.pipelines).each(function(pl){ %>
+              <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
+            <% }); %>
+            </ul>
+          <% } %>
           
         </script>
 

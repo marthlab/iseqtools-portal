@@ -46,9 +46,19 @@ DataFormat.prototype.graphable = false;
 function Tool(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
 	this.name = cfg.name || cfg.id;
-	this.team = _(gdata.teams).find(by_id(cfg.team_id)) || null;
+
+	this.parent_tool = cfg.parent_tool || null;
+	this.team = _(gdata.teams).find(by_id(cfg.team_id)) || (this.parent_tool && this.parent_tool.team) || null;
+
+	this.subtools = (cfg.subtools || []).map(function(subtool_cfg){
+		return new Tool(_.extend(subtool_cfg, {parent_tool: this}));
+	}, this);
+
 }
 Tool.prototype.graphable = false;
+Tool.prototype.getTeam = function() {
+
+}
 
 function Pipeline(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
