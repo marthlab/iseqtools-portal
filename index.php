@@ -130,8 +130,8 @@
           <div>Graph</div>
         </script>
 
-        <script type="text/html" id='info_global_template'>
-          <h1>Welcome!</h1>
+        <script type="text/html" id='info_summary_template'>
+          <%= t.description %>
         </script>
 
         <script type="text/html" id='info_workflow_template'>
@@ -165,6 +165,12 @@
           <ul>
           <% _(t.tools).each(function(tool){ %>
             <li data-id="<%= tool.id %>"><a href="/tools/<%= tool.id %>"><%= tool.name %></a></li>
+          <% }); %>
+          </ul>
+          <p>Pipelines developed:</p>
+          <ul>
+          <% _(t.pipelines).each(function(pl){ %>
+            <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
           <% }); %>
           </ul>
           

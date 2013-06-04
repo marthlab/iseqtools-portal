@@ -1,4 +1,7 @@
 {
+	"summary": {
+		"description": "<b>Welcome!</b>"
+	},
 	"teams": [
 		{
 			"id": "broad",

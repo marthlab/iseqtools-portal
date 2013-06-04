@@ -2,10 +2,10 @@
 
   _.templateSettings.variable = "t";
 
-  var app = {};
-
-  app.data = {
+  var gdata = {
     init: function(cfg) {
+      this.summary = new Summary(cfg.summary);
+
       var create_dt = function(dt_cfg){ return new DataType(dt_cfg);};
 
       this.teams = cfg.teams.map(function(team_cfg) {
@@ -61,7 +61,7 @@
     }
   }
 
-  app.widgets = {
+  var widgets = {
     logo: {
       init: function() {
 
@@ -71,12 +71,13 @@
       template: _.template($('#main_nav_template').html()),
       init: function() {
         this.$el = $('#main_nav'); 
-        this.$el.html(this.template(_(app.data).pick('workflows', 'pipelines', 'tools', 'teams')));
+        this.$el.html(this.template(_(gdata).pick('workflows', 'pipelines', 'tools', 'teams')));
       },
       transition: function() {
         var complete = $.Deferred();
 
         window.setTimeout(function() {
+          console.log("test");
           complete.resolve();
         }, 2000);
 
@@ -87,7 +88,7 @@
       template: _.template($('#workflows_template').html()),
       init: function() {
         this.$el = $('#workflows');
-        this.$el.html(this.template({workflows: app.data.workflows, start_index: 0}));
+        this.$el.html(this.template({workflows: gdata.workflows, start_index: 0}));
       },
       transition: function() {
         
@@ -116,7 +117,7 @@
     },
     info: {
       templates: {
-        'global': _.template($('#info_global_template').html()),
+        'summary': _.template($('#info_summary_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
         'pipeline': _.template($('#info_pipeline_template').html()),
         'team': _.template($('#info_team_template').html()),
@@ -128,14 +129,13 @@
       transition: function() {
         var content = (app.contentType(app.content) == 'tool_usage' ? app.content.tool : app.content);
         this.$el.html(this.templates[app.contentType(content)](content));
-
       }
     },
     teams: {
       template: _.template($('#teams_template').html()),
       init: function() {
         this.$el = $('#teams');
-        this.$el.html(this.template({teams: app.data.teams}));
+        this.$el.html(this.template({teams: gdata.teams}));
       },
       transition: function() {
 
@@ -144,14 +144,14 @@
     }
   }
 
-  
+  var app = {};
 
   app.showContent = function(item) {
     item = item || null;
     if(this.is_transitioning) {
       this.queued_content = item;
     } else {
-      console.log(item);
+      //console.log(item);
       this.old_content = this.content;
       this.content = item;
       this.is_transitioning = true;
@@ -167,22 +167,23 @@
   }
   
   app.contentType = function(item) {
-    return item ? item.constructor.name.toUnderscore() : 'global';
+    return item.constructor.name.toUnderscore();
   }
 
   app.transition = function(onTransitionEnd) {
     
-    $.when( app.widgets.main_nav.transition(),
-            app.widgets.info.transition(),
-            app.widgets.workflows.transition() )
+    $.when( widgets.main_nav.transition(),
+            widgets.info.transition(),
+            widgets.workflows.transition() )
     .then(function() {
+      console.log("then");
       onTransitionEnd();
     });
     
   }
 
   // initialize data
-  app.data.init(app_json);
+  gdata.init(app_json);
 
   // start in global view
   app.old_content = null;
@@ -193,23 +194,23 @@
   //initialize router
   app.router = Davis(function () {
     this.get('/:type/:id', function (req) {
-      var data = app.data[req.params['type']];
+      var data = gdata[req.params['type']];
       if(data) {
         app.showContent(_(data).find(by_id(req.params['id'])));
       }
-    })
+    });
   })
 
   app.router.start();
       
   // initialize widgets
-  app.widgets.logo.init();
-  app.widgets.main_nav.init();
-  app.widgets.workflows.init();
-  app.widgets.info.init();
-  app.widgets.teams.init();
+  widgets.logo.init();
+  widgets.main_nav.init();
+  widgets.workflows.init();
+  widgets.info.init();
+  widgets.teams.init();
 
-  app.showContent();
+  app.showContent(gdata.summary);
 
 //})();
 
