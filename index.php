@@ -99,8 +99,18 @@
           <li data-type="tools" class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
             <ul class="dropdown-menu">
-            <% _(t.tools).each(function(tool){ %>
-              <li data-id="<%= tool.id %>"><a href="/tools/<%= tool.id %>"><%= tool.name %></a></li>
+            <% _(t.root_tools).each(function(tool){ %>
+              <% var has_subtools = tool.subtools.length > 0 %>
+              <li data-id="<%= tool.id %>" class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
+                <a href="/tools/<%= tool.id %>"><%= tool.name %></a>
+                <% if(has_subtools) { %>
+                <ul class="dropdown-menu">
+                <% _(tool.subtools).each(function(subtool){ %>
+                  <li data-id="<%= subtool.id %>"><a href="/tools/<%= subtool.id %>"><%= subtool.name %></a></li>
+                <% }); %>
+                </ul>
+                <% } %>
+              </li>
             <% }); %>
             </ul>
           </li>
@@ -163,8 +173,8 @@
           <h1>Team: <%= t.name %></h1>
           <p>Tools developed:</p>
           <ul>
-          <% _(t.tools).each(function(tool){ %>
-            <li data-id="<%= tool.id %>"><a href="/tools/<%= tool.id %>"><%= tool.name %></a></li>
+          <% _(t.root_tools).each(function(root_tool){ %>
+            <li data-id="<%= root_tool.id %>"><a href="/tools/<%= root_tool.id %>"><%= root_tool.name %></a></li>
           <% }); %>
           </ul>
           <p>Pipelines developed:</p>

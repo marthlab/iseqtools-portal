@@ -27,20 +27,9 @@
       //  dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
       // });
 
-      // var create_tool = function(tool_cfg){ return new Tool(tool_cfg);};
-      // var parent_tools = cfg.tools.map(create_tool);
-      // this.tools = _.union(
-      //   parent_tools,
-      //   _.flatten(cfg.tools.map(function(tool_cfg){
-      //     var parent_tool = _(parent_tools).find(by_id(tool_cfg.id));
-      //     return (tool_cfg.subtools || []).map(function(subtool_cfg) {
-      //       return create_tool(_.extend(subtool_cfg, {parent_tool: parent_tool}));
-      //     });
-      //   }))
-      // );
-
-      var parent_tools = cfg.tools.map(function(tool_cfg){ return new Tool(tool_cfg);});
-      this.tools = _.union(parent_tools, _.flatten(parent_tools.map(function(tool) {return tool.subtools;})));
+      this.root_tools = cfg.tools.map(function(tool_cfg){ return new Tool(tool_cfg);});
+      this.subtools = _.flatten(this.root_tools.map(function(tool) {return tool.subtools;}));
+      this.tools = _.union(this.root_tools, this.subtools);
       
       this.workflows = cfg.workflows.map(function(wf_cfg) {
         return new Workflow(wf_cfg);
@@ -59,7 +48,7 @@
       }, this);
 
       _(this.teams).each(function(team) {
-        team.tools = _(this.tools).filter(function(tool) {return tool.team === team; }, this);
+        team.root_tools = _(this.root_tools).filter(function(tool) {return tool.team === team; }, this);
         team.pipelines = _(this.pipelines).filter(function(pl) {return pl.team === team; }, this);
       }, this);
 
@@ -75,7 +64,7 @@
       template: _.template($('#main_nav_template').html()),
       init: function() {
         this.$el = $('#main_nav'); 
-        this.$el.html(this.template(_(gdata).pick('workflows', 'pipelines', 'tools', 'teams')));
+        this.$el.html(this.template(_(gdata).pick('workflows', 'pipelines', 'root_tools', 'teams')));
       },
       transition: function() {
         var complete = $.Deferred();

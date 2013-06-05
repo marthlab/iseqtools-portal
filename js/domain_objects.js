@@ -48,7 +48,7 @@ function Tool(cfg) {
 	this.name = cfg.name || cfg.id;
 
 	this.parent_tool = cfg.parent_tool || null;
-	this.team = _(gdata.teams).find(by_id(cfg.team_id)) || (this.parent_tool && this.parent_tool.team) || null;
+	this.team = (this.parent_tool && this.parent_tool.team) || (!this.parent_tool && _(gdata.teams).find(by_id(cfg.team_id))) || null;
 
 	this.subtools = (cfg.subtools || []).map(function(subtool_cfg){
 		return new Tool(_.extend(subtool_cfg, {parent_tool: this}));
@@ -56,9 +56,6 @@ function Tool(cfg) {
 
 }
 Tool.prototype.graphable = false;
-Tool.prototype.getTeam = function() {
-
-}
 
 function Pipeline(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
