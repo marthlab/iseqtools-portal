@@ -42,6 +42,11 @@
 
         </div>
 
+        <div id="graph">
+          <svg preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
+          <svg preserveAspectRatio="xMidYMid meet" id="layout_svg"></svg>
+        </div>
+
         <!-- Main hero unit for a primary marketing message or call to action -->
         <div class="hero-unit" id="info">
         </div>
@@ -56,10 +61,10 @@
         <![endif]-->
 
 
-        <div id="graph_container">
+<!--         <div id="graph_container">
           <div id="graph_nav"></div>
           <div id="graph"></div>
-        </div>
+        </div> -->
 
         
 
@@ -215,7 +220,7 @@
           <% }); %>
         </script>
 
-        <script type="text/html" id='breadcrumbs-template'>
+/*        <script type="text/html" id='breadcrumbs-template'>
             <% var type = app.activeItemType(); %>
             
             <% if(type === "global") { %>
@@ -240,7 +245,7 @@
             &nbsp;&gt;&gt;&nbsp;<span class="tool current"><%= app.current_tool.name %></span>
             <% } %>
              
-        </script>
+        </script>*/
 
         <script>
         var app_json = <?php echo file_get_contents('./js/app.json'); ?>;
@@ -248,7 +253,7 @@
         </script>
 
         <script src="/js/utils.js"></script>
-        <script src="/js/config.js"></script>
+        <script src="/js/settings.js"></script>
         <script src="/js/domain_objects.js"></script>
         <script src="/js/graph/graph.js"></script>
         <script src="/js/graph/node.js"></script>

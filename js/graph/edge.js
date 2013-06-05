@@ -1,6 +1,6 @@
 function Edge(options) {
-	this.source = options.source_node;
-	this.target = options.target_node;
+	this.source = options.source;
+	this.target = options.target;
 	this.graph = options.graph;
 }
 Edge.prototype = {

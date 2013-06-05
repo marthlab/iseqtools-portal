@@ -10,6 +10,8 @@ body {
 #teams .team {text-align:center; margin-top:15px; margin-bottom: 15px;}
 
 #breadcrumbs {position:absolute; font-size:12px;}
+
+#graph {height: 400px;}
 #display_svg {display:block; margin:0 auto; width:90%; height:100%;}
 #layout_svg {position:absolute; overflow:hidden; top:0; left:20000px;}
 

@@ -105,11 +105,11 @@
         this.old_graph = null;
         this.graph = null;
         this.drawing_for_layout = new GraphDrawing({
-          svg: d3.select(options.layout_svg),
+          svg: d3.select(document.getElementById('layout_svg')),
           use_transitions: false
         });
         this.drawing_for_display = new GraphDrawing({
-          svg: d3.select(options.display_svg),
+          svg: d3.select(document.getElementById('display_svg')),
           use_transitions: true
         });
 
@@ -118,7 +118,7 @@
       transition: function() {
 
         var trans_completion = $.Deferred();
-        var updater = _.partial(this._update, trans_completion.resolve);
+        var updater = this._update.bind(this, trans_completion.resolve);
 
         if(!this.visible && app.content.graphable) {
           this._show(updater);
@@ -232,7 +232,7 @@
   // initialize data
   gdata.init(app_json);
 
-  // start in global view
+  // start in summary view
   app.old_content = null;
   app.content = null;
   app.queued_content = null;

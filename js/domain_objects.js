@@ -1,5 +1,5 @@
 var gdata_mixin = {
-	type = function() { return this.constructor.name.toUnderscore(); }
+	type: function() { return this.constructor.name.toUnderscore(); }
 }
 
 function Summary(cfg) {

@@ -92,16 +92,17 @@
       switch(app.content.type()) {
         case "summary":
         case "workflow":
-        
           this.edges = _.union.apply(null, this.primary_nodes.map(function(primary_node) {
+            //debugger;
             var edges_out = primary_node.gdatum.out_data_types.map(function(dt) {
+              //debugger;
               return new Edge({
                 source: primary_node,
                 target: _(this.secondary_nodes).find(function(secondary_node) { return secondary_node.gdatum == dt;}),
                 graph: this
               });
             }, this);
-            var edges_in = task_node.gdatum.in_data_types.map(function(dt) {
+            var edges_in = primary_node.gdatum.in_data_types.map(function(dt) {
               return new Edge({
                 source: _(this.secondary_nodes).find(function(secondary_node) { return secondary_node.gdatum == dt;}),
                 target: primary_node,
@@ -174,7 +175,7 @@
     _createEdgePaths: function() {
       this.edges.forEach(function(edge) {
         switch(app.content.type()) {
-          case "global":
+          case "summary":
             edge.edge_paths = _.union(edge.source.gdatum.workflows || [], edge.target.gdatum.workflows || []).map(function(wf){
               return new EdgePath({edge: edge, gdatum: wf});
             }, this);
@@ -207,18 +208,21 @@
       this.edge_paths = _.flatten(this.edges.map(function(edge){return edge.edge_paths;}));
     },
     _assignKeys: function() {
-      if(app.old_content.type() == "summary" && app.content.type() == "workflow") {
 
-      } else if(app.old_content.type() == "workflow" && app.content.type() == "summary") {
-        
-      } else if(app.old_content.type() == "workflow" && app.content.type() == "pipeline") {
-        
-      } else if(app.old_content.type() == "pipeline" && app.content.type() == "workflow") {
-        
-      } else if(app.old_content.type() == "pipeline" && app.content.type() == "tool_usage") {
-        
-      } else if(app.old_content.type() == "tool_usage" && app.content.type() == "pipeline") {
-        
+      if(app.old_content) {
+        if(app.old_content.type() == "summary" && app.content.type() == "workflow") {
+
+        } else if(app.old_content.type() == "workflow" && app.content.type() == "summary") {
+          
+        } else if(app.old_content.type() == "workflow" && app.content.type() == "pipeline") {
+          
+        } else if(app.old_content.type() == "pipeline" && app.content.type() == "workflow") {
+          
+        } else if(app.old_content.type() == "pipeline" && app.content.type() == "tool_usage") {
+          
+        } else if(app.old_content.type() == "tool_usage" && app.content.type() == "pipeline") {
+          
+        }
       }
 
       // all nodes, node_paths, and edge_paths that have no corresponding member in the old graph are assigned a random GUID for the key
