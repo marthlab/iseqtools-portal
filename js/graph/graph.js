@@ -159,6 +159,7 @@
       this.nodes.forEach(function(node) {
         switch(app.content.type()) {
           case "workflow":
+            var workflow = app.content; 
             node.node_paths = workflow.pipelines.filter(function(pl){
               return pl.data_types.length === 1 && node.gdatum === pl.data_types[0];
             }).map(function(pl){
@@ -181,6 +182,7 @@
             }, this);
             break;
           case "workflow":
+            var workflow = app.content;
             edge.edge_paths = workflow.pipelines.filter(function(pl) {
               var e = edge, s = edge.source, t = edge.target;
               var to_intermediate_task = _(pl.data_types).contains(s.gdatum)
