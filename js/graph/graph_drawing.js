@@ -1,30 +1,29 @@
-function GraphDrawing(graph, svg, use_transitions) {
-	this.graph = graph;
-	this.svg = svg;
-	this.use_transitions = use_transitions;
+function GraphDrawing(options) {
+	this.svg = options.svg;
+	this.use_transitions = options.use_transitions;
 	this.svgGroup = this.svg.append("g");
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 }
 GraphDrawing.prototype = {
-	_edgePathSpline: function(edge, path_item) {
+	_edgePathSpline: function(edge, edge_path) {
 
 		var e = edge, s = e.source, t = e.target;
 		
     var s_exit = {
     	x: s.dagre.x+s.dagre.width/2,
-    	y: s.dagre.y + app.cfg.graph.path_width*(1+app.cfg.graph.path_gap)*((s.pathOrder(e, path_item, "out")-s.numPathsOut()/2)+1/2)
+    	y: s.dagre.y + settings.graph.path_width*(1+settings.graph.path_gap)*((s.pathOrder(e, edge_path, "out")-s.numPathsOut()/2)+1/2)
     };
 	  var t_enter = {
 	  	x: t.dagre.x-t.dagre.width/2,
-	  	y: t.dagre.y + app.cfg.graph.path_width*(1+app.cfg.graph.path_gap)*((t.pathOrder(e, path_item, "in")-t.numPathsIn()/2)+1/2)
+	  	y: t.dagre.y + settings.graph.path_width*(1+settings.graph.path_gap)*((t.pathOrder(e, edge_path, "in")-t.numPathsIn()/2)+1/2)
 	  };
 	  var s_circ_intersect = {
-	  	x: s.dagre.x+Math.sqrt(Math.pow(s.cfg.radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2)),
+	  	x: s.dagre.x+Math.sqrt(Math.pow(settings.nodes[s.type()].radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2)),
 	  	y: s_exit.y
 	  };
 	  var t_circ_intersect = {
-	  	x: t.dagre.x-Math.sqrt(Math.pow(t.cfg.radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
+	  	x: t.dagre.x-Math.sqrt(Math.pow(settings.nodes[t.type()].radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
 	  	y: t_enter.y
 	  };
 	  var rank_exit = {
@@ -47,11 +46,11 @@ GraphDrawing.prototype = {
 
 		function curve(start, end) {
 
-			var base_offset = (end.x-start.x)*app.cfg.graph.edge_curvature;
-			var order = e.path_items.indexOf(path_item);
+			var base_offset = (end.x-start.x)*settings.graph.edge_curvature;
+			var order = e.edge_paths.indexOf(edge_path);
 			var slope = (end.y-start.y)/(end.x-start.x);
 			// FIXME: there MUST be a more theoretically sound way of calculating path_offset
-			var path_offset = order*Math.min(Math.abs(slope), 1)*1.3*app.cfg.graph.path_width*-sign(slope);
+			var path_offset = order*Math.min(Math.abs(slope), 1)*1.3*settings.graph.path_width*-sign(slope);
 
 			return d3.svg.line(start, end)
 	      .x(function(d) { return d.x; })
@@ -76,8 +75,8 @@ GraphDrawing.prototype = {
 	  	path_string += curve(rank_exit, rank_enter)
 	  } else {
 	  	//var connection_y = e.dagre.points[0].y; // same as e.dagre.points[1].y
-	  	var points = [{x: rank_exit.x + app.cfg.graph.rankSep, y: e.dagre.points[0].y},
-  								{x: rank_enter.x - app.cfg.graph.rankSep, y: e.dagre.points[1].y}];
+	  	var points = [{x: rank_exit.x + settings.graph.rankSep, y: e.dagre.points[0].y},
+  								{x: rank_enter.x - settings.graph.rankSep, y: e.dagre.points[1].y}];
 	  	path_string += curve(rank_exit, points[0])
 	  	path_string += line(points[0], points[1])
 	  	path_string += curve(points[1], rank_enter)
@@ -91,7 +90,7 @@ GraphDrawing.prototype = {
 
 	  return path_string;
 	},
-	render: function(viewBox) {
+	render: function(graph, viewBox) {
 
 		var self = this;
 
@@ -124,9 +123,9 @@ GraphDrawing.prototype = {
 							.append("circle")
 								.attr("cx", 0)
 								.attr("cy", 5*((num_circles-1)/2 - (num_circles-i-1)))
-								.attr("r", function(n) { return n.cfg.radius; })
-								.attr("stroke-width", app.cfg.graph.path_width)
-								.attr("stroke", app.cfg.nodes.stroke)
+								.attr("r", function(n) { return settings.nodes[n.type()].radius; })
+								.attr("stroke-width", settings.graph.path_width)
+								.attr("stroke", settings.nodes.stroke)
 								
 					}
 				})
@@ -135,7 +134,7 @@ GraphDrawing.prototype = {
 
 		var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
 			.selectAll("circle.circle_path")
-			.data(function(n) { return n.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;});
+			.data(function(n) { return n.node_paths; }, NodePath.key);
 
 		var new_circle_paths = circle_paths
 	  		.enter()
@@ -143,15 +142,15 @@ GraphDrawing.prototype = {
 	  			.attr("class", "circle_path")
 	  			.attr("cx", 0)
 					.attr("cy", 0)
-					.attr("r", function(path_item) {
+					.attr("r", function(node_path) {
 						var node = d3.select(this.parentNode).datum();
-	    			return node.cfg.radius+(node.path_items.indexOf(path_item)+1)*app.cfg.graph.path_width;
+	    			return settings.nodes[node.type()].radius+(node.node_paths.indexOf(node_path)+1)*settings.graph.path_width;
 					})
-	  			.attr("stroke", function(path_item) {
+	  			.attr("stroke", function(node_path) {
 	  				var node = d3.select(this.parentNode).datum();
-	    			return node.graph.pathColors(path_item.id);
+	    			return node.graph.pathColors(node_path.id);
 	  			})
-	  			.attr("stroke-width", app.cfg.graph.path_width);
+	  			.attr("stroke-width", settings.graph.path_width);
 
 		var old_circle_paths = circle_paths
 			.exit();
@@ -171,7 +170,7 @@ GraphDrawing.prototype = {
 	    	var label_lines = [[]];
 				for (var i=0; i<fragments.length; i++) {
 					text_elem.text(label_lines[label_lines.length-1].join("") + fragments[i].trim());
-				  if (text_elem.node().getBBox().width > app.cfg.nodes.label_max_width) {
+				  if (text_elem.node().getBBox().width > settings.nodes.label_max_width) {
 				    label_lines.push([]); 
 				  }
 				  label_lines[label_lines.length-1].push(fragments[i]);
@@ -205,7 +204,7 @@ GraphDrawing.prototype = {
 
 		var edges_elems = this.edgeGroup
 	    .selectAll("g.edge")
-	    .data(this.graph.edges, Edge.key)
+	    .data(this.graph.edges)
 
 	  var new_edges_elems = edges_elems
 	    .enter()
@@ -221,12 +220,12 @@ GraphDrawing.prototype = {
 
 	  var edges_paths = edges_elems
 	  	.selectAll("path")
-	    .data(function(e) { return e.path_items; }, function(pi) {return pi.constructor.name + "__" + pi.id;})
+	    .data(function(e) { return e.edge_paths; }, EdgePath.key)
 
 	  var new_edges_paths = edges_paths
 	  	.enter()
     		.append("path")
-    		.attr("stroke-width", app.cfg.graph.path_width);
+    		.attr("stroke-width", settings.graph.path_width);
 
 	  var old_edges_paths = edges_paths.exit()
 
@@ -235,30 +234,30 @@ GraphDrawing.prototype = {
 		})
 
 	  dagre.layout()
-	    .nodeSep(this.graph.cfg.nodeSep)
-	    .edgeSep(this.graph.cfg.edgeSep)
-	    .rankSep(this.graph.cfg.rankSep)
+	    .nodeSep(settings.graph.nodeSep)
+	    .edgeSep(settings.graph.edgeSep)
+	    .rankSep(settings.graph.rankSep)
 	    .rankDir("LR")
 	    .nodes(this.graph.nodes)
 	    .edges(this.graph.edges)
 	    .debugLevel(1)
 	    .run();
 
-	  (this.use_transitions ? old_nodes_elems.transition().duration(this.graph.cfg.render_duration) : old_nodes_elems)
+	  (this.use_transitions ? old_nodes_elems.transition().duration(settings.graph.render_duration) : old_nodes_elems)
 	  	.style("opacity", 0)
 	  	.remove();
 
 
-	  (this.use_transitions ? old_circle_paths.transition().duration(this.graph.cfg.render_duration) : old_circle_paths)
+	  (this.use_transitions ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
 			.style("stroke-opacity", 0)
   		.remove();
 	 
 
-	 	(this.use_transitions ? old_edges_paths.transition().duration(this.graph.cfg.render_duration) : old_edges_paths)
+	 	(this.use_transitions ? old_edges_paths.transition().duration(settings.graph.render_duration) : old_edges_paths)
 	  	.style("stroke-opacity", 0)
 	  	.remove();
 
-	  (this.use_transitions ? old_edges_elems.transition().duration(this.graph.cfg.render_duration) : old_edges_elems)
+	  (this.use_transitions ? old_edges_elems.transition().duration(settings.graph.render_duration) : old_edges_elems)
 	  	.style("opacity", 0)
 	  	.remove();
 
@@ -267,13 +266,13 @@ GraphDrawing.prototype = {
 
 	  new_nodes_elems.attr("transform", getTransform);
 
-	  (this.use_transitions ? new_nodes_elems.transition().duration(this.graph.cfg.render_duration) : new_nodes_elems)
+	  (this.use_transitions ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
 	  	.style("opacity", 1);
 
 	  if(this.use_transitions) {
 	  	updated_nodes_elems
 		  	.transition()
-      	.duration(this.graph.cfg.render_duration)
+      	.duration(settings.graph.render_duration)
       	.attrTween("transform", function tween(d, i, a) {
 		      return d3.interpolateString(this.getAttribute("transform"), getTransform(d) );
 		    });
@@ -281,42 +280,55 @@ GraphDrawing.prototype = {
 	  	updated_nodes_elems.attr("transform", getTransform);
 	  }
 
-	  (this.use_transitions ? new_circle_paths.transition().duration(this.graph.cfg.render_duration) : new_circle_paths)
+	  (this.use_transitions ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
 			.style("stroke-opacity", 1);
 
-	  (this.use_transitions ? labels.transition().duration(this.graph.cfg.render_duration) : labels)
+	  (this.use_transitions ? labels.transition().duration(settings.graph.render_duration) : labels)
 	  	.attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; });
 
-	  (this.use_transitions ? updated_edges_paths.transition().duration(this.graph.cfg.render_duration) : updated_edges_paths)
-	  	.attr("d", function(path_item) {
+	  (this.use_transitions ? updated_edges_paths.transition().duration(settings.graph.render_duration) : updated_edges_paths)
+	  	.attr("d", function(edge_path) {
 	    	var edge = d3.select(this.parentNode).datum();
-	    	return self._edgePathSpline(edge, path_item);
+	    	return self._edgePathSpline(edge, edge_path);
 	    })
 	  
 	  new_edges_paths
-	  	.attr("d", function(path_item) {
+	  	.attr("d", function(edge_path) {
 	    	var edge = d3.select(this.parentNode).datum();
-	    	return self._edgePathSpline(edge, path_item);
+	    	return self._edgePathSpline(edge, edge_path);
 	    })
-	    .attr("stroke", function(path_item) {
+	    .attr("stroke", function(edge_path) {
 	    	var edge = d3.select(this.parentNode).datum();
-	    	return edge.graph.pathColors(path_item.id);
-	    }).each(function(path_item) {
-	    	this.addEventListener("click", app.activateItem.bind(app, path_item));
+	    	return edge.graph.pathColors(edge_path.id);
+	    }).each(function(edge_path) {
+	    	this.addEventListener("click", app.activateItem.bind(app, edge_path));
 	    });
 
 	  new_circle_paths
-	    .each(function(path_item) {
-	    	this.addEventListener("click", app.activateItem.bind(app, path_item));
+	    .each(function(node_path) {
+	    	this.addEventListener("click", app.activateItem.bind(app, node_path));
 	    });
 
-	  (this.use_transitions ? new_edges_paths.transition().duration(this.graph.cfg.render_duration) : new_edges_paths)
+	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
 	  	.style("stroke-opacity", 1)
 
    	if(viewBox) {
-	   	(this.use_transitions ? this.svg.transition().duration(this.graph.cfg.render_duration) : this.svg)
+	   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
 	   		.attr("viewBox", viewBox);
 	  }
 
-	}
+	},
+	getViewBox: function() {
+    var rect = this.svgGroup.node().getBoundingClientRect();
+    // fudge factors prevent unwanted clipping of content on sides
+    var horz_padding_fraction = 0.06;
+    var vert_padding_fraction = 0.01;
+    return  -Math.ceil(rect.width*horz_padding_fraction/2)
+            +" "
+            +Math.floor(rect.top-rect.height*vert_padding_fraction/2)
+            +" "
+            +Math.ceil(rect.width*(1+horz_padding_fraction))
+            +" "
+            +Math.ceil(rect.height*(1+vert_padding_fraction));
+  }
 }

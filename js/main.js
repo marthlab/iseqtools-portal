@@ -60,7 +60,7 @@
   }
 
   var widgets = {
-    main_nav: {
+    main_nav_widget: {
       template: _.template($('#main_nav_template').html()),
       init: function() {
         this.$el = $('#main_nav'); 
@@ -76,7 +76,7 @@
         return complete.promise();
       }
     },
-    workflows: {
+    workflows_widget: {
       template: _.template($('#workflows_template').html()),
       init: function() {
         this.$el = $('#workflows');
@@ -87,7 +87,7 @@
 
       }
     },
-    graph_nav: {
+    graph_nav_widget: {
       //template: _.template($('#teams_template').html()),
       init: function() {
         this.$el = $('#graph_nav'); 
@@ -97,11 +97,22 @@
 
       }
     },
-    graph: {
+    graph_widget: {
       //template: _.template($('#teams_template').html()),
       init: function() {
         this.$el = $('#graph');
         this.visible = false;
+        this.old_graph = null;
+        this.graph = null;
+        this.drawing_for_layout = new GraphDrawing({
+          svg: d3.select(options.layout_svg),
+          use_transitions: false
+        });
+        this.drawing_for_display = new GraphDrawing({
+          svg: d3.select(options.display_svg),
+          use_transitions: true
+        });
+
         // create new graph object
       },
       transition: function() {
@@ -121,9 +132,22 @@
 
       },
       _update: function(on_complete) {
+        this.old_graph = this.graph;
+        this.graph = new Graph();
+        this.drawing_for_layout.render(this.graph);
+        var viewBox = this.drawing_for_layout.getViewBox();
+        this.drawing_for_display.render(this.graph, viewBox);
+
         console.log("test update");
         //when complete
         on_complete();
+      },
+      _createNodes: function() {
+        
+      },
+      _createEdges: function(nodes) {
+        var edges = [];
+
       },
       _hide: function(on_complete) {
         this.visible = false;
@@ -139,7 +163,7 @@
       }
       
     },
-    info: {
+    info_widget: {
       templates: {
         'summary': _.template($('#info_summary_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
@@ -151,11 +175,11 @@
         this.$el = $('#info'); 
       },
       transition: function() {
-        var content = (app.contentType(app.content) == 'tool_usage' ? app.content.tool : app.content);
-        this.$el.html(this.templates[app.contentType(content)](content));
+        var content = (app.content.type() == 'tool_usage' ? app.content.tool : app.content);
+        this.$el.html(this.templates[app.content.type()](content));
       }
     },
-    teams: {
+    teams_widget: {
       template: _.template($('#teams_template').html()),
       init: function() {
         this.$el = $('#teams');
@@ -190,10 +214,6 @@
         }
       }).bind(this));
     }
-  }
-  
-  app.contentType = function(item) {
-    return item.constructor.name.toUnderscore();
   }
 
   app.transition = function(onTransitionEnd) {
@@ -237,7 +257,7 @@
     this.get('/', function (req) {
       app.showContent(gdata.summary);
     });
-  })
+  });
 
   app.router.start();
 

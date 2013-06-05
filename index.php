@@ -189,7 +189,7 @@
         <script type="text/html" id='info_tool_template'>
           <h1>Tool: <%= t.name %></h1>
           <% if(t.team) { %><p>Developed by: <a href="/teams/<%= t.team.id %>"><%= t.team.name %></a></p><% } %>
-          <% if(t.parent_tool) { %><p>Part of: <a href="/tools/<%= t.parent_tool.id %>"><%= t.parent_tool.name %></a></p><% } %>
+          <% if(t.parent_tool) { %><p>Parent tool: <a href="/tools/<%= t.parent_tool.id %>"><%= t.parent_tool.name %></a></p><% } %>
           <% if(t.subtools.length > 0) { %>
             <p>This tool includes the following subtools:</p>
             <% _(t.subtools).each(function(subtool){ %>

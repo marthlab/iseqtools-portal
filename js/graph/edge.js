@@ -1,11 +1,15 @@
-function Edge(source_node, target_node, graph) {
-	this.graph = graph;
-	this.source = source_node;
-	this.target = target_node;
-
-	this.cfg = app.cfg.edges;
+function Edge(options) {
+	this.source = options.source_node;
+	this.target = options.target_node;
+	this.graph = options.graph;
 }
 Edge.prototype = {
 	
 };
-Edge.key = function(e) {return  e.source.referent.constructor.name + "__" + e.source.referent.id + "__" + e.target.referent.constructor.name + "__" + e.target.referent.id; }
+//Edge.key = function(e) {return  e.source.gdatum.constructor.name + "__" + e.source.gdatum.id + "__" + e.target.gdatum.constructor.name + "__" + e.target.gdatum.id; }
+
+function EdgePath(options) {
+	this.edge = options.edge;
+	this.gdatum = options.gdatum;
+}
+EdgePath.key = function(edge_path) {	return edge_path.key; }

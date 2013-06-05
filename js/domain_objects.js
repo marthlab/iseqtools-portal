@@ -1,16 +1,23 @@
+var gdata_mixin = {
+	type = function() { return this.constructor.name.toUnderscore(); }
+}
+
 function Summary(cfg) {
 	_(this).extend(_(cfg).pickStrings('description'));
 }
-Summary.prototype.graphable = false;
+_.extend(Summary.prototype, gdata_mixin);
+Summary.prototype.graphable = true;
 
 function Team(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
 }
+_.extend(Team.prototype, gdata_mixin);
 Team.prototype.graphable = false;
 
 function DataType(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
 }
+_.extend(DataType.prototype, gdata_mixin);
 DataType.prototype.graphable = false;
 
 function Task(cfg) {
@@ -21,6 +28,7 @@ function Task(cfg) {
 	// references populated later
 	this.workflows = {};
 }
+_.extend(Task.prototype, gdata_mixin);
 Task.prototype.graphable = false;
 
 function Workflow(cfg) {
@@ -34,6 +42,7 @@ function Workflow(cfg) {
 	this.in_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.out_data_types).contains(dt); })).isEmpty();}, this);
 	this.out_data_types = this.data_types.filter(function(dt) { return _(this.tasks.filter(function(task){ return _(task.in_data_types).contains(dt); })).isEmpty();}, this);
 }
+_.extend(Workflow.prototype, gdata_mixin);
 Workflow.prototype.graphable = true;
 
 function DataFormat(cfg) {
@@ -41,6 +50,7 @@ function DataFormat(cfg) {
 	this.name = cfg.name || cfg.id;
 	//this.data_type = _(gdata.tasks).find(by_id(cfg.data_type_id)) || null;
 }
+_.extend(DataFormat.prototype, gdata_mixin);
 DataFormat.prototype.graphable = false;
 
 function Tool(cfg) {
@@ -55,6 +65,7 @@ function Tool(cfg) {
 	}, this);
 
 }
+_.extend(Tool.prototype, gdata_mixin);
 Tool.prototype.graphable = false;
 
 function Pipeline(cfg) {
@@ -79,6 +90,7 @@ function Pipeline(cfg) {
 
   this.tools = _.uniq(this.tool_usages.map(function(tu) { return tu.tool;}));
 }
+_.extend(Pipeline.prototype, gdata_mixin);
 Pipeline.prototype.graphable = true;
 
 function DataFormatUsage(cfg) {
@@ -87,6 +99,7 @@ function DataFormatUsage(cfg) {
 	this.pipeline = cfg.pipeline;
 	this.data_format = _(gdata.data_formats).find(by_id(cfg.data_format_id));
 }
+_.extend(DataFormatUsage.prototype, gdata_mixin);
 DataFormatUsage.prototype.graphable = false;
 
 function ToolUsage(cfg) {
@@ -98,4 +111,5 @@ function ToolUsage(cfg) {
 	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return _(this.pipeline.data_format_usages).find(by_id(dfu_id));}, this);
 	this.out_data_format_usages = cfg.out_data_format_usages.map(function(dfu_cfg){ return _(this.pipeline.data_format_usages).find(by_id(dfu_cfg.id));}, this);
 }
+_.extend(ToolUsage.prototype, gdata_mixin);
 ToolUsage.prototype.graphable = true;

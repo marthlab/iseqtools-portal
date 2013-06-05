@@ -25,3 +25,14 @@ String.prototype.toUnderscore = function(){
   return this.replace(/\W+/g, '_')
                 .replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase();
 };
+
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+             .toString(16)
+             .substring(1);
+};
+
+function guid() {
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+         s4() + '-' + s4() + s4() + s4();
+}
