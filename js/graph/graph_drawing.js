@@ -302,12 +302,16 @@ GraphDrawing.prototype = {
 	    	var edge = d3.select(this.parentNode).datum();
 	    	return graph.edgePathColors(edge_path.id);
 	    }).each(function(edge_path) {
-	    	this.addEventListener("click", app.showContent.bind(app, edge_path.gdatum));
+	    	if(edge_path.gdatum) {
+	    		this.addEventListener("click", app.showContent.bind(app, edge_path.gdatum));
+	    	}
 	    });
 
 	  new_circle_paths
 	    .each(function(node_path) {
-	    	this.addEventListener("click", app.showContent.bind(app, node_path.gdatum));
+	    	if(node_path.gdatum) {
+	    		this.addEventListener("click", app.showContent.bind(app, node_path.gdatum));
+	    	}
 	    });
 
 	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
@@ -323,7 +327,7 @@ GraphDrawing.prototype = {
     var rect = this.svgGroup.node().getBoundingClientRect();
     // fudge factors prevent unwanted clipping of content on sides
     var horz_padding_fraction = 0.06;
-    var vert_padding_fraction = 0.01;
+    var vert_padding_fraction = 0.03;
     return  -Math.ceil(rect.width*horz_padding_fraction/2)
             +" "
             +Math.floor(rect.top-rect.height*vert_padding_fraction/2)

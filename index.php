@@ -36,7 +36,7 @@
         </div>
       </div>
 
-      <div class="container">
+      <div class="container" id="main">
 
         <div id="workflows">
 
@@ -49,6 +49,7 @@
 
         <!-- Main hero unit for a primary marketing message or call to action -->
         <div class="hero-unit" id="info">
+          <div id="info_inner"></div>
         </div>
 
         <div id="teams">
@@ -79,8 +80,6 @@
         <script src="/js/vendor/davis.min.js"></script>
         <script src="/js/vendor/bootstrap.js"></script>
         <script src="/js/vendor/underscore-min.js"></script>
-        <!-- <script src="js/vendor/jquery.svg.min.js"></script> 
-        <script src="js/vendor/jquery.svgdom.min.js"></script> -->
         <script src="/js/vendor/d3.js"></script>
         <script src="/js/vendor/dagre.js"></script>
 
@@ -89,7 +88,7 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Workflows <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.workflows).each(function(wf){ %>
-              <li data-id="<%= wf.id %>"><a href="/workflows/<%= wf.id %>"><%= wf.name %></a></li>
+              <li data-id="<%= wf.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/workflows/<%= wf.id %>"><%= wf.name %></a></li>
             <% }); %>
             </ul>
           </li>
@@ -97,7 +96,7 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Pipelines <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.pipelines).each(function(pl){ %>
-              <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
+              <li data-id="<%= pl.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
             <% }); %>
             </ul>
           </li>
@@ -107,11 +106,11 @@
             <% _(t.root_tools).each(function(tool){ %>
               <% var has_subtools = tool.subtools.length > 0 %>
               <li data-id="<%= tool.id %>" class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
-                <a href="/tools/<%= tool.id %>"><%= tool.name %></a>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="/tools/<%= tool.id %>"><%= tool.name %></a>
                 <% if(has_subtools) { %>
                 <ul class="dropdown-menu">
                 <% _(tool.subtools).each(function(subtool){ %>
-                  <li data-id="<%= subtool.id %>"><a href="/tools/<%= subtool.id %>"><%= subtool.name %></a></li>
+                  <li data-id="<%= subtool.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/tools/<%= subtool.id %>"><%= subtool.name %></a></li>
                 <% }); %>
                 </ul>
                 <% } %>
@@ -123,7 +122,7 @@
             <a class="dropdown-toggle" data-toggle="dropdown">Teams <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.teams).each(function(team){ %>
-              <li data-id="<%= team.id %>"><a href="/teams/<%= team.id %>"><%= team.name %></a></li>
+              <li data-id="<%= team.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/teams/<%= team.id %>"><%= team.name %></a></li>
             <% }); %>
             </ul>
           </li>
@@ -219,33 +218,6 @@
             <%= i % 4 == 3 ? '</div>' : '' %>
           <% }); %>
         </script>
-
-/*        <script type="text/html" id='breadcrumbs-template'>
-            <% var type = app.activeItemType(); %>
-            
-            <% if(type === "global") { %>
-            <span class="global current">HOME</span>
-            <% } else { %>
-            <a href="#" class="global">HOME</a>
-            <% } %>
-
-            <% if(type === "workflow") { %>
-            &nbsp;&gt;&gt;&nbsp;<span class="workflow current"><%= app.current_workflow.name %></span>
-            <% } else if(type === "pipeline" || type === "tool") { %>
-            &nbsp;&gt;&gt;&nbsp;<a href="#" class="workflow"><%= app.current_workflow.name %></a>
-            <% } %>
-
-            <% if(type === "pipeline") { %>
-            &nbsp;&gt;&gt;&nbsp;<span class="pipeline current"><%= app.current_pipeline.name %></span>
-            <% } else if(type === "tool") { %>
-            &nbsp;&gt;&gt;&nbsp;<a href="#" class="pipeline"><%= app.current_pipeline.name %></a>
-            <% } %>
-
-            <% if(type === "tool") { %>
-            &nbsp;&gt;&gt;&nbsp;<span class="tool current"><%= app.current_tool.name %></span>
-            <% } %>
-             
-        </script>*/
 
         <script>
         var app_json = <?php echo file_get_contents('./js/app.json'); ?>;

@@ -1,4 +1,5 @@
 settings = {
+  trans_dur: 1000,
   graph: {
     nodeSep: 50,
     edgeSep: 20,

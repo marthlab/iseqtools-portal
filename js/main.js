@@ -142,24 +142,13 @@
         //when complete
         on_complete();
       },
-      _createNodes: function() {
-        
-      },
-      _createEdges: function(nodes) {
-        var edges = [];
-
-      },
       _hide: function(on_complete) {
         this.visible = false;
-        console.log("test hide");
-        //when complete
-        on_complete();
+        this.$el.hide(1000, on_complete);
       },
       _show: function(on_complete) {
         this.visible = true;
-        console.log("test show");
-        //when complete
-        on_complete();
+        this.$el.show(1000, on_complete);
       }
       
     },
@@ -172,7 +161,7 @@
         'tool': _.template($('#info_tool_template').html())
       },
       init: function() {
-        this.$el = $('#info'); 
+        this.$el = $('#info_inner'); 
       },
       transition: function() {
         var content = (app.content.type() == 'tool_usage' ? app.content.tool : app.content);
@@ -260,6 +249,8 @@
   });
 
   app.router.start();
+
+
 
 //})();
 

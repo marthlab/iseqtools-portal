@@ -3,17 +3,31 @@ body {
         padding-bottom: 40px;
       }
 
+#main {}
 #workflows .workflow {text-align:center;}
-#info {padding:30px 60px;}
+#graph {height: 400px; display:none;}
+#display_svg {display:block; margin:0 auto; width:90%; height:100%;}
+#layout_svg {position:absolute; overflow:hidden; top:0; left:0px; visibility:hidden;}
+#info {padding:30px 60px; height:300px; }
+#info_inner {position:relative; height:100%; overflow:auto;}
+#info_inner::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 11px;
+    height: 11px;
+}
+#info_inner::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 2px solid white; /* should match background, can't be transparent */
+    background-color: rgba(0, 0, 0, .5);
+}
+
 #info h1 {font-size:30px;}
 #info h2 {font-size:22px;}
 #teams .team {text-align:center; margin-top:15px; margin-bottom: 15px;}
 
 #breadcrumbs {position:absolute; font-size:12px;}
 
-#graph {height: 400px;}
-#display_svg {display:block; margin:0 auto; width:90%; height:100%;}
-#layout_svg {position:absolute; overflow:hidden; top:0; left:20000px;}
+
 
 .edge path {stroke-opacity:0;}
 .node {opacity:0;}

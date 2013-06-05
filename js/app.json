@@ -341,17 +341,17 @@
 		// 	"tool_usages": [
 		// 	]
 		// },
-		{
-			"id": "test-a",
-			"name": "test-a",
-			"team_id": "bc",
-			"workflow_id": 1,
-			"data_types_ids": ["reads", "reference_genomes", "alignments"],
-			"initial_data_format_usages": [
-			],
-			"tool_usages": [
-			]
-		},
+		// {
+		// 	"id": "test-a",
+		// 	"name": "test-a",
+		// 	"team_id": "bc",
+		// 	"workflow_id": 1,
+		// 	"data_types_ids": ["reads", "reference_genomes", "alignments"],
+		// 	"initial_data_format_usages": [
+		// 	],
+		// 	"tool_usages": [
+		// 	]
+		// },
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
