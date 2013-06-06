@@ -149,7 +149,7 @@ GraphDrawing.prototype = {
 					})
 	  			.attr("stroke", function(node_path) {
 	  				var node = d3.select(this.parentNode).datum();
-	    			return graph.nodePathColors(node_path.gdatum && node_path.gdatum.id);
+	    			return graph.pathColors(node_path.gdatum && node_path.gdatum.id);
 	  			})
 	  			.attr("stroke-width", settings.graph.path_width);
 
@@ -300,7 +300,9 @@ GraphDrawing.prototype = {
 	    })
 	    .attr("stroke", function(edge_path) {
 	    	var edge = d3.select(this.parentNode).datum();
-	    	return graph.edgePathColors(edge_path.gdatum && edge_path.gdatum.id);
+	    	// console.log(edge_path.gdatum.id);
+	    	// console.log(graph.pathColors(edge_path.gdatum && edge_path.gdatum.id));
+	    	return graph.pathColors(edge_path.gdatum && edge_path.gdatum.id);
 	    }).each(function(edge_path) {
 	    	if(edge_path.gdatum) {
 	    		this.addEventListener("click", app.requestResource.bind(app, edge_path.gdatum.url()));
