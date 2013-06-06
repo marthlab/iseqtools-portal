@@ -84,12 +84,20 @@ function Pipeline(cfg) {
 		return new DataFormatUsage(_.extend(dfu_cfg, {pipeline: this}));
 	};
 
+	this.in_data_format_usages = cfg.initial_data_format_usages.map(create_dfu, this);
+
   this.data_format_usages = _.flatten(_(cfg.tool_usages.map(function(tu_cfg) {
   	return tu_cfg.out_data_format_usages.map(create_dfu, this);
-  }, this)).union(cfg.initial_data_format_usages.map(create_dfu, this)), true);
+  }, this)).union(this.in_data_format_usages), true);
 	
 	this.tool_usages = cfg.tool_usages.map(function(tu_cfg) {
   	return new ToolUsage(_.extend(tu_cfg, {pipeline: this}));
+  }, this);
+
+  this.out_data_format_usages = this.data_format_usages.filter(function(dfu) {
+  	return _(this.tool_usages.filter(function(tu){
+  		return _(tu.in_data_format_usages).contains(dfu);
+  	})).isEmpty();
   }, this);
 
   this.tools = _.uniq(this.tool_usages.map(function(tu) { return tu.tool;}));

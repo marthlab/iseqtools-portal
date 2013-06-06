@@ -156,6 +156,7 @@
         <script type="text/html" id='info_workflow_template'>
           <h1>Workflow: <%= t.name %></h1>
           <h2><%= t.question %></h1>
+          <p>This workflow consumes <%= t.in_data_types.map(function(dt){return dt.name;}).toEnglishList() %> and produces <%= t.out_data_types.map(function(dt){return dt.name}).toEnglishList()%>.</p>
           <p>This workflow is implemented by the following pipelines:</p>
           <ul>
           <% _(t.pipelines).each(function(pl){ %>
@@ -168,6 +169,7 @@
         <script type="text/html" id='info_pipeline_template'>
           <h1>Pipeline: <%= t.name %></h1>
           <% if(t.team) { %><p>Developed by: <a href="/teams/<%= t.team.id %>"><%= t.team.name %></a></p><% } %>
+          <p>This pipeline consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
           <p>This pipeline implements the <a href="/workflows/<%= t.workflow.id %>"><%= t.workflow.name %></a> workflow.</p>
           <p>This pipeline uses the following tools:</p>
           <ul>

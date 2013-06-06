@@ -35,11 +35,11 @@
 	"initial_data_types": [
 		{
 			"id":"gene_models",
-			"name":"Gene Models"
+			"name":"gene models"
 		},
 		{
 			"id":"reference_genomes",
-			"name":"Reference Genomes"
+			"name":"reference genomes"
 		}
 	],
 	"tasks": [
@@ -50,7 +50,7 @@
 			"out_data_types": [
 				{
 					"id":"reads",
-					"name":"Reads"
+					"name":"reads"
 				}
 			]
 		},
@@ -61,7 +61,7 @@
 			"out_data_types": [
 				{
 					"id":"alignments",
-					"name":"Alignments"
+					"name":"alignments"
 				}
 			]
 		},
@@ -72,11 +72,11 @@
 			"out_data_types": [
 				{
 					"id":"functional_features",
-					"name":"Functional Features"
+					"name":"functional features"
 				},
 				{
 					"id":"variants",
-					"name":"Variants"
+					"name":"variants"
 				}
 			]
 		},
@@ -87,7 +87,7 @@
 			"out_data_types": [
 				{
 					"id":"de_genes",
-					"name":"DE Genes"
+					"name":"differentially expressed genes"
 				}
 			]
 		},
@@ -98,7 +98,7 @@
 			"out_data_types": [
 				{
 					"id":"annotated_variants",
-					"name":"Annotated Variants"
+					"name":"annotated variants"
 				}
 			]
 		}

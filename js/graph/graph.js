@@ -30,7 +30,7 @@
           })).map(function(dt) {
             return new Node({
               gdatum: dt,
-              label: dt.name,
+              label: dt.name.toTitleCase(),
               graph: this
             });
           }, this);
@@ -53,7 +53,7 @@
           })).map(function(dt) {
             return new Node({
               gdatum: dt,
-              label: dt.name,
+              label: dt.name.toTitleCase(),
               graph: this
             });
           }, this);
