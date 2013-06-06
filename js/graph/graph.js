@@ -5,7 +5,7 @@
     this._createEdgePaths();
     this._assignKeys();
 
-    var edge_path_gdatum_ids = _.uniq(this.edge_paths.map(function(ep){ return (ep.gdatum && ep.gdatum.id) || '';}));
+    var edge_path_gdatum_ids = _.uniq(this.edge_paths.map( function(ep){ return (ep.gdatum && ep.gdatum.id) || '';}));
     this.edgePathColors = d3.scale.category10().domain(edge_path_gdatum_ids);
 
     var node_path_gdatum_ids = _.uniq(this.node_paths.map(function(np){ return (np.gdatum && np.gdatum.id) || '';}));

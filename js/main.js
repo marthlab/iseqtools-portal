@@ -183,18 +183,24 @@
 
   var app = {};
 
-  app.showContent = function(item) {
-    console.log("showContent: ");
-    console.log(item);
+  // PUBLIC METHODS
+
+  // used to programatically change state (links/forms are handled automatically by the Davis router)
+  app.requestResource = function(url) {
+    Davis.location.assign(new Davis.Request(url));
+  }
+
+  // PRIVATE METHODS
+
+  app._showContent = function(item) {
     item = item || null;
     if(this.is_transitioning) {
       this.queued_content = item;
     } else {
-      //console.log(item);
       this.old_content = this.content;
       this.content = item;
       this.is_transitioning = true;
-      this.transition((function() {
+      this._transition((function() {
         this.is_transitioning = false;
         if(this.queued_content) {
           var next = this.queued_content;
@@ -205,7 +211,7 @@
     }
   }
 
-  app.transition = function(onTransitionEnd) {
+  app._transition = function(onTransitionEnd) {
     
     var widget_transitions = Object.keys(widgets).map(function(w_name) {
       widgets[w_name].transition();
@@ -217,6 +223,8 @@
     });
     
   }
+
+  // APP INITIALIZATION
 
   // initialize data
   gdata.init(app_json);
@@ -240,17 +248,15 @@
     this.get('/:type/:id', function (req) {
       var data = gdata[req.params['type']];
       if(data) {
-        app.showContent(_(data).find(by_id(req.params['id'])));
+        app._showContent(_(data).find(by_id(req.params['id'])));
       }
     });
     this.get('/', function (req) {
-      app.showContent(gdata.summary);
+      app._showContent(gdata.summary);
     });
   });
 
   app.router.start();
-
-
 
 //})();
 

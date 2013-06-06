@@ -149,7 +149,7 @@ GraphDrawing.prototype = {
 					})
 	  			.attr("stroke", function(node_path) {
 	  				var node = d3.select(this.parentNode).datum();
-	    			return graph.nodePathColors(node_path.id);
+	    			return graph.nodePathColors(node_path.gdatum && node_path.gdatum.id);
 	  			})
 	  			.attr("stroke-width", settings.graph.path_width);
 
@@ -300,17 +300,17 @@ GraphDrawing.prototype = {
 	    })
 	    .attr("stroke", function(edge_path) {
 	    	var edge = d3.select(this.parentNode).datum();
-	    	return graph.edgePathColors(edge_path.id);
+	    	return graph.edgePathColors(edge_path.gdatum && edge_path.gdatum.id);
 	    }).each(function(edge_path) {
 	    	if(edge_path.gdatum) {
-	    		this.addEventListener("click", app.showContent.bind(app, edge_path.gdatum));
+	    		this.addEventListener("click", app.requestResource.bind(app, edge_path.gdatum.url()));
 	    	}
 	    });
 
 	  new_circle_paths
 	    .each(function(node_path) {
 	    	if(node_path.gdatum) {
-	    		this.addEventListener("click", app.showContent.bind(app, node_path.gdatum));
+	    		this.addEventListener("click", app.requestResource.bind(app, node_path.gdatum.url()));
 	    	}
 	    });
 

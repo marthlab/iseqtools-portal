@@ -1,5 +1,9 @@
 var gdata_mixin = {
-	type: function() { return this.constructor.name.toUnderscore(); }
+	type: function() { return this.constructor.name.toUnderscore(); },
+	url: function() { 
+		var type = this.type();
+		return (type == "summary") ? '/' : '/'+type+'s/'+this.id;
+	}
 }
 
 function Summary(cfg) {

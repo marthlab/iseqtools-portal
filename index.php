@@ -145,7 +145,12 @@
         </script>
 
         <script type="text/html" id='info_summary_template'>
-          <%= t.description %>
+          <h2>Welcome!</h2>
+
+          <p>Sed imperdiet lorem eu quam hendrerit, at faucibus justo varius. Donec et sagittis diam. Sed condimentum massa sed tellus bibendum, id ultrices nibh euismod. Quisque sit amet sem id ligula lacinia molestie. Vivamus ut tellus neque. Nulla feugiat nulla nec lorem posuere vulputate. Nunc porttitor, urna non volutpat faucibus, ante felis porttitor lorem, in laoreet justo justo eget mauris. Suspendisse vel libero sed mi vulputate adipiscing. Donec neque mi, volutpat nec lobortis quis, ullamcorper in erat. Ut pharetra massa eget cursus congue. Suspendisse metus neque, tincidunt et nunc sed, cursus ultrices metus. Nullam venenatis euismod pretium. Vivamus vitae leo in lacus lacinia tempor eu eu urna.</p>
+
+          <p>Phasellus vel eros ornare, viverra felis at, semper dui. Suspendisse tempus risus felis, ac tempor lorem ullamcorper iaculis. Etiam at orci sapien. Duis justo urna, aliquam quis ornare vitae, hendrerit quis diam. Phasellus ac ante tincidunt, elementum mauris at, laoreet risus. In hac habitasse platea dictumst. In velit elit, commodo tristique luctus sit amet, consequat vel massa.</p>
+
         </script>
 
         <script type="text/html" id='info_workflow_template'>
@@ -226,7 +231,7 @@
 
         <script src="/js/utils.js"></script>
         <script src="/js/settings.js"></script>
-        <script src="/js/domain_objects.js"></script>
+        <script src="/js/gdata.js"></script>
         <script src="/js/graph/graph.js"></script>
         <script src="/js/graph/node.js"></script>
         <script src="/js/graph/edge.js"></script>
