@@ -300,10 +300,7 @@ GraphDrawing.prototype = {
 	    	return edgePathSpline(edge, edge_path);
 	    })
 	    .attr("stroke", function(edge_path) {
-	    	var edge = d3.select(this.parentNode).datum();
-	    	// console.log(edge_path.gdatum.id);
-	    	// console.log(graph.pathColors(edge_path.gdatum && edge_path.gdatum.id));
-	    	return graph.pathColors(edge_path.gdatum && edge_path.gdatum.id);
+    		return edge_path.gdatum ? edge_path.gdatum.color() : app.content.color();
 	    })
 	  
 	  new_edges_paths
@@ -312,10 +309,7 @@ GraphDrawing.prototype = {
 	    	return edgePathSpline(edge, edge_path);
 	    })
 	    .attr("stroke", function(edge_path) {
-	    	var edge = d3.select(this.parentNode).datum();
-	    	// console.log(edge_path.gdatum.id);
-	    	// console.log(graph.pathColors(edge_path.gdatum && edge_path.gdatum.id));
-	    	return graph.pathColors(edge_path.gdatum && edge_path.gdatum.id);
+    		return edge_path.gdatum ? edge_path.gdatum.color() : app.content.color();
 	    })
 
 	  edges_paths
@@ -328,7 +322,10 @@ GraphDrawing.prototype = {
 	    .each(function(node_path) {
 	    	var node_path_elem = this;
     		this.onclick = function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } };
-	    });
+	    })
+	    .attr("stroke", function(node_path) {
+    		return node_path.gdatum ? node_path.gdatum.color() : app.content.color();
+	    })
 
 	  nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
 	    .each(function(node) {

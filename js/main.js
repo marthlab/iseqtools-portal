@@ -230,6 +230,16 @@
   // initialize data
   gdata.init(app_json);
 
+  //set up color functions
+  app.colors = {
+    workflow: d3.scale.ordinal()
+      .domain(gdata.workflows.map(function(wf){return wf.id;}))
+      .range(colorbrewer.Dark2[gdata.workflows.length]),
+    pipeline: d3.scale.ordinal()
+      .domain(gdata.pipelines.map(function(pl){return pl.id;}))
+      .range(colorbrewer.Set2[gdata.pipelines.length])
+  };
+
   // start in summary view
   app.old_content = null;
   app.content = null;

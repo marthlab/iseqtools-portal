@@ -82,6 +82,7 @@
         <script src="/js/vendor/underscore-min.js"></script>
         <script src="/js/vendor/d3.js"></script>
         <script src="/js/vendor/dagre.js"></script>
+        <script src="/js/vendor/colorbrewer.js"></script>
 
         <script type="text/html" id='main_nav_template'>
           <li data-type="workflows" class="dropdown">

@@ -9,6 +9,14 @@ var gdata_mixin = {
 		} else {
 			return '/'+type+'s/'+this.id;
 		}
+	},
+	color: function() {
+		var type = this.type();
+		if(app.colors[type]) {
+			return app.colors[type](this.id);
+		} else {
+			return "#000";
+		}
 	}
 }
 
