@@ -2,7 +2,13 @@ var gdata_mixin = {
 	type: function() { return this.constructor.name.toUnderscore(); },
 	url: function() { 
 		var type = this.type();
-		return (type == "summary") ? '/' : '/'+type+'s/'+this.id;
+		if(type == "summary") {
+			return "/";
+		} else if(type == "tool_usage") {
+			return '/pipelines/'+this.pipeline.id+'/tool_usages/'+this.id;
+		} else {
+			return '/'+type+'s/'+this.id;
+		}
 	}
 }
 

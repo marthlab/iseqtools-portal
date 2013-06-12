@@ -106,6 +106,7 @@ GraphDrawing.prototype = {
 		      .classed("primary", function(n) { return n.type() === 'primary'; })
 					.classed("secondary", function(n) { return n.type() === 'secondary'; })
 
+
 		var old_nodes_elems = nodes_elems
 			.exit()
 		
@@ -133,6 +134,8 @@ GraphDrawing.prototype = {
 				.append("g")
 					.attr("class", "circle_paths");
 
+		nodes_elems.classed("link", function(n) { return n.gdatum && n.gdatum !== app.content && n.gdatum.type() === "tool_usage"; })
+
 		var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
 			.selectAll("circle.circle_path")
 			.data(function(n) { return n.node_paths; }, NodePath.key);
@@ -152,6 +155,8 @@ GraphDrawing.prototype = {
 	    			return graph.pathColors(node_path.gdatum && node_path.gdatum.id);
 	  			})
 	  			.attr("stroke-width", settings.graph.path_width);
+
+	  circle_paths.classed("link", function(np) { return true; })
 
 		var old_circle_paths = circle_paths
 			.exit();
@@ -227,6 +232,8 @@ GraphDrawing.prototype = {
 	  	.enter()
     		.append("path")
     		.attr("stroke-width", settings.graph.path_width);
+
+    edges_paths.classed("link", function(ep) { return ep.gdatum; });
 
 	  var old_edges_paths = edges_paths.exit()
 
@@ -304,16 +311,20 @@ GraphDrawing.prototype = {
 	    	// console.log(graph.pathColors(edge_path.gdatum && edge_path.gdatum.id));
 	    	return graph.pathColors(edge_path.gdatum && edge_path.gdatum.id);
 	    }).each(function(edge_path) {
-	    	if(edge_path.gdatum) {
-	    		this.addEventListener("click", app.requestResource.bind(app, edge_path.gdatum.url()));
-	    	}
+	    	var edge_path_elem = this;
+    		this.addEventListener("click", function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } });
 	    });
 
 	  new_circle_paths
 	    .each(function(node_path) {
-	    	if(node_path.gdatum) {
-	    		this.addEventListener("click", app.requestResource.bind(app, node_path.gdatum.url()));
-	    	}
+	    	var node_path_elem = this;
+    		this.addEventListener("click", function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } });
+	    });
+
+	  new_nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
+	    .each(function(node) {
+	    	var node_elem = this;
+    		this.addEventListener("click", function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } });
 	    });
 
 	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
@@ -330,7 +341,7 @@ GraphDrawing.prototype = {
     var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
     // fudge factors prevent unwanted clipping of content on sides
     var horz_padding_fraction = 0.06;
-    var vert_padding_fraction = 0.03;
+    var vert_padding_fraction = 0.04;
     return  -Math.ceil(rect.width*horz_padding_fraction/2)
             +" "
             +Math.floor(rect.top-rect.height*vert_padding_fraction/2)

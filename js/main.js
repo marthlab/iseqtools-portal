@@ -165,7 +165,7 @@
       },
       transition: function() {
         var content = (app.content.type() == 'tool_usage' ? app.content.tool : app.content);
-        this.$el.html(this.templates[app.content.type()](content));
+        this.$el.html(this.templates[content.type()](content));
       }
     },
     teams_widget: {
@@ -246,11 +246,13 @@
     this.configure(function(){
       this.generateRequestOnPageLoad = true;
     });
+    this.get('/pipelines/:pipeline_id/tool_usages/:tu_id', function (req) {
+      var tu = _(_(gdata.pipelines).find(by_id(req.params['pipeline_id'])).tool_usages).find(by_id(req.params['tu_id']));
+      app._showContent(tu);
+    });
     this.get('/:type/:id', function (req) {
-      var data = gdata[req.params['type']];
-      if(data) {
-        app._showContent(_(data).find(by_id(req.params['id'])));
-      }
+      var item = _(gdata[req.params['type']]).find(by_id(req.params['id']));
+      app._showContent(item);
     });
     this.get('/', function (req) {
       app._showContent(gdata.summary);

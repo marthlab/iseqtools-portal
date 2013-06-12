@@ -54,3 +54,18 @@ function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
          s4() + '-' + s4() + s4() + s4();
 }
+
+// jQuery's hasClass doesn't work for SVG, but this does!
+// takes an object obj and checks for class has
+// returns true if the class exits in obj, false otherwise
+function hasClassSVG(obj, has) {
+    var classes = $(obj).attr('class') || '';
+    var index = classes.search(has);
+      
+    if (index == -1) {
+      return false;
+    }
+    else {
+      return true;
+    }
+}

@@ -150,8 +150,7 @@
           }, this));
   
           break;
-
-        case "tool_usage":
+          
         default:
           this.edges = [];
       }

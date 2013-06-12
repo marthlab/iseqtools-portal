@@ -32,6 +32,11 @@ body {
 .edge path {stroke-opacity:0;}
 .node {opacity:0;}
 
+.node.link circle:hover {
+  cursor: pointer;
+  opacity: 0.4;
+}
+
 .node.primary circle {
   fill: #fff;
 }
@@ -45,7 +50,7 @@ body {
   fill: none;
 }
 
-.node.secondary circle.circle_path:hover {
+.node.secondary circle.circle_path.link:hover {
   cursor: pointer;
   opacity: 0.4;
 }
@@ -67,7 +72,7 @@ body {
   fill: none;
 }
 
-.edge path:hover {
+.edge path.link:hover {
   cursor: pointer;
   opacity: 0.4;
 }
