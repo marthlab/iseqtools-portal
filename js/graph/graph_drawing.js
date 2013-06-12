@@ -316,6 +316,8 @@ GraphDrawing.prototype = {
 	  	.each(function(edge_path) {
 	    	var edge_path_elem = this;
     		this.onclick = function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } };
+    		this.onmouseover = function() { edges_paths.classed("hover", function(ep) { return ep.gdatum === edge_path.gdatum; }); };
+    		this.onmouseout = function() { edges_paths.classed("hover", false); };
 	    });
 
 	  circle_paths
