@@ -1,4 +1,4 @@
-  function Graph() {
+  function Graph(old_graph) {
     this._createNodes();
     this._createNodePaths();
     this._createEdges();
@@ -150,7 +150,7 @@
           }, this));
   
           break;
-          
+
         default:
           this.edges = [];
       }
@@ -211,20 +211,49 @@
     },
     _assignKeys: function() {
 
-      if(app.old_content) {
-        if(app.old_content.type() == "summary" && app.content.type() == "workflow") {
+      if(widgets.graph_widget.old_graph) {
 
-        } else if(app.old_content.type() == "workflow" && app.content.type() == "summary") {
+        var old_graph = widgets.graph_widget.old_graph;
+        var old_nodes = old_graph.nodes;
+        var old_edges = old_graph.edges;
+
+        this.nodes.forEach(function(node) {
+          var match = node.gdatum && _(old_nodes).find(function(old_node){
+            return old_node.gdatum == node.gdatum;
+          });
+          if(match) {
+            node.key = match.key;
+          }
+        });
+
+        this.edges.forEach(function(edge) {
+          var match = edge.source.gdatum && edge.target.gdatum && _(old_edges).find(function(old_edge){
+            return old_edge.source.gdatum == edge.source.gdatum && old_edge.target.gdatum == edge.target.gdatum;
+          });
+          if(match) {
+            edge.key = match.key;
+            for(var i=0; i<match.edge_paths.length && i<edge.edge_paths.length; i++) {
+              edge.edge_paths[i].key = match.edge_paths[i].key;
+            }
+          }
+        });
+
+        // if(app.old_content.type() == "summary" && app.content.type() == "workflow") {
+        //   this.nodes.forEach(function(node) {
+        //     if(node.gdatum)
+        //     //node.key = node.key || guid();
+        //   });
+        // } else if(app.old_content.type() == "workflow" && app.content.type() == "summary") {
           
-        } else if(app.old_content.type() == "workflow" && app.content.type() == "pipeline") {
+        // } else if(app.old_content.type() == "workflow" && app.content.type() == "pipeline") {
           
-        } else if(app.old_content.type() == "pipeline" && app.content.type() == "workflow") {
+        // } else if(app.old_content.type() == "pipeline" && app.content.type() == "workflow") {
           
-        } else if(app.old_content.type() == "pipeline" && app.content.type() == "tool_usage") {
+        // } else if(app.old_content.type() == "pipeline" && app.content.type() == "tool_usage") {
           
-        } else if(app.old_content.type() == "tool_usage" && app.content.type() == "pipeline") {
+        // } else if(app.old_content.type() == "tool_usage" && app.content.type() == "pipeline") {
           
-        }
+        // }
       }
 
       // all nodes, node_paths, and edge_paths that have no corresponding member in the old graph are assigned a random GUID for the key
@@ -235,6 +264,7 @@
         });
       });
       this.edges.forEach(function(edge) {
+        edge.key = edge.key || guid();
         edge.edge_paths.forEach(function(edge_path) {
           edge_path.key = edge_path.key || guid();
         });

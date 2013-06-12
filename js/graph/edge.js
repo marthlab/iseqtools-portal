@@ -6,7 +6,7 @@ function Edge(options) {
 Edge.prototype = {
 	
 };
-//Edge.key = function(e) {return  e.source.gdatum.constructor.name + "__" + e.source.gdatum.id + "__" + e.target.gdatum.constructor.name + "__" + e.target.gdatum.id; }
+Edge.key = function(edge) { return edge.key; }
 
 function EdgePath(options) {
 	this.edge = options.edge;

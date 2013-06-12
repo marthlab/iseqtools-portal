@@ -210,7 +210,7 @@ GraphDrawing.prototype = {
 
 		var edges_elems = this.edgeGroup
 	    .selectAll("g.edge")
-	    .data(graph.edges)
+	    .data(graph.edges, Edge.key)
 
 	  var new_edges_elems = edges_elems
 	    .enter()
