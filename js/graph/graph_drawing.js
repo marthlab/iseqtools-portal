@@ -299,6 +299,12 @@ GraphDrawing.prototype = {
 	    	var edge = d3.select(this.parentNode).datum();
 	    	return edgePathSpline(edge, edge_path);
 	    })
+	    .attr("stroke", function(edge_path) {
+	    	var edge = d3.select(this.parentNode).datum();
+	    	// console.log(edge_path.gdatum.id);
+	    	// console.log(graph.pathColors(edge_path.gdatum && edge_path.gdatum.id));
+	    	return graph.pathColors(edge_path.gdatum && edge_path.gdatum.id);
+	    })
 	  
 	  new_edges_paths
 	  	.attr("d", function(edge_path) {
@@ -310,21 +316,24 @@ GraphDrawing.prototype = {
 	    	// console.log(edge_path.gdatum.id);
 	    	// console.log(graph.pathColors(edge_path.gdatum && edge_path.gdatum.id));
 	    	return graph.pathColors(edge_path.gdatum && edge_path.gdatum.id);
-	    }).each(function(edge_path) {
+	    })
+
+	  edges_paths
+	  	.each(function(edge_path) {
 	    	var edge_path_elem = this;
-    		this.addEventListener("click", function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } });
+    		this.onclick = function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } };
 	    });
 
-	  new_circle_paths
+	  circle_paths
 	    .each(function(node_path) {
 	    	var node_path_elem = this;
-    		this.addEventListener("click", function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } });
+    		this.onclick = function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } };
 	    });
 
-	  new_nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
+	  nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
 	    .each(function(node) {
 	    	var node_elem = this;
-    		this.addEventListener("click", function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } });
+    		this.onclick = function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } };
 	    });
 
 	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
