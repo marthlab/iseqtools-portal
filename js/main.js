@@ -193,21 +193,22 @@
   // PRIVATE METHODS
 
   app._showContent = function(item) {
-    item = item || null;
-    if(this.is_transitioning) {
-      this.queued_content = item;
-    } else {
-      this.old_content = this.content;
-      this.content = item;
-      this.is_transitioning = true;
-      this._transition((function() {
-        this.is_transitioning = false;
-        if(this.queued_content) {
-          var next = this.queued_content;
-          this.queued_content = null;
-          this.showContent(next);
-        }
-      }).bind(this));
+    if(item !== this.content) { // halt if trying to navigate to current content
+      if(this.is_transitioning) {
+        this.queued_content = item;
+      } else {
+        this.old_content = this.content;
+        this.content = item;
+        this.is_transitioning = true;
+        this._transition((function() {
+          this.is_transitioning = false;
+          if(this.queued_content) {
+            var next = this.queued_content;
+            this.queued_content = null;
+            this._showContent(next);
+          }
+        }).bind(this));
+      }
     }
   }
 
