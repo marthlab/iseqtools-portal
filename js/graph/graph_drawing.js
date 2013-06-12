@@ -326,7 +326,8 @@ GraphDrawing.prototype = {
 
 	},
 	getViewBox: function() {
-    var rect = this.svgGroup.node().getBoundingClientRect();
+    var bcr = this.svgGroup.node().getBoundingClientRect();
+    var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
     // fudge factors prevent unwanted clipping of content on sides
     var horz_padding_fraction = 0.06;
     var vert_padding_fraction = 0.03;
