@@ -6,7 +6,7 @@ function GraphDrawing(options) {
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 }
 GraphDrawing.prototype = {
-	render: function(graph, rect, container_width) {
+	render: function(graph, rect, container_width, max_height) {
 
 		function edgePathSpline(edge, edge_path) {
 
@@ -342,7 +342,7 @@ GraphDrawing.prototype = {
 	  	.style("stroke-opacity", 1)
 
    	if(rect) {
-   		var horz_padding_fraction = 0.04;
+   		var horz_padding_fraction = 0.12;
     	var vert_padding_fraction = 0.04;
     	var width = Math.ceil(rect.width*(1+horz_padding_fraction));
     	var height = Math.ceil(rect.height*(1+vert_padding_fraction));
@@ -356,17 +356,17 @@ GraphDrawing.prototype = {
 
 	   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
 	   		.attr("viewBox", viewBox)
-	   		.attr("height", height*(container_width/width) || 0)
+	   		.attr("height", Math.min(height*(container_width/width) || 0, max_height))
 
 	   	//console.log(height*(container_width/width) || 0);
 	  }
 
 	},
 	getRect: function() {
-    //var bcr = this.svgGroup.node().getBoundingClientRect();
-    var bcr = this.svg.node().getBBox();
-    //var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
-    var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
+    var bcr = this.svgGroup.node().getBoundingClientRect();
+    //var bcr = this.svg.node().getBBox();
+    var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
+    //var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
     return rect;
 
   },

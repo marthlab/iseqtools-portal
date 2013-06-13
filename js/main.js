@@ -171,7 +171,7 @@
         this.old_graph = this.graph;
         this.graph = new Graph();
         this.drawing_for_layout.render(this.graph);
-        this.drawing_for_display.render(this.graph, this.drawing_for_layout.getRect(), this.$el.width() );
+        this.drawing_for_display.render(this.graph, this.drawing_for_layout.getRect(), this.$el.width(), parseInt(this.$el.css('maxHeight'), 10) );
         if(app.content.type() === "summary") {
           this.drawing_for_display.highlightWorkflow(gdata.workflows[0]);
         }
