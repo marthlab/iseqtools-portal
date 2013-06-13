@@ -348,8 +348,8 @@ GraphDrawing.prototype = {
     var bcr = this.svgGroup.node().getBoundingClientRect();
     var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
     // fudge factors prevent unwanted clipping of content on sides
-    var horz_padding_fraction = 0.06;
-    var vert_padding_fraction = 0.04;
+    var horz_padding_fraction = 0.12;
+    var vert_padding_fraction = 0.05;
     return  -Math.ceil(rect.width*horz_padding_fraction/2)
             +" "
             +Math.floor(rect.top-rect.height*vert_padding_fraction/2)

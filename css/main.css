@@ -8,7 +8,7 @@ body {
 #graph {height: 400px; display:none;}
 #display_svg {display:block; margin:0 auto; }
 #layout_svg {position:absolute; overflow:hidden; top:0; left:0px; visibility:hidden;}
-#info {padding:30px 30px 30px 60px; height:300px; }
+#info {padding:30px 30px 30px 60px; height:300px; margin-top:10px;}
 #info_inner {position:relative; height:100%; overflow:auto; padding-right:30px;}
 #info_inner::-webkit-scrollbar {
     -webkit-appearance: none;
