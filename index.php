@@ -38,7 +38,7 @@
 
       <div class="container" id="main">
 
-        <div id="workflows">
+        <div id="workflows_carousel" class="carousel slide">
 
         </div>
 
@@ -83,6 +83,7 @@
         <script src="/js/vendor/d3.js"></script>
         <script src="/js/vendor/dagre.js"></script>
         <script src="/js/vendor/colorbrewer.js"></script>
+        <script src="/js/vendor/glow.js"></script>
 
         <script type="text/html" id='main_nav_template'>
           <li data-type="workflows" class="dropdown">
@@ -129,12 +130,21 @@
           </li>
         </script>
 
-        <script type="text/html" id='workflows_template'>
+        <script type="text/html" id='workflows_carousel_template'>
+          <ol class="carousel-indicators">
           <% _(t.workflows).each(function(wf, i){ %>
-            <%= i % 4 == 0 ? '<div class="row">' : '' %>
-            <div class="span3 workflow" data-id="<%= wf.id %>"><a href="/workflows/<%= wf.id %>"><%= wf.name %></a></div>
-            <%= i % 4 == 3 ? '</div>' : '' %>
+            <li data-target="#workflows_carousel" data-slide-to="<%= i %>" class="<%= i==0 ? 'active':'' %>"></li>
           <% }); %>
+          </ol>
+
+          <div class="carousel-inner">
+          <% _(t.workflows).each(function(wf, i){ %>
+            <div class="<%= i==0 ? 'active':'' %> item"><a href="/workflows/<%= wf.id %>"><%= wf.question %></a></div>
+          <% }); %>
+          </div>
+
+          <a class="carousel-control left" href="#workflows_carousel" data-slide="prev">&lsaquo;</a>
+          <a class="carousel-control right" href="#workflows_carousel" data-slide="next">&rsaquo;</a>
         </script>
 
         <script type="text/html" id='breadcrumbs_template'>

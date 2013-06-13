@@ -4,7 +4,13 @@ body {
       }
 
 #main {}
-#workflows .workflow {text-align:center;}
+#workflows_carousel {display:none; background: gray;}
+#workflows_carousel .carousel-indicators {margin:0 auto; position: absolute; width:100%; overflow: hidden; text-align: center; top:auto; right:auto; bottom:10px;}
+#workflows_carousel .carousel-indicators li {display:inline-block; float:none;}
+#workflows_carousel .carousel-inner {}
+#workflows_carousel .carousel-inner .item {height:100px; text-align:center;  font-size:20px;}
+#workflows_carousel .carousel-inner .item a {color:#fff; line-height:80px;}
+#workflows_carousel .carousel-control {top:50%;}
 #graph {height: 400px; display:none;}
 #display_svg {display:block; margin:0 auto; }
 #layout_svg {position:absolute; overflow:hidden; top:0; left:0px; visibility:hidden;}

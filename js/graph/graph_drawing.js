@@ -95,6 +95,9 @@ GraphDrawing.prototype = {
 
 		var self = this;
 
+		var myGlow = glow("myGlow").rgb("#ffff00").stdDeviation(4);
+		this.svg.call(myGlow);
+
 	  // handle nodes
     var nodes_elems = this.nodeGroup.selectAll("g .node")
 	    .data(graph.nodes, Node.key);

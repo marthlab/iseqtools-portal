@@ -76,15 +76,35 @@
         return complete.promise();
       }
     },
-    workflows_widget: {
-      template: _.template($('#workflows_template').html()),
+    workflows_carousel_widget: {
+      template: _.template($('#workflows_carousel_template').html()),
       init: function() {
-        this.$el = $('#workflows');
+        this.$el = $('#workflows_carousel');
         this.$el.html(this.template({workflows: gdata.workflows, start_index: 0}));
+        this.$el.carousel();
+        this.visible = false;
       },
       transition: function() {
         
+        var trans_completion = $.Deferred();
 
+        if(!this.visible && app.content.type() === "summary") {
+          this._show(trans_completion.resolve);
+        } else if(this.visible && app.content.type() !== "summary") {
+          this._hide(trans_completion.resolve);
+        }
+
+      },
+      _hide: function(on_complete) {
+        this.visible = false;
+        this.$el.hide(1000, on_complete);
+      },
+      _show: function(on_complete) {
+        this.visible = true;
+        this.$el.show(1000, function() {
+
+          on_complete();
+        });
       }
     },
     graph_nav_widget: {
