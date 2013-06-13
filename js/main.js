@@ -80,8 +80,18 @@
       template: _.template($('#workflows_carousel_template').html()),
       init: function() {
         this.$el = $('#workflows_carousel');
-        this.$el.html(this.template({workflows: gdata.workflows, start_index: 0}));
-        this.$el.carousel();
+        this.$el.html(this.template({workflows: gdata.workflows}));
+        this.$el.carousel({interval: 3000}).on('slide', (function (e) {
+          widgets.graph_widget.drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
+        }).bind(this));
+        this.$el.carousel('pause');
+        this.$el.children('.carousel-control.left').on('click', (function(e) {
+          this.$el.carousel('prev');
+        }).bind(this));
+        this.$el.children('.carousel-control.right').on('click', (function(e) {
+          this.$el.carousel('next');
+        }).bind(this));
+
         this.visible = false;
       },
       transition: function() {
@@ -95,16 +105,20 @@
         }
 
       },
+      _currIndex: function() {
+        return this.$el.find(".carousel-inner > .active").index(".carousel-inner > div");
+      },
       _hide: function(on_complete) {
         this.visible = false;
+        this.$el.carousel('pause');
         this.$el.hide(1000, on_complete);
       },
       _show: function(on_complete) {
         this.visible = true;
-        this.$el.show(1000, function() {
-
+        this.$el.show(1000, (function() {
+          this.$el.carousel('cycle');
           on_complete();
-        });
+        }).bind(this));
       }
     },
     graph_nav_widget: {

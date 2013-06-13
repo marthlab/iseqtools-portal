@@ -360,5 +360,13 @@ GraphDrawing.prototype = {
             +Math.ceil(rect.width*(1+horz_padding_fraction))
             +" "
             +Math.ceil(rect.height*(1+vert_padding_fraction));
+  },
+  highlightWorkflow: function(workflow) {
+  	var x = this.edgeGroup
+	    .selectAll("g.edge").selectAll("path")
+	    .style("filter", function(ep,i){
+	    	return (workflow === ep.gdatum ? "url(#myGlow)" : ""); 
+	    });
+
   }
 }

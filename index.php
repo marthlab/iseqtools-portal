@@ -143,8 +143,8 @@
           <% }); %>
           </div>
 
-          <a class="carousel-control left" href="#workflows_carousel" data-slide="prev">&lsaquo;</a>
-          <a class="carousel-control right" href="#workflows_carousel" data-slide="next">&rsaquo;</a>
+          <a class="carousel-control left" data-slide="prev">&lsaquo;</a>
+          <a class="carousel-control right" data-slide="next">&rsaquo;</a>
         </script>
 
         <script type="text/html" id='breadcrumbs_template'>
