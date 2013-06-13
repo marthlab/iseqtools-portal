@@ -11,7 +11,7 @@ body {
 #workflows_carousel .carousel-inner .item {height:100px; text-align:center;  font-size:20px;}
 #workflows_carousel .carousel-inner .item a {color:#fff; line-height:80px;}
 #workflows_carousel .carousel-control {top:50%; cursor:pointer;}
-#graph {height: 400px; display:none;}
+#graph {height: auto; display:none;}
 #display_svg {display:block; margin:0 auto; }
 #layout_svg {position:absolute; overflow:hidden; top:0; left:0px; visibility:hidden;}
 #info {padding:30px 30px 30px 60px; height:300px; margin-top:10px;}

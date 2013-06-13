@@ -6,7 +6,7 @@ function GraphDrawing(options) {
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 }
 GraphDrawing.prototype = {
-	render: function(graph, viewBox) {
+	render: function(graph, rect, container_width) {
 
 		function edgePathSpline(edge, edge_path) {
 
@@ -341,25 +341,34 @@ GraphDrawing.prototype = {
 	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
 	  	.style("stroke-opacity", 1)
 
-   	if(viewBox) {
+   	if(rect) {
+   		var horz_padding_fraction = 0.12;
+    	var vert_padding_fraction = 0.04;
+    	var width = Math.ceil(rect.width*(1+horz_padding_fraction));
+    	var height = Math.ceil(rect.height*(1+vert_padding_fraction));
+   		var viewBox = -Math.ceil(rect.width*horz_padding_fraction/2)
+				            +" "
+				            +Math.floor(rect.top-rect.height*vert_padding_fraction/2)
+				            +" "
+				            +width
+				            +" "
+				            +height;
+
 	   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
-	   		.attr("viewBox", viewBox);
+	   		.attr("viewBox", viewBox)
+	   		.attr("height", height*(container_width/width))
 	  }
 
 	},
-	getViewBox: function() {
-    var bcr = this.svgGroup.node().getBoundingClientRect();
-    var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
+	getRect: function() {
+    //var bcr = this.svgGroup.node().getBoundingClientRect();
+    var bcr = this.svg.node().getBBox();
+    //var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
+    var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
+    return rect;
     // fudge factors prevent unwanted clipping of content on sides
-    var horz_padding_fraction = 0.12;
-    var vert_padding_fraction = 0.05;
-    return  -Math.ceil(rect.width*horz_padding_fraction/2)
-            +" "
-            +Math.floor(rect.top-rect.height*vert_padding_fraction/2)
-            +" "
-            +Math.ceil(rect.width*(1+horz_padding_fraction))
-            +" "
-            +Math.ceil(rect.height*(1+vert_padding_fraction));
+    //debugger;
+
   },
   highlightWorkflow: function(workflow) {
   	var x = this.edgeGroup

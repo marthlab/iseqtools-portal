@@ -43,8 +43,8 @@
         </div>
 
         <div id="graph">
-          <svg preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
-          <svg preserveAspectRatio="xMidYMid meet" id="layout_svg"></svg>
+          <svg height="0" preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
+          <svg id="layout_svg"></svg>
         </div>
 
         <!-- Main hero unit for a primary marketing message or call to action -->
