@@ -81,7 +81,7 @@
       init: function() {
         this.$el = $('#workflows_carousel');
         this.$el.html(this.template({workflows: gdata.workflows}));
-        this.$el.carousel({interval: 3000}).on('slide', (function (e) {
+        this.$el.carousel({interval: 3000}).on('slid', (function (e) {
           widgets.graph_widget.drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
         }).bind(this));
         this.$el.carousel('pause');
@@ -106,15 +106,19 @@
 
       },
       _currIndex: function() {
-        return this.$el.find(".carousel-inner > .active").index(".carousel-inner > div");
+        var index = this.$el.find(".carousel-inner > .active").index(".carousel-inner > div");
+        console.log(index)
+        return index;
       },
       _hide: function(on_complete) {
         this.visible = false;
         this.$el.carousel('pause');
+        widgets.graph_widget.drawing_for_display.highlightWorkflow(null);
         this.$el.hide(1000, on_complete);
       },
       _show: function(on_complete) {
         this.visible = true;
+        this.$el.carousel(0);
         this.$el.show(1000, (function() {
           this.$el.carousel('cycle');
           on_complete();
@@ -171,6 +175,7 @@
         this.drawing_for_layout.render(this.graph);
         var viewBox = this.drawing_for_layout.getViewBox();
         this.drawing_for_display.render(this.graph, viewBox);
+        this.drawing_for_display.highlightWorkflow(app.content.type() === "summary" ? gdata.workflows[0] : null);
 
         console.log("test update");
         //when complete

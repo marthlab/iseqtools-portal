@@ -365,7 +365,7 @@ GraphDrawing.prototype = {
   	var x = this.edgeGroup
 	    .selectAll("g.edge").selectAll("path")
 	    .style("filter", function(ep,i){
-	    	return (workflow === ep.gdatum ? "url(#myGlow)" : ""); 
+	    	return (workflow !== null && workflow === ep.gdatum ? "url(#myGlow)" : ""); 
 	    });
 
   }
