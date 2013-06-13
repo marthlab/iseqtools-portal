@@ -44,7 +44,7 @@
 
         <div id="graph">
           <svg height="0" preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
-          <svg id="layout_svg"></svg>
+          <svg id="layout_svg" preserveAspectRatio="none"></svg>
         </div>
 
         <!-- Main hero unit for a primary marketing message or call to action -->

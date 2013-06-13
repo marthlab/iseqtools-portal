@@ -342,7 +342,7 @@ GraphDrawing.prototype = {
 	  	.style("stroke-opacity", 1)
 
    	if(rect) {
-   		var horz_padding_fraction = 0.12;
+   		var horz_padding_fraction = 0.04;
     	var vert_padding_fraction = 0.04;
     	var width = Math.ceil(rect.width*(1+horz_padding_fraction));
     	var height = Math.ceil(rect.height*(1+vert_padding_fraction));
@@ -356,7 +356,9 @@ GraphDrawing.prototype = {
 
 	   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
 	   		.attr("viewBox", viewBox)
-	   		.attr("height", height*(container_width/width))
+	   		.attr("height", height*(container_width/width) || 0)
+
+	   	//console.log(height*(container_width/width) || 0);
 	  }
 
 	},
@@ -366,8 +368,6 @@ GraphDrawing.prototype = {
     //var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
     var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
     return rect;
-    // fudge factors prevent unwanted clipping of content on sides
-    //debugger;
 
   },
   highlightWorkflow: function(workflow) {
