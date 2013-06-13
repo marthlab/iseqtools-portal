@@ -354,11 +354,14 @@ GraphDrawing.prototype = {
 				            +" "
 				            +height;
 
+			var final_height = Math.min(height*(container_width/width) || 0, max_height);
+
 	   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
 	   		.attr("viewBox", viewBox)
-	   		.attr("height", Math.min(height*(container_width/width) || 0, max_height))
 
-	   	//console.log(height*(container_width/width) || 0);
+	   		.style("height", final_height)
+
+	   	console.log(final_height);
 	  }
 
 	},

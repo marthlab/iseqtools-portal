@@ -112,12 +112,13 @@
         this.visible = false;
         this.$el.carousel('pause');
         widgets.graph_widget.drawing_for_display.highlightWorkflow(null);
-        this.$el.hide(1000, on_complete);
+        this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
         this.visible = true;
         this.$el.carousel(0);
-        this.$el.show(1000, (function() {
+        this.$el.slideDown(1000, (function() {
+          this.$el.mouseover();
           this.$el.carousel('cycle');
           on_complete();
         }).bind(this));
@@ -180,11 +181,12 @@
       },
       _hide: function(on_complete) {
         this.visible = false;
-        this.$el.hide(1000, on_complete);
+        this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
         this.visible = true;
-        this.$el.show(1000, on_complete);
+        this.$el.show();
+        on_complete();
       }
       
     },

@@ -1,4 +1,4 @@
-  function Graph(old_graph) {
+  function Graph() {
     this._createNodes();
     this._createNodePaths();
     this._createEdges();
