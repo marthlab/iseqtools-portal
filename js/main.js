@@ -67,13 +67,13 @@
         this.$el.html(this.template(_(gdata).pick('workflows', 'pipelines', 'root_tools', 'teams')));
       },
       transition: function() {
-        var complete = $.Deferred();
+        // var complete = $.Deferred();
 
-        window.setTimeout(function() {
-          complete.resolve();
-        }, 2000);
+        // window.setTimeout(function() {
+        //   complete.resolve();
+        // }, 2000);
 
-        return complete.promise();
+        // return complete.promise();
       }
     },
     workflows_carousel_widget: {
@@ -124,16 +124,6 @@
         }).bind(this));
       }
     },
-    graph_nav_widget: {
-      //template: _.template($('#teams_template').html()),
-      init: function() {
-        this.$el = $('#graph_nav'); 
-      },
-      transition: function() {
-
-
-      }
-    },
     graph_widget: {
       //template: _.template($('#teams_template').html()),
       init: function() {
@@ -157,13 +147,7 @@
         var trans_completion = $.Deferred();
         var updater = this._update.bind(this, trans_completion.resolve);
 
-        if(!this.visible && app.content.graphable) {
-          this._show(updater);
-        } else if(this.visible && !app.content.graphable) {
-          this._hide(updater);
-        } else { // this covers 2 distinct cases: both true and both false
-          updater();
-        }
+        updater();
 
         return trans_completion.promise();
 
@@ -178,15 +162,6 @@
           this.drawing_for_display.highlightWorkflow(gdata.workflows[0]);
         }
         
-        on_complete();
-      },
-      _hide: function(on_complete) {
-        this.visible = false;
-        this.$el.slideUp(1000, on_complete);
-      },
-      _show: function(on_complete) {
-        this.visible = true;
-        this.$el.show();
         on_complete();
       }
       
@@ -309,80 +284,4 @@
   });
 
   app.router.start();
-
-//})();
-
-    // app.breadcrumbs = {
-    //   init: function(element, options) {
-    //     this.element = element;
-    //     //bind event handlers
-    //     $(this.element).on("click", "a", function(event){
-    //       var $t = $(event.target);
-    //       if($t.hasClass("global") ) {
-    //         app.activateItem(app);
-    //       } else if($t.hasClass("workflow") ) {
-    //         app.activateItem(app.current_workflow);
-    //       } else if($t.hasClass("pipeline") ) {
-    //         app.activateItem(app.current_pipeline);
-    //       }
-    //     });
-    //   },
-    //   update: function() {
-    //     $(this.element).html(app.templates.breadcrumbs(app));
-    //   }
-    // }
-
-    // app.activateItem = function(item) {
-    //   if(item == app) {
-    //     this.current_workflow = this.current_pipeline = this.current_tool = null;
-    //   } else if (item instanceof Workflow) {
-    //     this.current_pipeline = this.current_tool = null;
-    //     this.current_workflow = item;
-    //   } else if (item instanceof Pipeline) {
-    //     this.current_tool = null;
-    //     this.current_pipeline = item;
-    //     //this.current_workflow = pipeline.workflow;
-    //   } else if (item instanceof Tool) {
-    //     this.current_tool = item;
-    //   }
-    //   this.graph.update();
-    //   this.breadcrumbs.update();
-    // }
-
-    // app.activeItemType = function() {
-    //   if(this.current_tool) {return 'tool';}
-    //   else if(this.current_pipeline) {return 'pipeline';}
-    //   else if(this.current_workflow) {return 'workflow';}
-    //   else {return 'global';}
-    // }
-
-    // app.activeItem = function() {
-    //   switch(this.activeItemType() ) {
-    //     case 'tool':
-    //       return this.current_tool;
-    //     case 'pipeline':
-    //       return this.current_pipeline;
-    //     case 'workflow':
-    //       return this.current_workflow;
-    //     case 'global':
-    //       return this;
-    //   }
-    // }
-
-    // app.templates.nav.global = _.template($('#nav-template-global').html(), null, {variable: 'workflows'});
-    // app.templates.nav.workflow = _.template($('#nav-template-workflow').html(), null, {variable: 'pipelines'});
-    // app.templates.nav.pipeline = _.template($('#nav-template-pipeline').html(), null, {variable: 'tools'});
-    // app.templates = {
-    //   breadcrumbs: _.template($('#breadcrumbs-template').html(), null, {variable: 'app'})
-    // };
- 
-
-    // app.graph = new Graph({display_svg: document.getElementById('display_svg'), layout_svg: document.getElementById('layout_svg')});
-    // app.breadcrumbs.init(document.getElementById('breadcrumbs'));
-    // app.activateItem(app);
-    //app.graph.load_pipeline(app.pipelines[0]);
-
-    //app.graph.load_workflows([app.workflows[3]]);
-    
-    
 

@@ -357,11 +357,17 @@ GraphDrawing.prototype = {
 				            +" "
 				            +height;
 
-			var final_height = Math.min(height*(container_width/width) || 0, max_height);
+			var final_height = Math.max(Math.min(height*(container_width/width) || 0, max_height), 1);
 
-	   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
-	   		.attr("viewBox", viewBox)
-	   		.style("height", Math.max(final_height, 1)+"px")
+			if(final_height > 1) {
+		   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
+		   		.attr("viewBox", viewBox)
+		   		.style("height", final_height+"px");
+		  } else {
+		  	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
+		   		.style("height", final_height+"px");
+		  }
+	   		
 
 	  }
 
