@@ -13,7 +13,7 @@ body {
 #workflows_carousel .carousel-control {top:50%; cursor:pointer;}
 #graph {height:auto; display:block; max-height:400px; padding:10px 0;}
 #display_svg {height:1px; display:block; margin:0 auto; }
-#layout_svg {position:absolute; overflow:hidden; top:0; left:20000px; visibility:hidden;}
+#layout_svg {position:absolute; overflow:hidden; top:0; left:-20000px; visibility:hidden;}
 #info {padding:30px 30px 30px 60px; height:300px; margin-top:10px;}
 #info_inner {position:relative; height:100%; overflow:auto; padding-right:30px;}
 #info_inner::-webkit-scrollbar {
