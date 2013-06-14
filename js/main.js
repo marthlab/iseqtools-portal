@@ -112,18 +112,16 @@
         this.visible = false;
         this.$el.carousel('pause');
         widgets.graph_widget.drawing_for_display.highlightWorkflow(null);
-        //this.$el.slideUp(1000, on_complete);
-        //this.$el.animate({height:'10px'}, 1000, on_complete);
-        on_complete();
+        this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
         this.visible = true;
         this.$el.carousel(0);
-        //this.$el.animate({height:'auto'}, 1000, (function() {
+        this.$el.slideDown(1000, (function() {
           this.$el.mouseover();
           this.$el.carousel('cycle');
           on_complete();
-        //}).bind(this));
+        }).bind(this));
       }
     },
     graph_nav_widget: {
