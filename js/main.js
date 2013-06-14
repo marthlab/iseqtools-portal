@@ -182,8 +182,7 @@
       },
       _hide: function(on_complete) {
         this.visible = false;
-        this.$el.slideUp(1000);
-        on_complete();
+        this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
         this.visible = true;
