@@ -19,7 +19,7 @@
         <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
-      <div class="navbar navbar-inverse navbar-fixed-top">
+      <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
             <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -77,6 +77,7 @@
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+        <script src="/js/vendor/jquery.svg.min.js"></script>
         <script src="/js/vendor/davis.min.js"></script>
         <script src="/js/vendor/bootstrap.js"></script>
         <script src="/js/vendor/underscore-min.js"></script>

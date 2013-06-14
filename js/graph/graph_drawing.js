@@ -196,7 +196,10 @@ GraphDrawing.prototype = {
 	    })
 	    .attr("text-anchor", "middle")
       .attr("x", 0)
-      .attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; });
+      .attr("y", function(n) {
+      	var x = -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4;
+      	return x;
+      });
 
     var labels = nodes_elems.select(".node text");
     	
@@ -343,7 +346,7 @@ GraphDrawing.prototype = {
 
    	if(rect) {
    		var horz_padding_fraction = 0.12;
-    	var vert_padding_fraction = 0.04;
+    	var vert_padding_fraction = 0.06;
     	var width = Math.ceil(rect.width*(1+horz_padding_fraction));
     	var height = Math.ceil(rect.height*(1+vert_padding_fraction));
    		var viewBox = -Math.ceil(rect.width*horz_padding_fraction/2)
@@ -358,10 +361,8 @@ GraphDrawing.prototype = {
 
 	   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
 	   		.attr("viewBox", viewBox)
+	   		.style("height", Math.max(final_height, 1)+"px")
 
-	   		.style("height", final_height)
-
-	   	console.log(final_height);
 	  }
 
 	},
