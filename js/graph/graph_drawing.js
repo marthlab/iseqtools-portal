@@ -365,20 +365,25 @@ GraphDrawing.prototype = {
 		   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
 		   		.attr("viewBox", viewBox)
 		   		.style("height", final_height+"px");
+
 		  } else {
 		  	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
 		   		.style("height", final_height+"px");
 		  }
-	   		
+
+		  if(options.tween_container_height) {
+			  (this.use_transitions ? d3.select("#graph").transition().duration(settings.graph.render_duration) : d3.select("#graph"))
+			   			.style("height", final_height+"px");
+	   	}
 
 	  }
 
 	},
 	getRect: function() {
-    var bcr = this.svgGroup.node().getBoundingClientRect();
-    //var bcr = this.svg.node().getBBox();
-    var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
-    //var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
+    //var bcr = this.svgGroup.node().getBoundingClientRect();
+    var bcr = this.svg.node().getBBox();
+    //var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
+    var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
     return rect;
 
   },

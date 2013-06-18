@@ -1,5 +1,6 @@
   function Graph(content) {
     this.content = content;
+    this.content_type = this.content && this.content.type();
     this._createNodes();
     this._createNodePaths();
     this._createEdges();
@@ -15,8 +16,7 @@
   }
   Graph.prototype = {
     _createNodes: function() {
-      debugger;
-      switch(this.content.type()) {
+      switch(this.content_type) {
         case "summary":
           this.primary_nodes = gdata.tasks.map(function(task) {
             return new Node({
@@ -91,7 +91,7 @@
     },
     _createEdges: function() {
 
-      switch(this.content.type()) {
+      switch(this.content_type) {
         case "summary":
         case "workflow":
           this.edges = _.union.apply(null, this.primary_nodes.map(function(primary_node) {
@@ -158,7 +158,7 @@
     },
     _createNodePaths: function() {
       this.nodes.forEach(function(node) {
-        switch(this.content.type()) {
+        switch(this.content_type) {
           case "workflow":
             var workflow = this.content; 
             node.node_paths = workflow.pipelines.filter(function(pl){
@@ -176,7 +176,7 @@
     },
     _createEdgePaths: function() {
       this.edges.forEach(function(edge) {
-        switch(this.content.type()) {
+        switch(this.content_type) {
           case "summary":
             edge.edge_paths = _.union(edge.source.gdatum.workflows || [], edge.target.gdatum.workflows || []).map(function(wf){
               return new EdgePath({edge: edge, gdatum: wf});

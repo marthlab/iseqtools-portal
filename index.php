@@ -43,8 +43,8 @@
         </div>
 
         <div id="graph">
-          <svg preserveAspectRatio="xMidYMid meet" class="display_svg active"></svg>
-          <svg preserveAspectRatio="xMidYMid meet" class="display_svg inactive"></svg>
+          <svg preserveAspectRatio="xMidYMid meet" class="display_svg active" id="display_svg_1"></svg>
+          <svg preserveAspectRatio="xMidYMid meet" class="display_svg" id="display_svg_2"></svg>
           <svg id="layout_svg" preserveAspectRatio="none"></svg>
         </div>
 

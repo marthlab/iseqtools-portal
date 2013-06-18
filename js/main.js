@@ -167,7 +167,8 @@
           this.active_drawing_for_display.render(this.graph, {
             crop_rect: this.drawing_for_layout.getRect(),
             container_width: this.$el.width(),
-            max_height: parseInt(this.$el.css('maxHeight'), 10)
+            max_height: parseInt(this.$el.css('maxHeight'), 10),
+            tween_container_height: true
           });
         } else {
           var rel = app.content.visualRelationshipTo(app.old_content);
@@ -178,7 +179,8 @@
             this.active_drawing_for_display.render(this.graph, {
               crop_rect: this.drawing_for_layout.getRect(),
               container_width: this.$el.width(),
-              max_height: parseInt(this.$el.css('maxHeight'), 10)
+              max_height: parseInt(this.$el.css('maxHeight'), 10),
+              tween_container_height: true
             });
           } else if(rel.length === 1) { // content is itself - illegal transition
             throw "Illegal transition: cannot transition from content item to itself";
@@ -207,9 +209,16 @@
         on_complete();
       },
       _switchActiveDisplayDrawing: function() {
+
+        var currHeight = this.active_drawing_for_display.svg.style("height");
+
         var temp = this.active_drawing_for_display;
         this.active_drawing_for_display = this.inactive_drawing_for_display;
         this.inactive_drawing_for_display = temp;
+
+
+        this.active_drawing_for_display.svg.style("height", currHeight);
+        this.inactive_drawing_for_display.svg.style("height", "auto");
 
         this.active_drawing_for_display.svg.classed("active", true);
         this.inactive_drawing_for_display.svg.classed("active", false);
