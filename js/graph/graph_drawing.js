@@ -361,15 +361,33 @@ GraphDrawing.prototype = {
 			var final_height = Math.max(Math.min(height*(options.container_width/width) || 0, options.max_height), 1);
 
 			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-			if(final_height > 1 || !is_firefox) {
-		   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
-		   		.attr("viewBox", viewBox)
-		   		.style("height", final_height+"px");
 
-		  } else {
-		  	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
-		   		.style("height", final_height+"px");
-		  }
+			function setViewbox(selection) {
+				if (self.use_transitions && (final_height > 1 || !is_firefox) && options.tween_viewbox) {
+					return selection.transition().attr("viewBox", viewBox);
+				} else if(!options.tween_viewbox) {
+					return selection.attr("viewBox", viewBox);
+				} else {
+					return selection;
+				}
+			}
+
+			function setHeight(selection) {
+				if(self.use_transitions) {
+					return selection.transition().style("height", final_height+"px");
+				} else {
+					return selection.style("height", final_height+"px");
+				}
+			  
+			}
+
+			var svg = this.svg;
+
+			d3.transition()
+  		.duration(settings.graph.render_duration)
+  		.each(function() { console.log("asjhdsa"); svg.call(setViewbox).call(setHeight); })
+  		.each("end", function() { console.log("graph animation finished"); });
+			
 
 		  if(options.tween_container_height) {
 			  (this.use_transitions ? d3.select("#graph").transition().duration(settings.graph.render_duration) : d3.select("#graph"))

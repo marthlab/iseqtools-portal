@@ -136,11 +136,11 @@
           use_transitions: false
         });
         this.active_drawing_for_display = new GraphDrawing({
-          svg: d3.select($('.display_svg.active')[0]),
+          svg: d3.select($('.display_svg')[0]).classed("active", true),
           use_transitions: true
         });
         this.inactive_drawing_for_display = new GraphDrawing({
-          svg: d3.select($('.display_svg').not('.active')[0]),
+          svg: d3.select($('.display_svg')[1]).classed("active", false),
           use_transitions: true
         });
 
@@ -157,22 +157,26 @@
 
       },
       _update: function(on_complete) {
+        //debugger;
         console.log("updated");
         this.old_graph = this.graph;
-        console.log(app.content)
+        //console.log(app.content)
         this.graph = new Graph(app.content);
 
         if(!this.old_graph || this.graph.overlaps_old_graph) {
+          //debugger;
           this.drawing_for_layout.render(this.graph);
           this.active_drawing_for_display.render(this.graph, {
             crop_rect: this.drawing_for_layout.getRect(),
             container_width: this.$el.width(),
             max_height: parseInt(this.$el.css('maxHeight'), 10),
-            tween_container_height: true
+            tween_container_height: true,
+            tween_viewbox: true
           });
         } else {
           var rel = app.content.visualRelationshipTo(app.old_content);
           if(rel.length === 0) { // no relationship
+            console.log("test A");
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
             this.inactive_drawing_for_display.render(new Graph());
@@ -180,14 +184,16 @@
               crop_rect: this.drawing_for_layout.getRect(),
               container_width: this.$el.width(),
               max_height: parseInt(this.$el.css('maxHeight'), 10),
-              tween_container_height: true
+              tween_container_height: true,
+              tween_viewbox: false
             });
           } else if(rel.length === 1) { // content is itself - illegal transition
-            throw "Illegal transition: cannot transition from content item to itself";
+            //throw "Illegal transition: cannot transition from content item to itself";
+            console.log("test X");
           } else if(rel[0] === app.content) { // content is visual descendant of old content
-            console.log("test A");
-          } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
             console.log("test B");
+          } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
+            console.log("test C");
           }
         }
 
