@@ -132,11 +132,15 @@
         this.old_graph = null;
         this.graph = null;
         this.drawing_for_layout = new GraphDrawing({
-          svg: d3.select(document.getElementById('layout_svg')),
+          svg: d3.select($('#layout_svg')[0]),
           use_transitions: false
         });
-        this.drawing_for_display = new GraphDrawing({
-          svg: d3.select(document.getElementById('display_svg')),
+        this.active_drawing_for_display = new GraphDrawing({
+          svg: d3.select($('.display_svg.active')[0]),
+          use_transitions: true
+        });
+        this.inactive_drawing_for_display = new GraphDrawing({
+          svg: d3.select($('.display_svg').not('.active')[0]),
           use_transitions: true
         });
 
@@ -155,14 +159,60 @@
       _update: function(on_complete) {
         console.log("updated");
         this.old_graph = this.graph;
-        this.graph = new Graph();
-        this.drawing_for_layout.render(this.graph);
-        this.drawing_for_display.render(this.graph, this.drawing_for_layout.getRect(), this.$el.width(), parseInt(this.$el.css('maxHeight'), 10) );
+        console.log(app.content)
+        this.graph = new Graph(app.content);
+
+        if(!this.old_graph || this.graph.overlaps_old_graph) {
+          this.drawing_for_layout.render(this.graph);
+          this.active_drawing_for_display.render(this.graph, {
+            crop_rect: this.drawing_for_layout.getRect(),
+            container_width: this.$el.width(),
+            max_height: parseInt(this.$el.css('maxHeight'), 10)
+          });
+        } else {
+          var rel = app.content.visualRelationshipTo(app.old_content);
+          if(rel.length === 0) { // no relationship
+            this.drawing_for_layout.render(this.graph);
+            this._switchActiveDisplayDrawing();
+            this.inactive_drawing_for_display.render(new Graph());
+            this.active_drawing_for_display.render(this.graph, {
+              crop_rect: this.drawing_for_layout.getRect(),
+              container_width: this.$el.width(),
+              max_height: parseInt(this.$el.css('maxHeight'), 10)
+            });
+          } else if(rel.length === 1) { // content is itself - illegal transition
+            throw "Illegal transition: cannot transition from content item to itself";
+          } else if(rel[0] === app.content) { // content is visual descendant of old content
+            console.log("test A");
+          } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
+            console.log("test B");
+          }
+        }
+
+        // else if (app.content.isChildOf(app.old_content)) {
+
+        // } else if (app.old_content.isChildOf(app.content)) {
+          
+        // } else {
+
+        // }
+
+        
         if(app.content.type() === "summary") {
           this.drawing_for_display.highlightWorkflow(gdata.workflows[0]);
         }
         
+        
+        
         on_complete();
+      },
+      _switchActiveDisplayDrawing: function() {
+        var temp = this.active_drawing_for_display;
+        this.active_drawing_for_display = this.inactive_drawing_for_display;
+        this.inactive_drawing_for_display = temp;
+
+        this.active_drawing_for_display.svg.classed("active", true);
+        this.inactive_drawing_for_display.svg.classed("active", false);
       }
       
     },

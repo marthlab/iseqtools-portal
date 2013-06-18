@@ -17,6 +17,86 @@ var gdata_mixin = {
 		} else {
 			return "#000";
 		}
+	},
+	visualHierarchyLevel: function() {
+		switch(this.type()) {
+			case "tool_usage":
+				return 0;
+				break;
+			case "pipeline":
+				return 1;
+				break;
+			case "workflow":
+				return 2;
+				break;
+			case "summary":
+				return 3;
+				break;
+			default:
+				return null;
+				break;
+		}
+	},
+	// this function cannot be used to compare an item to itself
+	visualRelationshipTo: function(other_content) {
+		
+		if(this === other_content) {
+			throw "Cannot compare a gdata item to itself";
+		}
+
+		if(!other_content) { // if other content is not defined, then there is no relationship, i.e., return an empty array
+			return [];
+		}
+
+		var this_level = this.visualHierarchyLevel();
+		var other_level = other_content.visualHierarchyLevel();
+
+		if(this_level < other_level) {
+			start_content = this;
+			end_content = other_content;
+			end_level = other_level;
+		} else if (other_level < this_level) {
+			start_content = other_content;
+			end_content = this;
+			end_level = this_level;
+		} else { // might as well return early, since we know there is no ancestor-descendant relationship
+			return [];
+		}
+
+		var relationship = [];
+		var item_to_add = start_content;
+
+		if(item_to_add.type() == 'tool_usage') {
+			relationship.push(item_to_add);
+			item_to_add = item_to_add.pipeline;
+		}
+
+		if(item_to_add.type() == 'pipeline') {
+			relationship.push(item_to_add);
+			if(item_to_add === end_content) {
+				return relationship;
+			}
+			item_to_add = item_to_add.workflow;
+		}
+
+		if(item_to_add.type() == 'workflow') {
+			relationship.push(item_to_add);
+			if(item_to_add === end_content) {
+				return relationship;
+			}
+			item_to_add = gdata.summary;
+		}
+
+		if(item_to_add.type() == 'summary') {
+			relationship.push(item_to_add);
+			if(item_to_add === end_content) {
+				return relationship;
+			}
+		}
+
+		// if we got this far, start_content and end_content are not related, so ignore the relationship array
+		return [];
+
 	}
 }
 

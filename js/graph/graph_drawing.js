@@ -6,7 +6,8 @@ function GraphDrawing(options) {
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 }
 GraphDrawing.prototype = {
-	render: function(graph, rect, container_width, max_height) {
+	render: function(graph, options) { // options uses "crop_rect", "container_width", and "max_height"
+		var options = options || {};
 
 		function edgePathSpline(edge, edge_path) {
 
@@ -137,7 +138,7 @@ GraphDrawing.prototype = {
 				.append("g")
 					.attr("class", "circle_paths");
 
-		nodes_elems.classed("link", function(n) { return n.gdatum && n.gdatum !== app.content && n.gdatum.type() === "tool_usage"; })
+		nodes_elems.classed("link", function(n) { return n.gdatum && n.gdatum !== graph.content && n.gdatum.type() === "tool_usage"; })
 
 		var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
 			.selectAll("circle.circle_path")
@@ -306,7 +307,7 @@ GraphDrawing.prototype = {
 	    	return edgePathSpline(edge, edge_path);
 	    })
 	    .attr("stroke", function(edge_path) {
-    		return edge_path.gdatum ? edge_path.gdatum.color() : app.content.color();
+    		return edge_path.gdatum ? edge_path.gdatum.color() : graph.content.color();
 	    })
 	  
 	  new_edges_paths
@@ -315,7 +316,7 @@ GraphDrawing.prototype = {
 	    	return edgePathSpline(edge, edge_path);
 	    })
 	    .attr("stroke", function(edge_path) {
-    		return edge_path.gdatum ? edge_path.gdatum.color() : app.content.color();
+    		return edge_path.gdatum ? edge_path.gdatum.color() : graph.content.color();
 	    })
 
 	  edges_paths
@@ -332,7 +333,7 @@ GraphDrawing.prototype = {
     		this.onclick = function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } };
 	    })
 	    .attr("stroke", function(node_path) {
-    		return node_path.gdatum ? node_path.gdatum.color() : app.content.color();
+    		return node_path.gdatum ? node_path.gdatum.color() : graph.content.color();
 	    })
 
 	  nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
@@ -344,20 +345,20 @@ GraphDrawing.prototype = {
 	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
 	  	.style("stroke-opacity", 1)
 
-   	if(rect) {
+   	if(options.crop_rect) {
    		var horz_padding_fraction = 0.12;
     	var vert_padding_fraction = 0.06;
-    	var width = Math.ceil(rect.width*(1+horz_padding_fraction));
-    	var height = Math.ceil(rect.height*(1+vert_padding_fraction));
-   		var viewBox = -Math.ceil(rect.width*horz_padding_fraction/2)
+    	var width = Math.ceil(options.crop_rect.width*(1+horz_padding_fraction));
+    	var height = Math.ceil(options.crop_rect.height*(1+vert_padding_fraction));
+   		var viewBox = -Math.ceil(options.crop_rect.width*horz_padding_fraction/2)
 				            +" "
-				            +Math.floor(rect.top-rect.height*vert_padding_fraction/2)
+				            +Math.floor(options.crop_rect.top-options.crop_rect.height*vert_padding_fraction/2)
 				            +" "
 				            +width
 				            +" "
 				            +height;
 
-			var final_height = Math.max(Math.min(height*(container_width/width) || 0, max_height), 1);
+			var final_height = Math.max(Math.min(height*(options.container_width/width) || 0, options.max_height), 1);
 
 			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 			if(final_height > 1 || !is_firefox) {
@@ -382,11 +383,13 @@ GraphDrawing.prototype = {
 
   },
   highlightWorkflow: function(workflow) {
-  	var x = this.edgeGroup
+  	this.edgeGroup
 	    .selectAll("g.edge").selectAll("path")
 	    .style("filter", function(ep,i){
 	    	return (workflow !== null && workflow === ep.gdatum ? "url(#myGlow)" : ""); 
 	    });
-
+  },
+  getGdatumRect: function(gdatum) {
+  	
   }
 }
