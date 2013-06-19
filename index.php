@@ -157,12 +157,9 @@
         </script>
 
         <script type="text/html" id='info_summary_template'>
-          <h2>Welcome!</h2>
-
-          <p>Sed imperdiet lorem eu quam hendrerit, at faucibus justo varius. Donec et sagittis diam. Sed condimentum massa sed tellus bibendum, id ultrices nibh euismod. Quisque sit amet sem id ligula lacinia molestie. Vivamus ut tellus neque. Nulla feugiat nulla nec lorem posuere vulputate. Nunc porttitor, urna non volutpat faucibus, ante felis porttitor lorem, in laoreet justo justo eget mauris. Suspendisse vel libero sed mi vulputate adipiscing. Donec neque mi, volutpat nec lobortis quis, ullamcorper in erat. Ut pharetra massa eget cursus congue. Suspendisse metus neque, tincidunt et nunc sed, cursus ultrices metus. Nullam venenatis euismod pretium. Vivamus vitae leo in lacus lacinia tempor eu eu urna.</p>
-
-          <p>Phasellus vel eros ornare, viverra felis at, semper dui. Suspendisse tempus risus felis, ac tempor lorem ullamcorper iaculis. Etiam at orci sapien. Duis justo urna, aliquam quis ornare vitae, hendrerit quis diam. Phasellus ac ante tincidunt, elementum mauris at, laoreet risus. In hac habitasse platea dictumst. In velit elit, commodo tristique luctus sit amet, consequat vel massa.</p>
-
+          <p>
+Welcome to the Genome Sequencing Informatics Tools Project, funded by the National Human Genome Research Institute.<br>
+Six participant informatics groups are developing software tools for genome sequence analysis.</p>
         </script>
 
         <script type="text/html" id='info_workflow_template'>
