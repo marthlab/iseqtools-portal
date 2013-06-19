@@ -133,15 +133,15 @@
         this.graph = null;
         this.drawing_for_layout = new GraphDrawing({
           svg: d3.select($('#layout_svg')[0]),
-          use_transitions: false
+          for_display: false
         });
         this.active_drawing_for_display = new GraphDrawing({
           svg: d3.select($('.display_svg')[0]).classed("active", true),
-          use_transitions: true
+          for_display: true
         });
         this.inactive_drawing_for_display = new GraphDrawing({
           svg: d3.select($('.display_svg')[1]).classed("active", false),
-          use_transitions: true
+          for_display: true
         });
 
         // create new graph object
@@ -170,8 +170,8 @@
             crop_rect: this.drawing_for_layout.getRect(),
             container_width: this.$el.width(),
             max_height: parseInt(this.$el.css('maxHeight'), 10),
-            tween_container_height: true,
-            tween_viewbox: true
+            change_container_height: true,
+            animate_size: true
           });
         } else {
           var rel = app.content.visualRelationshipTo(app.old_content);
@@ -179,13 +179,15 @@
             console.log("test A");
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
-            this.inactive_drawing_for_display.render(new Graph());
+            this.inactive_drawing_for_display.render(new Graph(), {
+
+            });
             this.active_drawing_for_display.render(this.graph, {
               crop_rect: this.drawing_for_layout.getRect(),
               container_width: this.$el.width(),
               max_height: parseInt(this.$el.css('maxHeight'), 10),
-              tween_container_height: true,
-              tween_viewbox: false
+              change_container_height: true,
+              animate_size: false
             });
           } else if(rel.length === 1) { // content is itself - illegal transition
             //throw "Illegal transition: cannot transition from content item to itself";
@@ -224,7 +226,7 @@
 
 
         this.active_drawing_for_display.svg.style("height", currHeight);
-        this.inactive_drawing_for_display.svg.style("height", "auto");
+        this.inactive_drawing_for_display.svg.style("height", currHeight);
 
         this.active_drawing_for_display.svg.classed("active", true);
         this.inactive_drawing_for_display.svg.classed("active", false);

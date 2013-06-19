@@ -1,6 +1,6 @@
 function GraphDrawing(options) {
 	this.svg = options.svg;
-	this.use_transitions = options.use_transitions;
+	this.for_display = options.for_display;
 	this.svgGroup = this.svg.append("g");
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
@@ -95,6 +95,43 @@ GraphDrawing.prototype = {
 		}
 
 		var self = this;
+
+		if(this.for_display && options.crop_rect) {
+			var svg = this.svg;
+
+			var horz_padding_fraction = 0.12;
+	  	var vert_padding_fraction = 0.06;
+	  	var width = Math.ceil(options.crop_rect.width*(1+horz_padding_fraction));
+	  	var height = Math.ceil(options.crop_rect.height*(1+vert_padding_fraction));
+	 		var viewBox = -Math.ceil(options.crop_rect.width*horz_padding_fraction/2)
+				            +" "
+				            +Math.floor(options.crop_rect.top-options.crop_rect.height*vert_padding_fraction/2)
+				            +" "
+				            +width
+				            +" "
+				            +height;
+
+			var final_height = Math.max(Math.min(height*(options.container_width/width) || 0, options.max_height), 1);
+
+			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
+			function setViewbox(selection) {
+				return selection.attr("viewBox", viewBox);
+			}
+
+			function setHeight(selection) {
+				return selection.style("height", final_height+"px");
+			}
+
+			if(!options.animate_size && (final_height > 1 || !is_firefox)) {
+				svg.call(setViewbox);
+				svg.call(setHeight);
+				if(options.change_container_height) {
+  				d3.select("#graph").transition().duration(settings.graph.render_duration).call(setHeight);
+  			}
+			}
+		}
+		
 
 		var myGlow = glow("myGlow").rgb("#ffff00").stdDeviation(4);
 		this.svg.call(myGlow);
@@ -258,21 +295,21 @@ GraphDrawing.prototype = {
 	    .debugLevel(1)
 	    .run();
 
-	  (this.use_transitions ? old_nodes_elems.transition().duration(settings.graph.render_duration) : old_nodes_elems)
+	  (this.for_display ? old_nodes_elems.transition().duration(settings.graph.render_duration) : old_nodes_elems)
 	  	.style("opacity", 0)
 	  	.remove();
 
 
-	  (this.use_transitions ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
+	  (this.for_display ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
 			.style("stroke-opacity", 0)
   		.remove();
 	 
 
-	 	(this.use_transitions ? old_edges_paths.transition().duration(settings.graph.render_duration) : old_edges_paths)
+	 	(this.for_display ? old_edges_paths.transition().duration(settings.graph.render_duration) : old_edges_paths)
 	  	.style("stroke-opacity", 0)
 	  	.remove();
 
-	  (this.use_transitions ? old_edges_elems.transition().duration(settings.graph.render_duration) : old_edges_elems)
+	  (this.for_display ? old_edges_elems.transition().duration(settings.graph.render_duration) : old_edges_elems)
 	  	.style("opacity", 0)
 	  	.remove();
 
@@ -281,10 +318,10 @@ GraphDrawing.prototype = {
 
 	  new_nodes_elems.attr("transform", getTransform);
 
-	  (this.use_transitions ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
+	  (this.for_display ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
 	  	.style("opacity", 1);
 
-	  if(this.use_transitions) {
+	  if(this.for_display) {
 	  	updated_nodes_elems
 		  	.transition()
       	.duration(settings.graph.render_duration)
@@ -295,13 +332,13 @@ GraphDrawing.prototype = {
 	  	updated_nodes_elems.attr("transform", getTransform);
 	  }
 
-	  (this.use_transitions ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
+	  (this.for_display ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
 			.style("stroke-opacity", 1);
 
-	  (this.use_transitions ? labels.transition().duration(settings.graph.render_duration) : labels)
+	  (this.for_display ? labels.transition().duration(settings.graph.render_duration) : labels)
 	  	.attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; });
 
-	  (this.use_transitions ? updated_edges_paths.transition().duration(settings.graph.render_duration) : updated_edges_paths)
+	  (this.for_display ? updated_edges_paths.transition().duration(settings.graph.render_duration) : updated_edges_paths)
 	  	.attr("d", function(edge_path) {
 	    	var edge = d3.select(this.parentNode).datum();
 	    	return edgePathSpline(edge, edge_path);
@@ -342,57 +379,29 @@ GraphDrawing.prototype = {
     		this.onclick = function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } };
 	    });
 
-	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
+	  (this.for_display ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
 	  	.style("stroke-opacity", 1)
 
-   	if(options.crop_rect) {
-   		var horz_padding_fraction = 0.12;
-    	var vert_padding_fraction = 0.06;
-    	var width = Math.ceil(options.crop_rect.width*(1+horz_padding_fraction));
-    	var height = Math.ceil(options.crop_rect.height*(1+vert_padding_fraction));
-   		var viewBox = -Math.ceil(options.crop_rect.width*horz_padding_fraction/2)
-				            +" "
-				            +Math.floor(options.crop_rect.top-options.crop_rect.height*vert_padding_fraction/2)
-				            +" "
-				            +width
-				            +" "
-				            +height;
-
-			var final_height = Math.max(Math.min(height*(options.container_width/width) || 0, options.max_height), 1);
-
-			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-
-			function setViewbox(selection) {
-				if (self.use_transitions && (final_height > 1 || !is_firefox) && options.tween_viewbox) {
-					return selection.transition().attr("viewBox", viewBox);
-				} else if(!options.tween_viewbox) {
-					return selection.attr("viewBox", viewBox);
-				} else {
-					return selection;
-				}
-			}
-
-			function setHeight(selection) {
-				if(self.use_transitions) {
-					return selection.transition().style("height", final_height+"px");
-				} else {
-					return selection.style("height", final_height+"px");
-				}
-			  
-			}
-
-			var svg = this.svg;
+   	if(this.for_display && options.crop_rect) {
 
 			d3.transition()
   		.duration(settings.graph.render_duration)
-  		.each(function() { console.log("asjhdsa"); svg.call(setViewbox).call(setHeight); })
-  		.each("end", function() { console.log("graph animation finished"); });
-			
+  		.each(function() {
+  			console.log("asjhdsa");
+  			if(options.animate_size && (final_height > 1 || !is_firefox)) {
+  				svg.transition().duration(settings.graph.render_duration).call(setViewbox);
+  				svg.transition().duration(settings.graph.render_duration).call(setHeight);
+  				if(options.change_container_height) {
+	  				d3.select("#graph").transition().duration(settings.graph.render_duration).call(setHeight);
+	  			}
+  			} else {
 
-		  if(options.tween_container_height) {
-			  (this.use_transitions ? d3.select("#graph").transition().duration(settings.graph.render_duration) : d3.select("#graph"))
-			   			.style("height", final_height+"px");
-	   	}
+  			}
+  			
+  			
+  			
+  		})
+  		.each("end", function() { console.log("graph animation finished"); });
 
 	  }
 
