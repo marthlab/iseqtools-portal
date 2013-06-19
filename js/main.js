@@ -82,7 +82,7 @@
         this.$el = $('#workflows_carousel');
         this.$el.html(this.template({workflows: gdata.workflows}));
         this.$el.carousel({interval: 3500}).on('slid', (function (e) {
-          widgets.graph_widget.drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
+          widgets.graph_widget.active_drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
         }).bind(this));
         this.$el.carousel('pause');
         this.$el.children('.carousel-control.left').on('click', (function(e) {
@@ -111,7 +111,7 @@
       _hide: function(on_complete) {
         this.visible = false;
         this.$el.carousel('pause');
-        widgets.graph_widget.drawing_for_display.highlightWorkflow(null);
+        widgets.graph_widget.active_drawing_for_display.highlightWorkflow(null);
         this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
@@ -147,7 +147,7 @@
         // create new graph object
       },
       transition: function() {
-
+        console.log("transition");
         var trans_completion = $.Deferred();
         var updater = this._update.bind(this, trans_completion.resolve);
 
@@ -179,9 +179,7 @@
             console.log("test A");
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
-            this.inactive_drawing_for_display.render(new Graph(), {
-
-            });
+            this.inactive_drawing_for_display.render(new Graph());
             this.active_drawing_for_display.render(this.graph, {
               crop_rect: this.drawing_for_layout.getRect(),
               container_width: this.$el.width(),
@@ -209,7 +207,7 @@
 
         
         if(app.content.type() === "summary") {
-          this.drawing_for_display.highlightWorkflow(gdata.workflows[0]);
+          this.active_drawing_for_display.highlightWorkflow(gdata.workflows[0]);
         }
         
         
