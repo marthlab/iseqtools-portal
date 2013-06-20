@@ -124,11 +124,13 @@ GraphDrawing.prototype = {
 		if(options && options.start_rect) {
 			var start_rect = this.padRectangle(options.start_rect);
 			var start_height = Math.max(Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height), 1);
+			console.log(start_height);
 			svg.attr("viewBox", this.getViewBoxString(start_rect) );
-			svg.style("height", start_height+"px");
 			if(options.change_container_height && !options.end_rect) {
-				var start_height = Math.max(Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height), 1);
 				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", start_height+"px");
+			}
+			if(!options.animate_height && !options.end_rect) {
+				svg.style("height", start_height+"px");
 			}
 		}
 
@@ -138,6 +140,10 @@ GraphDrawing.prototype = {
 	 		var end_viewBox = this.getViewBoxString(end_rect);
 
 			var end_height = Math.max(Math.min(end_rect.height*(this.container_width/end_rect.width) || 0, this.max_height), 1);
+
+			if(!options.animate_height) {
+				svg.style("height", end_height+"px");
+			}
 
 		}
 		

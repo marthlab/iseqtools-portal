@@ -602,7 +602,7 @@
 			"id": "build-moblist-reference",
 			"name": "build-moblist-reference",
 			"team_id": "bc",
-			"workflow_id": 2,
+			"workflow_id": 1,
 			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
 				{
