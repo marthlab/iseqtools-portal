@@ -6,6 +6,9 @@ function GraphDrawing(options) {
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 }
 GraphDrawing.prototype = {
+	zoom: function(bbox) {
+		this.svg.transition().duration(settings.graph.render_duration).call(setViewbox);
+	},
 	render: function(graph, options) { // options uses "crop_rect", "container_width", and "max_height"
 		var options = options || {};
 
@@ -103,9 +106,9 @@ GraphDrawing.prototype = {
 	  	var vert_padding_fraction = 0.06;
 	  	var width = Math.ceil(options.crop_rect.width*(1+horz_padding_fraction));
 	  	var height = Math.ceil(options.crop_rect.height*(1+vert_padding_fraction));
-	 		var viewBox = -Math.ceil(options.crop_rect.width*horz_padding_fraction/2)
+	 		var viewBox = Math.floor(options.crop_rect.x-options.crop_rect.width*horz_padding_fraction/2)
 				            +" "
-				            +Math.floor(options.crop_rect.top-options.crop_rect.height*vert_padding_fraction/2)
+				            +Math.floor(options.crop_rect.y-options.crop_rect.height*vert_padding_fraction/2)
 				            +" "
 				            +width
 				            +" "
@@ -123,13 +126,16 @@ GraphDrawing.prototype = {
 				return selection.style("height", final_height+"px");
 			}
 
-			if(!options.animate_size && (final_height > 1 || !is_firefox)) {
+			if(!options.animate_viewbox && (final_height > 1 || !is_firefox)) {
 				svg.call(setViewbox);
+			}
+			if(!options.animate_height) {
 				svg.call(setHeight);
 				if(options.change_container_height) {
   				d3.select("#graph").transition().duration(settings.graph.render_duration).call(setHeight);
   			}
 			}
+
 		}
 		
 
@@ -387,20 +393,18 @@ GraphDrawing.prototype = {
 			d3.transition()
   		.duration(settings.graph.render_duration)
   		.each(function() {
-  			console.log("asjhdsa");
-  			if(options.animate_size && (final_height > 1 || !is_firefox)) {
+
+  			if(options.animate_viewbox && (final_height > 1 || !is_firefox)) {
   				svg.transition().duration(settings.graph.render_duration).call(setViewbox);
+  			}
+  			if(options.animate_height) {
   				svg.transition().duration(settings.graph.render_duration).call(setHeight);
   				if(options.change_container_height) {
 	  				d3.select("#graph").transition().duration(settings.graph.render_duration).call(setHeight);
 	  			}
-  			} else {
-
   			}
-  			
-  			
-  			
-  		})
+	
+			})
   		.each("end", function() { console.log("graph animation finished"); });
 
 	  }
@@ -408,10 +412,7 @@ GraphDrawing.prototype = {
 	},
 	getRect: function() {
     //var bcr = this.svgGroup.node().getBoundingClientRect();
-    var bcr = this.svg.node().getBBox();
-    //var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
-    var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
-    return rect;
+    return this.svg.node().getBBox();
 
   },
   highlightWorkflow: function(workflow) {
@@ -421,7 +422,35 @@ GraphDrawing.prototype = {
 	    	return (workflow !== null && workflow === ep.gdatum ? "url(#myGlow)" : ""); 
 	    });
   },
-  getGdatumRect: function(gdatum) {
+  getGdatumBBox: function(gdatum) {
+
+  	var node_path_elems = this.nodeGroup.selectAll("circle.circle_path").filter(function(np) { return np.gdatum === gdatum; });
+  	var edge_path_elems = this.edgeGroup.selectAll("path").filter(function(ep) { return ep.gdatum === gdatum; });
+
+  	var x_min = Number.POSITIVE_INFINITY;
+  	var y_min = Number.POSITIVE_INFINITY;
+  	var x_max = Number.NEGATIVE_INFINITY;
+  	var y_max = Number.NEGATIVE_INFINITY;
+
+  	node_path_elems.each(function(d,i ) {
+  		// debugger;
+  		var path_bbox = this.parentElement.parentElement.parentElement.getBBox();
+  		x_min = Math.min(x_min, path_bbox.x);
+  		x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
+  		y_min = Math.min(y_min, path_bbox.y);
+  		y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
+  	})
+  	edge_path_elems.each(function(d,i ) {
+  		console.log(this.getBBox());
+  		var path_bbox = this.getBBox();
+  		x_min = Math.min(x_min, path_bbox.x);
+  		x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
+  		y_min = Math.min(y_min, path_bbox.y);
+  		y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
+  	})
+
+  	return {x: x_min, y: y_min, width: x_max-x_min, height: y_max-y_min};
+
   	
   }
 }

@@ -171,7 +171,8 @@
             container_width: this.$el.width(),
             max_height: parseInt(this.$el.css('maxHeight'), 10),
             change_container_height: true,
-            animate_size: true
+            animate_viewbox: true,
+            animate_height: true
           });
         } else {
           var rel = app.content.visualRelationshipTo(app.old_content);
@@ -185,15 +186,41 @@
               container_width: this.$el.width(),
               max_height: parseInt(this.$el.css('maxHeight'), 10),
               change_container_height: true,
-              animate_size: false
+              animate_viewbox: false,
+              animate_height: false
             });
           } else if(rel.length === 1) { // content is itself - illegal transition
             //throw "Illegal transition: cannot transition from content item to itself";
             console.log("test X");
           } else if(rel[0] === app.content) { // content is visual descendant of old content
             console.log("test B");
+            var bounding_box_item = rel[rel.length-2];
+            var bbox = this.active_drawing_for_display.getGdatumBBox(bounding_box_item);
+
+            this.drawing_for_layout.render(this.graph);
+            this._switchActiveDisplayDrawing();
+            console.log(bbox);
+            this.inactive_drawing_for_display.render(new Graph(), {
+              crop_rect: bbox,
+              container_width: this.$el.width(),
+              max_height: parseInt(this.$el.css('maxHeight'), 10),
+              change_container_height: false,
+              animate_viewbox: true,
+              animate_height: false
+            });
+            //this.inactive_drawing_for_display.render(new Graph());
+            //this.inactive_drawing_for_display.zoom(bbox);
+            this.active_drawing_for_display.render(this.graph, {
+              crop_rect: this.drawing_for_layout.getRect(),
+              container_width: this.$el.width(),
+              max_height: parseInt(this.$el.css('maxHeight'), 10),
+              change_container_height: true,
+              animate_viewbox: false,
+              animate_height: false
+            });
           } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
             console.log("test C");
+            //var bounding_box_item = rel[1];
           }
         }
 
