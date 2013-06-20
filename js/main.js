@@ -170,7 +170,7 @@
         //console.log(app.content)
         this.graph = new Graph(app.content);
 
-        if(!this.old_graph || this.graph.overlaps_old_graph) {
+        if(!this.old_graph || this.graph.overlaps_old_graph) { // old graph and new graph have visual overlap (or there is no old graph)
           this.drawing_for_layout.render(this.graph);
           this.active_drawing_for_display.render(this.graph, {
             crop_rect: this.drawing_for_layout.getRect(),
@@ -180,7 +180,7 @@
           });
         } else {
           var rel = app.content.visualRelationshipTo(app.old_content);
-          if(rel.length === 0) { // no relationship
+          if(rel.length === 0) { // old graph content and new graph content have no ancestor-descendant relationship
             console.log("test A");
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
@@ -197,7 +197,29 @@
           } else if(rel[0] === app.content) { // content is visual descendant of old content
             console.log("test B");
             var bounding_box_item = rel[rel.length-2];
-            var bbox = this.active_drawing_for_display.getGdatumBBox(bounding_box_item);
+            var start_zoom_in_rect = this.active_drawing_for_display.getInnerRect(bounding_box_item);
+
+            this.drawing_for_layout.render(this.graph);
+            //var zoom_out_rect = 
+
+            this._switchActiveDisplayDrawing();
+            this.inactive_drawing_for_display.render(new Graph(), {
+              crop_rect: start_zoom_in_rect,
+              change_container_height: false,
+              animate_viewbox: true,
+              animate_height: true
+            });
+            this.active_drawing_for_display.render(this.graph, {
+              crop_rect: this.drawing_for_layout.getRect(),
+              change_container_height: true,
+              animate_viewbox: false,
+              animate_height: false
+            });
+          } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
+            console.log("test C");
+
+            var bounding_box_item = rel[1];
+            var bbox = this.active_drawing_for_display.getOuterRect();
 
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
@@ -214,21 +236,9 @@
               animate_viewbox: false,
               animate_height: false
             });
-          } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
-            console.log("test C");
-            //var bounding_box_item = rel[1];
           }
         }
 
-        // else if (app.content.isChildOf(app.old_content)) {
-
-        // } else if (app.old_content.isChildOf(app.content)) {
-          
-        // } else {
-
-        // }
-
-        
         if(app.content.type() === "summary") {
           this.active_drawing_for_display.highlightWorkflow(gdata.workflows[0]);
         }

@@ -412,19 +412,30 @@ GraphDrawing.prototype = {
 	  }
 
 	},
-	getRect: function() {
-    //var bcr = this.svgGroup.node().getBoundingClientRect();
-    return this.svg.node().getBBox();
-
-  },
-  highlightWorkflow: function(workflow) {
+	highlightWorkflow: function(workflow) {
   	this.edgeGroup
 	    .selectAll("g.edge").selectAll("path")
 	    .style("filter", function(ep,i){
 	    	return (workflow !== null && workflow === ep.gdatum ? "url(#myGlow)" : ""); 
 	    });
   },
-  getGdatumBBox: function(gdatum) {
+	getRect: function() {
+    //var bcr = this.svgGroup.node().getBoundingClientRect();
+    return this.svg.node().getBBox();
+
+  },
+  getOuterRect: function() {
+    //var bcr = this.svgGroup.node().getBoundingClientRect();
+    var rect = this.svg.node().getBBox();
+    return {
+	            x: rect.x-rect.width*0.25,
+	            y: rect.y-rect.height*0.25,
+	            width: rect.width*1.5,
+	            height: rect.height*1.5
+	          };
+
+  },
+  getInnerRect: function(gdatum) {
 
   	var node_path_elems = this.nodeGroup.selectAll("circle.circle_path").filter(function(np) { return np.gdatum === gdatum; });
   	var edge_path_elems = this.edgeGroup.selectAll("path").filter(function(ep) { return ep.gdatum === gdatum; });
@@ -434,16 +445,20 @@ GraphDrawing.prototype = {
   	var x_max = Number.NEGATIVE_INFINITY;
   	var y_max = Number.NEGATIVE_INFINITY;
 
-  	node_path_elems.each(function(d,i ) {
-  		// debugger;
-  		var path_bbox = this.parentElement.parentElement.parentElement.getBBox();
+  	node_path_elems.each(function(d, i) {
+  		var dagre_data = this.parentElement.parentElement.parentElement.__data__.dagre;
+  		var path_bbox = {
+  			x: dagre_data.x-dagre_data.width/2,
+  			y: dagre_data.y-dagre_data.height/2,
+  			width: dagre_data.width,
+  			height: dagre_data.height
+  		};
   		x_min = Math.min(x_min, path_bbox.x);
   		x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
   		y_min = Math.min(y_min, path_bbox.y);
   		y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
   	})
-  	edge_path_elems.each(function(d,i ) {
-  		console.log(this.getBBox());
+  	edge_path_elems.each(function(d, i) {
   		var path_bbox = this.getBBox();
   		x_min = Math.min(x_min, path_bbox.x);
   		x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
