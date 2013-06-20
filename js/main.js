@@ -164,7 +164,6 @@
 
       },
       _update: function(on_complete) {
-        //debugger;
         console.log("updated");
         this.old_graph = this.graph;
         //console.log(app.content)
@@ -173,9 +172,8 @@
         if(!this.old_graph || this.graph.overlaps_old_graph) { // old graph and new graph have visual overlap (or there is no old graph)
           this.drawing_for_layout.render(this.graph);
           this.active_drawing_for_display.render(this.graph, {
-            crop_rect: this.drawing_for_layout.getRect(),
+            end_rect: this.drawing_for_layout.getRect(),
             change_container_height: true,
-            animate_viewbox: true,
             animate_height: true
           });
         } else {
@@ -186,9 +184,8 @@
             this._switchActiveDisplayDrawing();
             this.inactive_drawing_for_display.render(new Graph());
             this.active_drawing_for_display.render(this.graph, {
-              crop_rect: this.drawing_for_layout.getRect(),
+              start_rect: this.drawing_for_layout.getRect(),
               change_container_height: true,
-              animate_viewbox: false,
               animate_height: false
             });
           } else if(rel.length === 1) { // content is itself - illegal transition
@@ -196,44 +193,33 @@
             console.log("test X");
           } else if(rel[0] === app.content) { // content is visual descendant of old content
             console.log("test B");
-            var bounding_box_item = rel[rel.length-2];
-            var start_zoom_in_rect = this.active_drawing_for_display.getInnerRect(bounding_box_item);
-
             this.drawing_for_layout.render(this.graph);
-            //var zoom_out_rect = 
-
             this._switchActiveDisplayDrawing();
             this.inactive_drawing_for_display.render(new Graph(), {
-              crop_rect: start_zoom_in_rect,
+              end_rect: this.inactive_drawing_for_display.getInnerRect(rel[rel.length-2]),
               change_container_height: false,
-              animate_viewbox: true,
               animate_height: true
             });
             this.active_drawing_for_display.render(this.graph, {
-              crop_rect: this.drawing_for_layout.getRect(),
+              start_rect: this.drawing_for_layout.getOuterRect(),
+              end_rect: this.drawing_for_layout.getRect(),
               change_container_height: true,
-              animate_viewbox: false,
               animate_height: false
             });
           } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
             console.log("test C");
-
-            var bounding_box_item = rel[1];
-            var bbox = this.active_drawing_for_display.getOuterRect();
-
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
-            console.log(bbox);
             this.inactive_drawing_for_display.render(new Graph(), {
-              crop_rect: bbox,
+              end_rect: this.inactive_drawing_for_display.getOuterRect(),
               change_container_height: false,
-              animate_viewbox: true,
               animate_height: true
             });
+            //debugger;
             this.active_drawing_for_display.render(this.graph, {
-              crop_rect: this.drawing_for_layout.getRect(),
+              start_rect: this.drawing_for_layout.getInnerRect(rel[rel.length-2]),
+              end_rect: this.drawing_for_layout.getRect(),
               change_container_height: true,
-              animate_viewbox: false,
               animate_height: false
             });
           }

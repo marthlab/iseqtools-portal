@@ -8,10 +8,26 @@ function GraphDrawing(options) {
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 }
 GraphDrawing.prototype = {
-	zoom: function(bbox) {
-		this.svg.transition().duration(settings.graph.render_duration).call(setViewbox);
+	padRectangle: function(rect, hpf, vpf) {
+		var horz_padding_fraction = hpf || 0.12;
+  	var vert_padding_fraction = vpf || 0.06;
+  	return {
+	            x: Math.floor(rect.x-rect.width*horz_padding_fraction/2),
+	            y: Math.floor(rect.y-rect.height*vert_padding_fraction/2),
+	            width: Math.ceil(rect.width*(1+horz_padding_fraction)),
+	            height: Math.ceil(rect.height*(1+vert_padding_fraction))
+	          };
 	},
-	render: function(graph, options) { // options uses "crop_rect", "container_width", and "max_height"
+	getViewBoxString: function(rect) {
+		 return rect.x
+	          +" "
+	          +rect.y
+	          +" "
+	          +rect.width
+	          +" "
+	          +rect.height;
+	},
+	render: function(graph, options) { // options uses "end_rect", "container_width", and "max_height"
 		var options = options || {};
 
 		function edgePathSpline(edge, edge_path) {
@@ -101,42 +117,27 @@ GraphDrawing.prototype = {
 
 		var self = this;
 
-		if(this.for_display && options.crop_rect) {
-			var svg = this.svg;
+		var svg = this.svg;
 
-			var horz_padding_fraction = 0.12;
-	  	var vert_padding_fraction = 0.06;
-	  	var width = Math.ceil(options.crop_rect.width*(1+horz_padding_fraction));
-	  	var height = Math.ceil(options.crop_rect.height*(1+vert_padding_fraction));
-	 		var viewBox = Math.floor(options.crop_rect.x-options.crop_rect.width*horz_padding_fraction/2)
-				            +" "
-				            +Math.floor(options.crop_rect.y-options.crop_rect.height*vert_padding_fraction/2)
-				            +" "
-				            +width
-				            +" "
-				            +height;
+		var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
-			var final_height = Math.max(Math.min(height*(this.container_width/width) || 0, this.max_height), 1);
-
-			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-
-			function setViewbox(selection) {
-				return selection.attr("viewBox", viewBox);
+		if(options && options.start_rect) {
+			var start_rect = this.padRectangle(options.start_rect);
+			var start_height = Math.max(Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height), 1);
+			svg.attr("viewBox", this.getViewBoxString(start_rect) );
+			svg.style("height", start_height+"px");
+			if(options.change_container_height && !options.end_rect) {
+				var start_height = Math.max(Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height), 1);
+				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", start_height+"px");
 			}
+		}
 
-			function setHeight(selection) {
-				return selection.style("height", final_height+"px");
-			}
+		if(options && options.end_rect) {
+			
+			var end_rect = this.padRectangle(options.end_rect);
+	 		var end_viewBox = this.getViewBoxString(end_rect);
 
-			if(!options.animate_viewbox && (final_height > 1 || !is_firefox)) {
-				svg.call(setViewbox);
-			}
-			if(!options.animate_height) {
-				svg.call(setHeight);
-				if(options.change_container_height) {
-  				d3.select("#graph").transition().duration(settings.graph.render_duration).call(setHeight);
-  			}
-			}
+			var end_height = Math.max(Math.min(end_rect.height*(this.container_width/end_rect.width) || 0, this.max_height), 1);
 
 		}
 		
@@ -390,21 +391,23 @@ GraphDrawing.prototype = {
 	  (this.for_display ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
 	  	.style("stroke-opacity", 1)
 
-   	if(this.for_display && options.crop_rect) {
+   	if(this.for_display && options.end_rect) {
 
 			d3.transition()
   		.duration(settings.graph.render_duration)
   		.each(function() {
 
-  			if(options.animate_viewbox && (final_height > 1 || !is_firefox)) {
-  				svg.transition().duration(settings.graph.render_duration).call(setViewbox);
+  			if(options.end_rect && (end_height > 1 || !is_firefox)) {
+  				svg.transition().duration(settings.graph.render_duration).attr("viewBox", end_viewBox);
   			}
-  			if(options.animate_height) {
-  				svg.transition().duration(settings.graph.render_duration).call(setHeight);
-  				if(options.change_container_height) {
-	  				d3.select("#graph").transition().duration(settings.graph.render_duration).call(setHeight);
-	  			}
+  			if(options.end_rect && options.animate_height) {
+  				svg.transition().duration(settings.graph.render_duration).style("height", end_height+"px");
   			}
+  			if(options.end_rect && options.change_container_height) {
+  				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", end_height+"px");
+  			}
+
+
 	
 			})
   		.each("end", function() { console.log("graph animation finished"); });
@@ -427,12 +430,7 @@ GraphDrawing.prototype = {
   getOuterRect: function() {
     //var bcr = this.svgGroup.node().getBoundingClientRect();
     var rect = this.svg.node().getBBox();
-    return {
-	            x: rect.x-rect.width*0.25,
-	            y: rect.y-rect.height*0.25,
-	            width: rect.width*1.5,
-	            height: rect.height*1.5
-	          };
+    return this.padRectangle(rect, 0.5, 0.5);
 
   },
   getInnerRect: function(gdatum) {
