@@ -82,7 +82,7 @@
         this.$el = $('#workflows_carousel');
         this.$el.html(this.template({workflows: gdata.workflows}));
         this.$el.carousel({interval: 3500}).on('slid', (function (e) {
-          widgets.graph_widget.drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
+          widgets.graph_widget.active_drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
         }).bind(this));
         this.$el.carousel('pause');
         this.$el.children('.carousel-control.left').on('click', (function(e) {
@@ -111,7 +111,7 @@
       _hide: function(on_complete) {
         this.visible = false;
         this.$el.carousel('pause');
-        widgets.graph_widget.drawing_for_display.highlightWorkflow(null);
+        widgets.graph_widget.active_drawing_for_display.highlightWorkflow(null);
         this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
@@ -132,18 +132,29 @@
         this.old_graph = null;
         this.graph = null;
         this.drawing_for_layout = new GraphDrawing({
-          svg: d3.select(document.getElementById('layout_svg')),
-          use_transitions: false
+          svg: d3.select($('#layout_svg')[0]),
+          for_display: false,
+          container_width: this.$el.width(),
+          max_height: parseInt(this.$el.css('maxHeight'), 10)
         });
-        this.drawing_for_display = new GraphDrawing({
-          svg: d3.select(document.getElementById('display_svg')),
-          use_transitions: true
+        this.active_drawing_for_display = new GraphDrawing({
+          svg: d3.select($('.display_svg')[0]).classed("active", true),
+          for_display: true,
+          container_width: this.$el.width(),
+          max_height: parseInt(this.$el.css('maxHeight'), 10)
         });
+        this.inactive_drawing_for_display = new GraphDrawing({
+          svg: d3.select($('.display_svg')[1]).classed("active", false),
+          for_display: true,
+          container_width: this.$el.width(),
+          max_height: parseInt(this.$el.css('maxHeight'), 10)
+        });
+        
 
         // create new graph object
       },
       transition: function() {
-
+        console.log("transition");
         var trans_completion = $.Deferred();
         var updater = this._update.bind(this, trans_completion.resolve);
 
@@ -155,14 +166,87 @@
       _update: function(on_complete) {
         console.log("updated");
         this.old_graph = this.graph;
-        this.graph = new Graph();
-        this.drawing_for_layout.render(this.graph);
-        this.drawing_for_display.render(this.graph, this.drawing_for_layout.getRect(), this.$el.width(), parseInt(this.$el.css('maxHeight'), 10) );
+        //console.log(app.content)
+        this.graph = new Graph(app.content);
+
+        if(!this.old_graph || this.graph.overlaps_old_graph) { // old graph and new graph have visual overlap (or there is no old graph)
+          this.drawing_for_layout.render(this.graph);
+          this.active_drawing_for_display.render(this.graph, {
+            end_rect: this.drawing_for_layout.getRect(),
+            change_container_height: true,
+            animate_height: true
+          });
+        } else {
+          var rel = app.content.visualRelationshipTo(app.old_content);
+          if(rel.length === 0) { // old graph content and new graph content have no ancestor-descendant relationship
+            console.log("test A");
+            this.drawing_for_layout.render(this.graph);
+            this._switchActiveDisplayDrawing();
+            this.inactive_drawing_for_display.render(new Graph());
+            this.active_drawing_for_display.render(this.graph, {
+              start_rect: this.drawing_for_layout.getRect(),
+              change_container_height: true,
+              animate_height: false
+            });
+          } else if(rel.length === 1) { // content is itself - illegal transition
+            //throw "Illegal transition: cannot transition from content item to itself";
+            console.log("test X");
+          } else if(rel[0] === app.content) { // content is visual descendant of old content
+            console.log("test B");
+            this.drawing_for_layout.render(this.graph);
+            this._switchActiveDisplayDrawing();
+            this.inactive_drawing_for_display.render(new Graph(), {
+              end_rect: this.inactive_drawing_for_display.getInnerRect(rel[rel.length-2]),
+              change_container_height: false,
+              animate_height: true
+            });
+            this.active_drawing_for_display.render(this.graph, {
+              start_rect: this.drawing_for_layout.getOuterRect(),
+              end_rect: this.drawing_for_layout.getRect(),
+              change_container_height: true,
+              animate_height: false
+            });
+          } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
+            console.log("test C");
+            this.drawing_for_layout.render(this.graph);
+            this._switchActiveDisplayDrawing();
+            this.inactive_drawing_for_display.render(new Graph(), {
+              end_rect: this.inactive_drawing_for_display.getOuterRect(),
+              change_container_height: false,
+              animate_height: true
+            });
+            //debugger;
+            this.active_drawing_for_display.render(this.graph, {
+              start_rect: this.drawing_for_layout.getInnerRect(rel[rel.length-2]),
+              end_rect: this.drawing_for_layout.getRect(),
+              change_container_height: true,
+              animate_height: false
+            });
+          }
+        }
+
         if(app.content.type() === "summary") {
-          this.drawing_for_display.highlightWorkflow(gdata.workflows[0]);
+          this.active_drawing_for_display.highlightWorkflow(gdata.workflows[0]);
         }
         
+        
+        
         on_complete();
+      },
+      _switchActiveDisplayDrawing: function() {
+
+        var currHeight = this.active_drawing_for_display.svg.style("height");
+
+        var temp = this.active_drawing_for_display;
+        this.active_drawing_for_display = this.inactive_drawing_for_display;
+        this.inactive_drawing_for_display = temp;
+
+
+        this.active_drawing_for_display.svg.style("height", currHeight);
+        this.inactive_drawing_for_display.svg.style("height", currHeight);
+
+        this.active_drawing_for_display.svg.classed("active", true);
+        this.inactive_drawing_for_display.svg.classed("active", false);
       }
       
     },

@@ -1,12 +1,34 @@
 function GraphDrawing(options) {
 	this.svg = options.svg;
-	this.use_transitions = options.use_transitions;
+	this.for_display = options.for_display;
+  this.container_width = options.container_width;
+  this.max_height = options.max_height;
 	this.svgGroup = this.svg.append("g");
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 }
 GraphDrawing.prototype = {
-	render: function(graph, rect, container_width, max_height) {
+	padRectangle: function(rect, hpf, vpf) {
+		var horz_padding_fraction = hpf || 0.12;
+  	var vert_padding_fraction = vpf || 0.06;
+  	return {
+	            x: Math.floor(rect.x-rect.width*horz_padding_fraction/2),
+	            y: Math.floor(rect.y-rect.height*vert_padding_fraction/2),
+	            width: Math.ceil(rect.width*(1+horz_padding_fraction)),
+	            height: Math.ceil(rect.height*(1+vert_padding_fraction))
+	          };
+	},
+	getViewBoxString: function(rect) {
+		 return rect.x
+	          +" "
+	          +rect.y
+	          +" "
+	          +rect.width
+	          +" "
+	          +rect.height;
+	},
+	render: function(graph, options) { // options uses "end_rect", "container_width", and "max_height"
+		var options = options || {};
 
 		function edgePathSpline(edge, edge_path) {
 
@@ -95,6 +117,37 @@ GraphDrawing.prototype = {
 
 		var self = this;
 
+		var svg = this.svg;
+
+		var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
+		if(options && options.start_rect) {
+			var start_rect = this.padRectangle(options.start_rect);
+			var start_height = Math.max(Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height), 1);
+			console.log(start_height);
+			svg.attr("viewBox", this.getViewBoxString(start_rect) );
+			if(options.change_container_height && !options.end_rect) {
+				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", start_height+"px");
+			}
+			if(!options.animate_height && !options.end_rect) {
+				svg.style("height", start_height+"px");
+			}
+		}
+
+		if(options && options.end_rect) {
+			
+			var end_rect = this.padRectangle(options.end_rect);
+	 		var end_viewBox = this.getViewBoxString(end_rect);
+
+			var end_height = Math.max(Math.min(end_rect.height*(this.container_width/end_rect.width) || 0, this.max_height), 1);
+
+			if(!options.animate_height) {
+				svg.style("height", end_height+"px");
+			}
+
+		}
+		
+
 		var myGlow = glow("myGlow").rgb("#ffff00").stdDeviation(4);
 		this.svg.call(myGlow);
 
@@ -137,7 +190,7 @@ GraphDrawing.prototype = {
 				.append("g")
 					.attr("class", "circle_paths");
 
-		nodes_elems.classed("link", function(n) { return n.gdatum && n.gdatum !== app.content && n.gdatum.type() === "tool_usage"; })
+		nodes_elems.classed("link", function(n) { return n.gdatum && n.gdatum !== graph.content && n.gdatum.type() === "tool_usage"; })
 
 		var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
 			.selectAll("circle.circle_path")
@@ -257,21 +310,21 @@ GraphDrawing.prototype = {
 	    .debugLevel(1)
 	    .run();
 
-	  (this.use_transitions ? old_nodes_elems.transition().duration(settings.graph.render_duration) : old_nodes_elems)
+	  (this.for_display ? old_nodes_elems.transition().duration(settings.graph.render_duration) : old_nodes_elems)
 	  	.style("opacity", 0)
 	  	.remove();
 
 
-	  (this.use_transitions ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
+	  (this.for_display ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
 			.style("stroke-opacity", 0)
   		.remove();
 	 
 
-	 	(this.use_transitions ? old_edges_paths.transition().duration(settings.graph.render_duration) : old_edges_paths)
+	 	(this.for_display ? old_edges_paths.transition().duration(settings.graph.render_duration) : old_edges_paths)
 	  	.style("stroke-opacity", 0)
 	  	.remove();
 
-	  (this.use_transitions ? old_edges_elems.transition().duration(settings.graph.render_duration) : old_edges_elems)
+	  (this.for_display ? old_edges_elems.transition().duration(settings.graph.render_duration) : old_edges_elems)
 	  	.style("opacity", 0)
 	  	.remove();
 
@@ -280,10 +333,10 @@ GraphDrawing.prototype = {
 
 	  new_nodes_elems.attr("transform", getTransform);
 
-	  (this.use_transitions ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
+	  (this.for_display ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
 	  	.style("opacity", 1);
 
-	  if(this.use_transitions) {
+	  if(this.for_display) {
 	  	updated_nodes_elems
 		  	.transition()
       	.duration(settings.graph.render_duration)
@@ -294,19 +347,19 @@ GraphDrawing.prototype = {
 	  	updated_nodes_elems.attr("transform", getTransform);
 	  }
 
-	  (this.use_transitions ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
+	  (this.for_display ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
 			.style("stroke-opacity", 1);
 
-	  (this.use_transitions ? labels.transition().duration(settings.graph.render_duration) : labels)
+	  (this.for_display ? labels.transition().duration(settings.graph.render_duration) : labels)
 	  	.attr("y", function(n) {return -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4; });
 
-	  (this.use_transitions ? updated_edges_paths.transition().duration(settings.graph.render_duration) : updated_edges_paths)
+	  (this.for_display ? updated_edges_paths.transition().duration(settings.graph.render_duration) : updated_edges_paths)
 	  	.attr("d", function(edge_path) {
 	    	var edge = d3.select(this.parentNode).datum();
 	    	return edgePathSpline(edge, edge_path);
 	    })
 	    .attr("stroke", function(edge_path) {
-    		return edge_path.gdatum ? edge_path.gdatum.color() : app.content.color();
+    		return edge_path.gdatum ? edge_path.gdatum.color() : graph.content.color();
 	    })
 	  
 	  new_edges_paths
@@ -315,7 +368,7 @@ GraphDrawing.prototype = {
 	    	return edgePathSpline(edge, edge_path);
 	    })
 	    .attr("stroke", function(edge_path) {
-    		return edge_path.gdatum ? edge_path.gdatum.color() : app.content.color();
+    		return edge_path.gdatum ? edge_path.gdatum.color() : graph.content.color();
 	    })
 
 	  edges_paths
@@ -332,7 +385,7 @@ GraphDrawing.prototype = {
     		this.onclick = function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } };
 	    })
 	    .attr("stroke", function(node_path) {
-    		return node_path.gdatum ? node_path.gdatum.color() : app.content.color();
+    		return node_path.gdatum ? node_path.gdatum.color() : graph.content.color();
 	    })
 
 	  nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
@@ -341,52 +394,84 @@ GraphDrawing.prototype = {
     		this.onclick = function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } };
 	    });
 
-	  (this.use_transitions ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
+	  (this.for_display ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
 	  	.style("stroke-opacity", 1)
 
-   	if(rect) {
-   		var horz_padding_fraction = 0.12;
-    	var vert_padding_fraction = 0.06;
-    	var width = Math.ceil(rect.width*(1+horz_padding_fraction));
-    	var height = Math.ceil(rect.height*(1+vert_padding_fraction));
-   		var viewBox = -Math.ceil(rect.width*horz_padding_fraction/2)
-				            +" "
-				            +Math.floor(rect.top-rect.height*vert_padding_fraction/2)
-				            +" "
-				            +width
-				            +" "
-				            +height;
+   	if(this.for_display && options.end_rect) {
 
-			var final_height = Math.max(Math.min(height*(container_width/width) || 0, max_height), 1);
+			d3.transition()
+  		.duration(settings.graph.render_duration)
+  		.each(function() {
 
-			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-			if(final_height > 1 || !is_firefox) {
-		   	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
-		   		.attr("viewBox", viewBox)
-		   		.style("height", final_height+"px");
-		  } else {
-		  	(this.use_transitions ? this.svg.transition().duration(settings.graph.render_duration) : this.svg)
-		   		.style("height", final_height+"px");
-		  }
-	   		
+  			if(options.end_rect && (end_height > 1 || !is_firefox)) {
+  				svg.transition().duration(settings.graph.render_duration).attr("viewBox", end_viewBox);
+  			}
+  			if(options.end_rect && options.animate_height) {
+  				svg.transition().duration(settings.graph.render_duration).style("height", end_height+"px");
+  			}
+  			if(options.end_rect && options.change_container_height) {
+  				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", end_height+"px");
+  			}
+
+
+	
+			})
+  		.each("end", function() { console.log("graph animation finished"); });
 
 	  }
 
 	},
-	getRect: function() {
-    var bcr = this.svgGroup.node().getBoundingClientRect();
-    //var bcr = this.svg.node().getBBox();
-    var rect = { top: bcr.top + document.body.scrollTop, width: bcr.width, height: bcr.height };
-    //var rect = { top: bcr.y, width: bcr.width, height: bcr.height };
-    return rect;
-
-  },
-  highlightWorkflow: function(workflow) {
-  	var x = this.edgeGroup
+	highlightWorkflow: function(workflow) {
+  	this.edgeGroup
 	    .selectAll("g.edge").selectAll("path")
 	    .style("filter", function(ep,i){
 	    	return (workflow !== null && workflow === ep.gdatum ? "url(#myGlow)" : ""); 
 	    });
+  },
+	getRect: function() {
+    //var bcr = this.svgGroup.node().getBoundingClientRect();
+    return this.svg.node().getBBox();
 
+  },
+  getOuterRect: function() {
+    //var bcr = this.svgGroup.node().getBoundingClientRect();
+    var rect = this.svg.node().getBBox();
+    return this.padRectangle(rect, 0.5, 0.5);
+
+  },
+  getInnerRect: function(gdatum) {
+
+  	var node_path_elems = this.nodeGroup.selectAll("circle.circle_path").filter(function(np) { return np.gdatum === gdatum; });
+  	var edge_path_elems = this.edgeGroup.selectAll("path").filter(function(ep) { return ep.gdatum === gdatum; });
+
+  	var x_min = Number.POSITIVE_INFINITY;
+  	var y_min = Number.POSITIVE_INFINITY;
+  	var x_max = Number.NEGATIVE_INFINITY;
+  	var y_max = Number.NEGATIVE_INFINITY;
+
+  	node_path_elems.each(function(d, i) {
+  		var dagre_data = this.parentElement.parentElement.parentElement.__data__.dagre;
+  		var path_bbox = {
+  			x: dagre_data.x-dagre_data.width/2,
+  			y: dagre_data.y-dagre_data.height/2,
+  			width: dagre_data.width,
+  			height: dagre_data.height
+  		};
+  		x_min = Math.min(x_min, path_bbox.x);
+  		x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
+  		y_min = Math.min(y_min, path_bbox.y);
+  		y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
+  	})
+  	edge_path_elems.each(function(d, i) {
+  		var path_bbox = this.getBBox();
+  		x_min = Math.min(x_min, path_bbox.x);
+  		x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
+  		y_min = Math.min(y_min, path_bbox.y);
+  		y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
+  	})
+
+  	return {x: x_min, y: y_min, width: x_max-x_min, height: y_max-y_min};
+
+  	
   }
 }

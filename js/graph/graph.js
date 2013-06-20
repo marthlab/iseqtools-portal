@@ -1,4 +1,6 @@
-  function Graph() {
+  function Graph(content) {
+    this.content = content;
+    this.content_type = this.content && this.content.type();
     this._createNodes();
     this._createNodePaths();
     this._createEdges();
@@ -14,8 +16,7 @@
   }
   Graph.prototype = {
     _createNodes: function() {
-
-      switch(app.content.type()) {
+      switch(this.content_type) {
         case "summary":
           this.primary_nodes = gdata.tasks.map(function(task) {
             return new Node({
@@ -38,7 +39,7 @@
           break;
 
         case "workflow":
-          var wf = app.content;
+          var wf = this.content;
 
           this.primary_nodes = wf.tasks.map(function(task) {
             return new Node({
@@ -61,7 +62,7 @@
           break;
 
         case "pipeline":
-          var pl = app.content;
+          var pl = this.content;
 
           this.primary_nodes = pl.tool_usages.map(function(tu) { return new Node({gdatum: tu, label: tu.tool.id, graph: this});}, this);
           this.secondary_nodes = pl.data_format_usages
@@ -75,7 +76,7 @@
           break;
 
         case "tool_usage":
-          var tu = app.content;
+          var tu = this.content;
 
           this.primary_nodes = [new Node({gdatum: tu, label: tu.tool.id, graph: this})];
           this.secondary_nodes = [];
@@ -90,7 +91,7 @@
     },
     _createEdges: function() {
 
-      switch(app.content.type()) {
+      switch(this.content_type) {
         case "summary":
         case "workflow":
           this.edges = _.union.apply(null, this.primary_nodes.map(function(primary_node) {
@@ -157,9 +158,9 @@
     },
     _createNodePaths: function() {
       this.nodes.forEach(function(node) {
-        switch(app.content.type()) {
+        switch(this.content_type) {
           case "workflow":
-            var workflow = app.content; 
+            var workflow = this.content; 
             node.node_paths = workflow.pipelines.filter(function(pl){
               return pl.data_types.length === 1 && node.gdatum === pl.data_types[0];
             }).map(function(pl){
@@ -175,14 +176,14 @@
     },
     _createEdgePaths: function() {
       this.edges.forEach(function(edge) {
-        switch(app.content.type()) {
+        switch(this.content_type) {
           case "summary":
             edge.edge_paths = _.union(edge.source.gdatum.workflows || [], edge.target.gdatum.workflows || []).map(function(wf){
               return new EdgePath({edge: edge, gdatum: wf});
             }, this);
             break;
           case "workflow":
-            var workflow = app.content;
+            var workflow = this.content;
             edge.edge_paths = workflow.pipelines.filter(function(pl) {
               var e = edge, s = edge.source, t = edge.target;
               var to_intermediate_task = _(pl.data_types).contains(s.gdatum)
@@ -211,6 +212,8 @@
     },
     _assignKeys: function() {
 
+      this.overlaps_old_graph = false;
+
       if(widgets.graph_widget.old_graph) {
 
         var old_graph = widgets.graph_widget.old_graph;
@@ -223,8 +226,9 @@
           });
           if(match) {
             node.key = match.key;
+            this.overlaps_old_graph = true;
           }
-        });
+        }, this);
 
         this.edges.forEach(function(edge) {
           var match = edge.source.gdatum && edge.target.gdatum && _(old_edges).find(function(old_edge){
@@ -232,28 +236,13 @@
           });
           if(match) {
             edge.key = match.key;
+            this.overlaps_old_graph = true;
             for(var i=0; i<match.edge_paths.length && i<edge.edge_paths.length; i++) {
               edge.edge_paths[i].key = match.edge_paths[i].key;
             }
           }
-        });
+        }, this);
 
-        // if(app.old_content.type() == "summary" && app.content.type() == "workflow") {
-        //   this.nodes.forEach(function(node) {
-        //     if(node.gdatum)
-        //     //node.key = node.key || guid();
-        //   });
-        // } else if(app.old_content.type() == "workflow" && app.content.type() == "summary") {
-          
-        // } else if(app.old_content.type() == "workflow" && app.content.type() == "pipeline") {
-          
-        // } else if(app.old_content.type() == "pipeline" && app.content.type() == "workflow") {
-          
-        // } else if(app.old_content.type() == "pipeline" && app.content.type() == "tool_usage") {
-          
-        // } else if(app.old_content.type() == "tool_usage" && app.content.type() == "pipeline") {
-          
-        // }
       }
 
       // all nodes, node_paths, and edge_paths that have no corresponding member in the old graph are assigned a random GUID for the key
