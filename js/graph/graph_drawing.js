@@ -1,6 +1,8 @@
 function GraphDrawing(options) {
 	this.svg = options.svg;
 	this.for_display = options.for_display;
+  this.container_width = options.container_width;
+  this.max_height = options.max_height;
 	this.svgGroup = this.svg.append("g");
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
@@ -114,7 +116,7 @@ GraphDrawing.prototype = {
 				            +" "
 				            +height;
 
-			var final_height = Math.max(Math.min(height*(options.container_width/width) || 0, options.max_height), 1);
+			var final_height = Math.max(Math.min(height*(this.container_width/width) || 0, this.max_height), 1);
 
 			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 

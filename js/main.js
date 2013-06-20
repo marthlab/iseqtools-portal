@@ -133,16 +133,23 @@
         this.graph = null;
         this.drawing_for_layout = new GraphDrawing({
           svg: d3.select($('#layout_svg')[0]),
-          for_display: false
+          for_display: false,
+          container_width: this.$el.width(),
+          max_height: parseInt(this.$el.css('maxHeight'), 10)
         });
         this.active_drawing_for_display = new GraphDrawing({
           svg: d3.select($('.display_svg')[0]).classed("active", true),
-          for_display: true
+          for_display: true,
+          container_width: this.$el.width(),
+          max_height: parseInt(this.$el.css('maxHeight'), 10)
         });
         this.inactive_drawing_for_display = new GraphDrawing({
           svg: d3.select($('.display_svg')[1]).classed("active", false),
-          for_display: true
+          for_display: true,
+          container_width: this.$el.width(),
+          max_height: parseInt(this.$el.css('maxHeight'), 10)
         });
+        
 
         // create new graph object
       },
@@ -164,12 +171,9 @@
         this.graph = new Graph(app.content);
 
         if(!this.old_graph || this.graph.overlaps_old_graph) {
-          //debugger;
           this.drawing_for_layout.render(this.graph);
           this.active_drawing_for_display.render(this.graph, {
             crop_rect: this.drawing_for_layout.getRect(),
-            container_width: this.$el.width(),
-            max_height: parseInt(this.$el.css('maxHeight'), 10),
             change_container_height: true,
             animate_viewbox: true,
             animate_height: true
@@ -183,8 +187,6 @@
             this.inactive_drawing_for_display.render(new Graph());
             this.active_drawing_for_display.render(this.graph, {
               crop_rect: this.drawing_for_layout.getRect(),
-              container_width: this.$el.width(),
-              max_height: parseInt(this.$el.css('maxHeight'), 10),
               change_container_height: true,
               animate_viewbox: false,
               animate_height: false
@@ -202,18 +204,12 @@
             console.log(bbox);
             this.inactive_drawing_for_display.render(new Graph(), {
               crop_rect: bbox,
-              container_width: this.$el.width(),
-              max_height: parseInt(this.$el.css('maxHeight'), 10),
               change_container_height: false,
               animate_viewbox: true,
-              animate_height: false
+              animate_height: true
             });
-            //this.inactive_drawing_for_display.render(new Graph());
-            //this.inactive_drawing_for_display.zoom(bbox);
             this.active_drawing_for_display.render(this.graph, {
               crop_rect: this.drawing_for_layout.getRect(),
-              container_width: this.$el.width(),
-              max_height: parseInt(this.$el.css('maxHeight'), 10),
               change_container_height: true,
               animate_viewbox: false,
               animate_height: false
