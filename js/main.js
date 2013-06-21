@@ -4,6 +4,10 @@
 
   var gdata = {
     init: function(cfg) {
+      this.generic_pages = cfg.generic_pages.map(function(gp_cfg) {
+        return new GenericPage(gp_cfg);
+      });
+
       this.summary = new Summary(cfg.summary);
 
       this.teams = cfg.teams.map(function(team_cfg) {
@@ -64,7 +68,7 @@
       template: _.template($('#main_nav_template').html()),
       init: function() {
         this.$el = $('#main_nav'); 
-        this.$el.html(this.template(_(gdata).pick('workflows', 'pipelines', 'root_tools', 'teams')));
+        this.$el.html(this.template(_(gdata).pick('workflows', 'pipelines', 'root_tools', 'teams', 'generic_pages')));
       },
       transition: function() {
         // var complete = $.Deferred();
@@ -252,6 +256,7 @@
     },
     info_widget: {
       templates: {
+        'about': _.template($('#info_about_template').html()),
         'summary': _.template($('#info_summary_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
         'pipeline': _.template($('#info_pipeline_template').html()),
@@ -263,7 +268,8 @@
       },
       transition: function() {
         var content = (app.content.type() == 'tool_usage' ? app.content.tool : app.content);
-        this.$el.html(this.templates[content.type()](content));
+        var type = content.type();
+        this.$el.html(this.templates[type === "generic_page" ? content.id : type](content));
       }
     },
     teams_widget: {
@@ -364,6 +370,9 @@
     });
     this.get('/', function (req) {
       app._showContent(gdata.summary);
+    });
+    this.get('/:generic_page_id', function (req) {
+      app._showContent(_(gdata.generic_pages).find(by_id(req.params['generic_page_id'])));
     });
   });
 

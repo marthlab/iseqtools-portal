@@ -88,33 +88,33 @@
         <script src="/js/vendor/glow.js"></script>
 
         <script type="text/html" id='main_nav_template'>
-          <li data-type="workflows" class="dropdown">
+          <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">Workflows <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.workflows).each(function(wf){ %>
-              <li data-id="<%= wf.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/workflows/<%= wf.id %>"><%= wf.name %></a></li>
+              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= wf.url() %>"><%= wf.name %></a></li>
             <% }); %>
             </ul>
           </li>
-          <li data-type="pipelines" class="dropdown">
+          <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">Pipelines <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.pipelines).each(function(pl){ %>
-              <li data-id="<%= pl.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
+              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= pl.url() %>"><%= pl.name %></a></li>
             <% }); %>
             </ul>
           </li>
-          <li data-type="tools" class="dropdown">
+          <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.root_tools).each(function(tool){ %>
               <% var has_subtools = tool.subtools.length > 0 %>
-              <li data-id="<%= tool.id %>" class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="/tools/<%= tool.id %>"><%= tool.name %></a>
+              <li class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="<%= tool.url() %>"><%= tool.name %></a>
                 <% if(has_subtools) { %>
                 <ul class="dropdown-menu">
                 <% _(tool.subtools).each(function(subtool){ %>
-                  <li data-id="<%= subtool.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/tools/<%= subtool.id %>"><%= subtool.name %></a></li>
+                  <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= subtool.url() %>"><%= subtool.name %></a></li>
                 <% }); %>
                 </ul>
                 <% } %>
@@ -122,14 +122,20 @@
             <% }); %>
             </ul>
           </li>
-          <li data-type="teams" class="dropdown">
+          <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">Teams <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.teams).each(function(team){ %>
-              <li data-id="<%= team.id %>"><a class="dropdown-toggle" data-toggle="dropdown" href="/teams/<%= team.id %>"><%= team.name %></a></li>
+              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= team.url() %>"><%= team.name %></a></li>
             <% }); %>
             </ul>
           </li>
+          <% _(t.generic_pages).each(function(gp){ %>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="<%= gp.url() %>"><%= gp.name %></a>
+          </li>
+          <% }); %>
+          
         </script>
 
         <script type="text/html" id='workflows_carousel_template'>
@@ -153,8 +159,13 @@
           <div>Breadcrumbs</div>
         </script>
 
-        <script type="text/html" id='graph_template'>
-          <div>Graph</div>
+        <script type="text/html" id='info_about_template'>
+        <p>
+          Aliquam fermentum lacus sit amet tellus porta molestie. Sed commodo lacinia egestas. Aliquam vitae varius metus. Sed faucibus imperdiet molestie. Integer dignissim, justo non facilisis tempor, magna eros viverra risus, eget viverra ipsum enim vel mauris. Cras congue odio nunc, eu pellentesque tortor elementum vitae. Etiam sagittis convallis libero, eget tristique dui fringilla id. Nullam luctus ultrices justo, vel convallis mi tempor nec. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce eleifend consequat lacus vel molestie. Curabitur vehicula eget nisi eu vestibulum. Nam eget venenatis augue.
+        </p>
+        <p>
+          Ut eget purus quis lacus rhoncus scelerisque. Integer sed odio et sapien aliquet porta et ut massa. Mauris vel congue tellus, eget egestas ipsum. Phasellus facilisis dictum sapien, a vehicula eros imperdiet quis. Maecenas eget viverra metus. Donec non mauris nec turpis blandit pharetra vitae a velit. Ut vel nisl semper, gravida tellus quis, dictum justo. Sed consectetur ullamcorper ipsum. Proin eu ligula scelerisque, tincidunt erat at, viverra felis. Nullam et arcu vel risus adipiscing fermentum. Aliquam iaculis interdum euismod. Nullam at orci pretium, tempus libero sit amet, pellentesque mauris. Vivamus vestibulum magna lectus, a iaculis leo elementum vitae. Nam turpis turpis, bibendum vitae erat ut, imperdiet placerat orci. Donec aliquam fringilla ultricies. Vestibulum non tortor eu velit congue suscipit.
+        </p>
         </script>
 
         <script type="text/html" id='info_summary_template'>

@@ -4,6 +4,8 @@ var gdata_mixin = {
 		var type = this.type();
 		if(type == "summary") {
 			return "/";
+		} else if(type == "generic_page") {
+			return '/'+this.id;
 		} else if(type == "tool_usage") {
 			return '/pipelines/'+this.pipeline.id+'/tool_usages/'+this.id;
 		} else {
@@ -99,6 +101,12 @@ var gdata_mixin = {
 
 	}
 }
+
+function GenericPage(cfg) {
+	_(this).extend(_(cfg).pickStrings('id', 'name'));
+}
+_.extend(GenericPage.prototype, gdata_mixin);
+Summary.prototype.graphable = false;
 
 function Summary(cfg) {
 	_(this).extend(_(cfg).pickStrings('description'));

@@ -1,4 +1,10 @@
 {
+	"generic_pages": [
+		{
+			"id": "about",
+			"name": "About"
+		}
+	],
 	"summary": {
 
 	},
