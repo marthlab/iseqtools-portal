@@ -436,7 +436,7 @@ GraphDrawing.prototype = {
   getOuterRect: function() {
     //var bcr = this.svgGroup.node().getBoundingClientRect();
     var rect = this.svg.node().getBBox();
-    return this.padRectangle(rect, 0.5, 0.5);
+    return this.padRectangle(rect, 1.25, 1.25);
 
   },
   getInnerRect: function(gdatum) {

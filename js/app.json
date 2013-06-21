@@ -222,6 +222,26 @@
 		{
 			"id": "bamtools",
 			"team_id": "bc",
+			"tutorials": [
+				{
+					"label": "BamTools Introductory Tutorial",
+					"url":"http://www.google.com"
+				},
+				{
+					"label": "BamTools Advanced Tutorial",
+					"url":"http://www.google.com"
+				}
+			],
+			"demos": [
+				{
+					"label": "BamTools Simple Demo",
+					"url":"http://www.google.com"
+				},
+				{
+					"label": "BamTools Advanced Demo",
+					"url":"http://www.google.com"
+				}
+			],
 			"subtools": [
 				{
 					"id": "bamtools-sort"
@@ -361,6 +381,26 @@
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
+			"tutorials": [
+				{
+					"label": "FASTQ-VCF Introductory Tutorial",
+					"url": "http://www.google.com"
+				},
+				{
+					"label": "FASTQ-VCF Advanced Tutorial",
+					"url": "http://www.google.com"
+				}
+			],
+			"demos": [
+				{
+					"label": "FASTQ-VCF Simple Demo",
+					"url": "http://www.google.com"
+				},
+				{
+					"label": "FASTQ-VCF Advanced Demo",
+					"url": "http://www.google.com"
+				}
+			],
 			"team_id": "bc",
 			"workflow_id": 3,
 			"data_types_ids": ["reads", "reference_genomes", "alignments", "variants"],

@@ -161,6 +161,8 @@ DataFormat.prototype.graphable = false;
 
 function Tool(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
+	this.tutorials = cfg.tutorials || [];
+	this.demos = cfg.demos || [];
 	this.name = cfg.name || cfg.id;
 
 	this.parent_tool = cfg.parent_tool || null;

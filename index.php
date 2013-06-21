@@ -178,63 +178,103 @@ Six participant informatics groups are developing software tools for genome sequ
           <h1>Workflow: <%= t.name %></h1>
           <h2><%= t.question %></h1>
           <p>This workflow consumes <%= t.in_data_types.map(function(dt){return dt.name;}).toEnglishList() %> and produces <%= t.out_data_types.map(function(dt){return dt.name}).toEnglishList()%>.</p>
-          <p>This workflow is implemented by the following pipelines:</p>
-          <ul>
-          <% _(t.pipelines).each(function(pl){ %>
-            <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
-          <% }); %>
-          </ul>
+          <% if(t.pipelines.length > 0) { %>
+          <div class="info_float">
+            <h2>Pipelines implementing this workflow:</h2>
+            <ul>
+            <% _(t.pipelines).each(function(pl){ %>
+              <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
+            <% }); %>
+            </ul>
+          </div>
+          <% } %>
           
         </script>
 
         <script type="text/html" id='info_pipeline_template'>
           <h1>Pipeline: <%= t.name %></h1>
-          <% if(t.team) { %><p>Developed by: <a href="/teams/<%= t.team.id %>"><%= t.team.name %></a></p><% } %>
+          <% if(t.team) { %><p>Developed by: <a href="<%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
           <p>This pipeline consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
-          <p>This pipeline implements the <a href="/workflows/<%= t.workflow.id %>"><%= t.workflow.name %></a> workflow.</p>
-          <p>This pipeline uses the following tools:</p>
-          <ul>
-          <% _(t.tools).each(function(tool){ %>
-            <li data-id="<%= tool.id %>"><a href="/tools/<%= tool.id %>"><%= tool.name %></a></li>
-          <% }); %>
-          </ul>
+          <p>This pipeline implements the <a href="<%= t.workflow.url() %>"><%= t.workflow.name %></a> workflow.</p>
+          <% if(t.tools.length > 0) { %>
+          <div class="info_float">
+            <h2>Tools incorporated:</h2>
+            <ul>
+            <% _(t.tools).each(function(tool){ %>
+              <li><a href="<%= tool.url() %>"><%= tool.name %></a></li>
+            <% }); %>
+            </ul>
+          </div>
+          <% } %>
           
         </script>
 
         <script type="text/html" id='info_team_template'>
           <h1>Team: <%= t.name %></h1>
-          <p>Tools developed:</p>
-          <ul>
-          <% _(t.root_tools).each(function(root_tool){ %>
-            <li data-id="<%= root_tool.id %>"><a href="/tools/<%= root_tool.id %>"><%= root_tool.name %></a></li>
-          <% }); %>
-          </ul>
-          <p>Pipelines developed:</p>
-          <ul>
-          <% _(t.pipelines).each(function(pl){ %>
-            <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
-          <% }); %>
-          </ul>
+          <% if(t.root_tools.length > 0) { %>
+          <div class="info_float">
+            <h2>Tools developed:</h2>
+            <ul>
+            <% _(t.root_tools).each(function(root_tool){ %>
+              <li><a href="<%= root_tool.url() %>"><%= root_tool.name %></a></li>
+            <% }); %>
+            </ul>
+          </div>
+          <% } %>
+          <% if(t.pipelines.length > 0) { %>
+          <div class="info_float">
+            <h2>Pipelines developed:</h2>
+            <ul>
+            <% _(t.pipelines).each(function(pl){ %>
+              <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
+            <% }); %>
+            </ul>
+          </div>
+          <% } %>
           
         </script>
 
         <script type="text/html" id='info_tool_template'>
           <h1>Tool: <%= t.name %></h1>
-          <% if(t.team) { %><p>Developed by: <a href="/teams/<%= t.team.id %>"><%= t.team.name %></a></p><% } %>
-          <% if(t.parent_tool) { %><p>Parent tool: <a href="/tools/<%= t.parent_tool.id %>"><%= t.parent_tool.name %></a></p><% } %>
+          <% if(t.team) { %><p>Developed by: <a href="<%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
+          <% if(t.parent_tool) { %><p>Parent tool: <a href="<%= t.parent_tool.url() %>"><%= t.parent_tool.name %></a></p><% } %>
           <% if(t.subtools.length > 0) { %>
-            <p>This tool includes the following subtools:</p>
-            <% _(t.subtools).each(function(subtool){ %>
-              <li data-id="<%= subtool.id %>"><a href="/tools/<%= subtool.id %>"><%= subtool.name %></a></li>
-            <% }); %>
+            <div class="info_float">
+              <h2>Subtools:</h2>
+              <% _(t.subtools).each(function(subtool){ %>
+                <li><a href="<%= subtool.url() %>"><%= subtool.name %></a></li>
+              <% }); %>
+            </div>
           <% } %>
           <% if(t.pipelines.length > 0) { %>
-            <p>This tool is part of the following pipelines:</p>
-            <ul>
-            <% _(t.pipelines).each(function(pl){ %>
-              <li data-id="<%= pl.id %>"><a href="/pipelines/<%= pl.id %>"><%= pl.name %></a></li>
-            <% }); %>
-            </ul>
+            <div class="info_float">
+              <h2>Incorporated in pipelines:</h2>
+              <ul>
+              <% _(t.pipelines).each(function(pl){ %>
+                <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
+              <% }); %>
+              </ul>
+            </div>
+          <% } %>
+          <% if(t.tutorials.length > 0) { %>
+            <div class="info_float">
+              <h2>Tutorials:</h2>
+              <ul>
+              <% _(t.tutorials).each(function(tutorial){ %>
+                <li><a href="<%= tutorial.url %>"><%= tutorial.label %></a></li>
+              <% }); %>
+              </ul>
+            </div>
+          <% } %>
+          <% if(t.demos.length > 0) { %>
+            <div class="info_float">
+              <h2>Demos:</h2>
+              <ul>
+              <% _(t.demos).each(function(demo){ %>
+                <li><a href="<%= demo.url %>"><%= demo.label %></a></li>
+              <% }); %>
+              </ul>
+            </div>
           <% } %>
           
         </script>
@@ -242,7 +282,7 @@ Six participant informatics groups are developing software tools for genome sequ
         <script type="text/html" id='teams_template'>
           <% _(t.teams).each(function(team, i){ %>
             <%= i % 4 == 0 ? '<div class="row">' : '' %>
-            <div class="span3 team" data-id="<%= team.id %>"><a href="/teams/<%= team.id %>"><%= team.name %></a></div>
+            <div class="span3 team"><a href="<%= team.url() %>"><%= team.name %></a></div>
             <%= i % 4 == 3 ? '</div>' : '' %>
           <% }); %>
         </script>
