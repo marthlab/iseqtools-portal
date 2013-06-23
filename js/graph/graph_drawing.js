@@ -403,13 +403,13 @@ GraphDrawing.prototype = {
   		.duration(settings.graph.render_duration)
   		.each(function() {
 
-  			if(options.end_rect && (end_height > 1 || !is_firefox)) {
+  			if(end_height > 1 || !is_firefox) {
   				svg.transition().duration(settings.graph.render_duration).attr("viewBox", end_viewBox);
   			}
-  			if(options.end_rect && options.animate_height) {
+  			if(options.animate_height) {
   				svg.transition().duration(settings.graph.render_duration).style("height", end_height+"px");
   			}
-  			if(options.end_rect && options.change_container_height) {
+  			if(options.change_container_height) {
   				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", end_height+"px");
   			}
 

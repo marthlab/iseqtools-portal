@@ -183,7 +183,6 @@
         } else {
           var rel = app.content.visualRelationshipTo(app.old_content);
           if(rel.length === 0) { // old graph content and new graph content have no ancestor-descendant relationship
-            //console.log("test A");
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
             this.inactive_drawing_for_display.render(new Graph());
@@ -194,23 +193,13 @@
             });
           } else if(rel.length === 1) { // content is itself - illegal transition
             //throw "Illegal transition: cannot transition from content item to itself";
-            console.log("test X");
           } else if(rel[0] === app.content) { // content is visual descendant of old content
-            console.log("test B");
             this.drawing_for_layout.render(this.graph);
 
             var old_start_rect = this.active_drawing_for_display.getRect();
             var old_end_rect = this.active_drawing_for_display.getInnerRect(rel[rel.length-2]);
             var new_end_rect = this.drawing_for_layout.getRect();
             var new_start_rect = this._correspondingOuterRect(old_end_rect, old_start_rect, _.clone(new_end_rect) );
-            //var new_start_rect = this.drawing_for_layout.getOuterRect();
-            //var new_start_rect = {x: -4264, y: -1806, width: 5596, height: 2061};
-            //var new_start_rect = {x: 0, y: 0, width: 5596, height: 2061};
-
-            //console.log(new_start_rect);
-            //{x:-1000, y:1000, height:1000, width:1000}
-            //this.drawing_for_layout.getOuterRect();
-            //this._correspondingOuterRect(old_end_rect, old_start_rect, _(new_end_rect).clone() );
 
             this._switchActiveDisplayDrawing();
 
@@ -226,16 +215,12 @@
               animate_height: true
             });
           } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
-            console.log("test C");
             this.drawing_for_layout.render(this.graph);
 
             var old_start_rect = this.active_drawing_for_display.getRect();
             var new_end_rect = this.drawing_for_layout.getRect();
             var new_start_rect = this.drawing_for_layout.getInnerRect(rel[rel.length-2]); 
-            var old_end_rect = this._correspondingOuterRect(new_end_rect, new_start_rect, _(old_start_rect).clone());
-            //var old_end_rect = this.active_drawing_for_display.getOuterRect();
-            
-            
+            var old_end_rect = this._correspondingOuterRect(new_start_rect, new_end_rect, _.clone(old_start_rect));   
 
             this._switchActiveDisplayDrawing();
             this.inactive_drawing_for_display.render(new Graph(), {
@@ -281,51 +266,25 @@
         // extend the height or width of inner_2 to match proportions of inner_1 (while keeping the same center point)
         if(inner_1.width/inner_1.height <= inner_2.width/inner_2.height) {
           // extend the height of inner_2 to equalize_proportions
-          console.log("case 1");
           var old_height = inner_2.height;
           inner_2.height = inner_1.height/inner_1.width * inner_2.width;
           inner_2.y = inner_2.y - (inner_2.height - old_height)/2;
-          console.log("height ratio: "+ inner_2.height/old_height);
         } else if(inner_1.width/inner_1.height > inner_2.width/inner_2.height) {
-          console.log("case 2");
           // extend the width of inner_2 to equalize proportions
           var old_width = inner_2.width;
           inner_2.width = inner_1.width/inner_1.height * inner_2.height;
           inner_2.x = inner_2.x - (inner_2.width - old_width)/2;
-          console.log("width ratio: "+ inner_2.width/old_width);
         }
 
         // compute tentative result
-        var outer_2 = {
+        return {
           width: Math.ceil(inner_2.width * outer_1.width/inner_1.width),
           height: Math.ceil(inner_2.height * outer_1.height/inner_1.height),
           x: Math.floor(inner_2.x - (inner_2.width * (inner_1.x - outer_1.x) / inner_1.width)), // (inner_1.x - outer_1.x) / inner_1.width) == (inner_2.x - outer_2.x) / inner_2.width)
           y: Math.floor(inner_2.y - (inner_2.height * (inner_1.y - outer_1.y) / inner_1.height))
         }
 
-        console.log(outer_2);
-
-        // // because the viewBox is inexplicably inaccurate when the rectangle is too large, we clamp the tentative result before returning
-        // var clamp_factor = Math.min(Math.min(outer_2.width, 1500)/outer_2.width, Math.min(outer_2.height, 1000)/outer_2.height);
-        // var inner_1_center = {x: inner_1.x+inner_1.width/2, y:inner_1.y+inner_1.height/2};
-        // var inner_1_center_relative_location = {x: (inner_1_center.x-outer_1.x)/outer_1.width, y: (inner_1_center.y-outer_1.y)/outer_1.height};
-
-        // outer_2 = {
-        //   width: outer_2.width * clamp_factor,
-        //   height: outer_2.height * clamp_factor,
-        //   x: inner_1_center.x - outer_2.width * clamp_factor * inner_1_center_relative_location.x,
-        //   y: inner_1_center.y - outer_2.height * clamp_factor * inner_1_center_relative_location.y 
-        // }
-
-        // console.log(inner_1_center_relative_location);
-        // console.log(outer_2);
-
-        return outer_2;
-
-
-
       }
-      
     },
     info_widget: {
       templates: {
