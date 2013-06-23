@@ -19,13 +19,13 @@ GraphDrawing.prototype = {
 	          };
 	},
 	getViewBoxString: function(rect) {
-		 return rect.x
+		 return Math.floor(rect.x)
 	          +" "
-	          +rect.y
+	          +Math.floor(rect.y)
 	          +" "
-	          +rect.width
+	          +Math.ceil(rect.width)
 	          +" "
-	          +rect.height;
+	          +Math.ceil(rect.height);
 	},
 	render: function(graph, options) { // options uses "end_rect", "container_width", and "max_height"
 		var options = options || {};
@@ -124,7 +124,6 @@ GraphDrawing.prototype = {
 		if(options && options.start_rect) {
 			var start_rect = this.padRectangle(options.start_rect);
 			var start_height = Math.max(Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height), 1);
-			console.log(start_height);
 			svg.attr("viewBox", this.getViewBoxString(start_rect) );
 			if(options.change_container_height && !options.end_rect) {
 				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", start_height+"px");
@@ -142,6 +141,7 @@ GraphDrawing.prototype = {
 			var end_height = Math.max(Math.min(end_rect.height*(this.container_width/end_rect.width) || 0, this.max_height), 1);
 
 			if(!options.animate_height) {
+				console.log("set here");
 				svg.style("height", end_height+"px");
 			}
 
@@ -307,7 +307,7 @@ GraphDrawing.prototype = {
 	    .rankDir("LR")
 	    .nodes(graph.nodes)
 	    .edges(graph.edges)
-	    .debugLevel(1)
+	    .debugLevel(0)
 	    .run();
 
 	  (this.for_display ? old_nodes_elems.transition().duration(settings.graph.render_duration) : old_nodes_elems)
@@ -436,7 +436,7 @@ GraphDrawing.prototype = {
   getOuterRect: function() {
     //var bcr = this.svgGroup.node().getBoundingClientRect();
     var rect = this.svg.node().getBBox();
-    return this.padRectangle(rect, 1.25, 1.25);
+    return this.padRectangle(rect, 0.8, 0.8);
 
   },
   getInnerRect: function(gdatum) {
