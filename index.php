@@ -206,6 +206,26 @@ Six participant informatics groups are developing software tools for genome sequ
             </ul>
           </div>
           <% } %>
+          <% if(t.tutorials.length > 0) { %>
+            <div class="info_float">
+              <h2>Tutorials:</h2>
+              <ul>
+              <% _(t.tutorials).each(function(tutorial){ %>
+                <li><a href="<%= tutorial.url %>"><%= tutorial.label %></a></li>
+              <% }); %>
+              </ul>
+            </div>
+          <% } %>
+          <% if(t.demos.length > 0) { %>
+            <div class="info_float">
+              <h2>Demos:</h2>
+              <ul>
+              <% _(t.demos).each(function(demo){ %>
+                <li><a href="<%= demo.url %>"><%= demo.label %></a></li>
+              <% }); %>
+              </ul>
+            </div>
+          <% } %>
           
         </script>
 

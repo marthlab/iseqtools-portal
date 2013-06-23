@@ -178,6 +178,8 @@ Tool.prototype.graphable = false;
 
 function Pipeline(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
+	this.tutorials = cfg.tutorials || [];
+	this.demos = cfg.demos || [];
 	cfg.initial_data_format_usages = cfg.initial_data_format_usages || [];
 
 	this.team = _(gdata.teams).find(by_id(cfg.team_id)) || null;
