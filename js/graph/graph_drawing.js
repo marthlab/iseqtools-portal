@@ -10,7 +10,7 @@ function GraphDrawing(options) {
 GraphDrawing.prototype = {
 	padRectangle: function(rect, hpf, vpf) {
 		var horz_padding_fraction = hpf || 0.12;
-  	var vert_padding_fraction = vpf || 0.06;
+  	var vert_padding_fraction = vpf || 0.08;
   	return {
 	            x: Math.floor(rect.x-rect.width*horz_padding_fraction/2),
 	            y: Math.floor(rect.y-rect.height*vert_padding_fraction/2),
@@ -252,18 +252,12 @@ GraphDrawing.prototype = {
 	    .attr("text-anchor", "middle")
 	    .attr("transform", function(d,i) { return "translate(0, "+(-d3.select(this.parentNode).select('.circles').node().getBBox().height/2 - 9)+")";});
 
-    // new_labels.selectAll('text').attr("y", function(d,i) {
-    // 	return -d3.select(this.parentNode.parentNode).select('.circles').node().getBBox().height/2 - 9;
-    // })
-
     var updated_labels = updated_nodes_elems.selectAll(".text");
     	
-
 		nodes_elems.each(function(n) {
 	    var bbox = this.getBBox();
 	    n.bbox = bbox;
 	    n.width = bbox.width;
-	    n.offsetheight = -d3.select(this).select('.text').node().getBBox().y;
 	    n.height = bbox.height;
 	  });
 
