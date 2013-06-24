@@ -141,7 +141,6 @@ GraphDrawing.prototype = {
 			var end_height = Math.max(Math.min(end_rect.height*(this.container_width/end_rect.width) || 0, this.max_height), 1);
 
 			if(!options.animate_height) {
-				console.log("set here");
 				svg.style("height", end_height+"px");
 			}
 
@@ -250,7 +249,7 @@ GraphDrawing.prototype = {
 	    .attr("text-anchor", "middle")
       .attr("x", 0)
       .attr("y", function(n) {
-      	var x = -this.getBBox().height - $('.circles', this.parentNode)[0].getBBox().height/2 - 4;
+      	var x = -this.getBBox().height - d3.select(this.parentNode).select('.circles').node().getBBox().height/2 - 4;
       	return x;
       });
 
@@ -261,7 +260,7 @@ GraphDrawing.prototype = {
 	    var bbox = this.getBBox();
 	    n.bbox = bbox;
 	    n.width = bbox.width;
-	    n.offsetheight = -$(this).children('text')[0].getBBox().y;
+	    n.offsetheight = -d3.select(this).select('text').node().getBBox().y;
 	    n.height = bbox.height;
 	  });
 
