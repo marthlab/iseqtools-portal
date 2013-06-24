@@ -17,7 +17,7 @@ line-height: 28px;
 #workflows_carousel .carousel-inner .item a {color:#fff; line-height:80px;}
 #workflows_carousel .carousel-control {top:50%; cursor:pointer;}
 #graph {height:auto; display:block; max-height:400px; padding:10px 0; position:relative;}
-.display_svg {height:auto; display:block; position:absolute; z-index:2;}
+.display_svg {height:auto; display:block; position:absolute; z-index:2; width:100%;}
 .display_svg.active {z-index:3;}
 #display_svg_1 {  }
 #display_svg_2 {  }
@@ -35,7 +35,7 @@ line-height: 28px;
     background-color: rgba(0, 0, 0, .5);
 }
 
-#info h1 {font-size:30px; overflow:hidden;}
+#info h1 {font-size:30px; line-height:35px; overflow:hidden;}
 #info h2 {font-size:22px;}
 
 .info_float {float:left; margin-right: 40px;}

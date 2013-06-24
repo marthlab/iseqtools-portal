@@ -433,12 +433,6 @@ GraphDrawing.prototype = {
     return this.svg.node().getBBox();
 
   },
-  getOuterRect: function() {
-    //var bcr = this.svgGroup.node().getBoundingClientRect();
-    var rect = this.svg.node().getBBox();
-    return this.padRectangle(rect, 0.8, 0.8);
-
-  },
   getInnerRect: function(gdatum) {
 
   	var node_path_elems = this.nodeGroup.selectAll("circle.circle_path").filter(function(np) { return np.gdatum === gdatum; });
