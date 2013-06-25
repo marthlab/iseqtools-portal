@@ -42,7 +42,7 @@
 
         </div>
 
-        <div id="breadcrumbs">&nbsp;</div>
+        <div id="breadcrumbs"></div>
         <div id="graph">
           
           <svg preserveAspectRatio="xMidYMid meet" class="display_svg" id="display_svg_1"></svg>
@@ -144,7 +144,6 @@
         </script>
 
         <script type="text/html" id='breadcrumbs_template'>
-            &nbsp;
             <% var crumbs = t.crumbs.reverse(); %>
             <% _.each(crumbs, function(item, i){ %>
               <% if(i === crumbs.length-1) { %>
