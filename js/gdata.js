@@ -39,21 +39,18 @@ var gdata_mixin = {
 				break;
 		}
 	},
-	// this function cannot be used to compare an item to itself
 	visualRelationshipTo: function(other_content) {
-		
-		if(this === other_content) {
-			throw "Cannot compare a gdata item to itself";
-		}
 
-		if(!other_content) { // if other content is not defined, then there is no relationship, i.e., return an empty array
+		if(!other_content) { // other content is not defined, so no relationship
 			return [];
 		}
 
 		var this_level = this.visualHierarchyLevel();
 		var other_level = other_content.visualHierarchyLevel();
 
-		if(this_level < other_level) {
+		if(_.isNull(this_level) || _.isNull(other_level) || this_level === other_level) { // cases imply no visual relationship exists
+			return [];
+		} else if(this_level < other_level) {
 			start_content = this;
 			end_content = other_content;
 			end_level = other_level;
@@ -61,8 +58,6 @@ var gdata_mixin = {
 			start_content = other_content;
 			end_content = this;
 			end_level = this_level;
-		} else { // might as well return early, since we know there is no ancestor-descendant relationship
-			return [];
 		}
 
 		var relationship = [];
@@ -70,6 +65,9 @@ var gdata_mixin = {
 
 		if(item_to_add.type() == 'tool_usage') {
 			relationship.push(item_to_add);
+			if(item_to_add === end_content) {
+				return relationship;
+			}
 			item_to_add = item_to_add.pipeline;
 		}
 
@@ -94,6 +92,7 @@ var gdata_mixin = {
 			if(item_to_add === end_content) {
 				return relationship;
 			}
+			// nowhere else to go
 		}
 
 		// if we got this far, start_content and end_content are not related, so ignore the relationship array
@@ -109,7 +108,7 @@ _.extend(GenericPage.prototype, gdata_mixin);
 Summary.prototype.graphable = false;
 
 function Summary(cfg) {
-	_(this).extend(_(cfg).pickStrings('description'));
+	_(this).extend(_(cfg).pickStrings('name'));
 }
 _.extend(Summary.prototype, gdata_mixin);
 Summary.prototype.graphable = true;
@@ -224,6 +223,7 @@ function ToolUsage(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
 	this.pipeline = cfg.pipeline;
 	this.tool = _(gdata.tools).find(by_id(cfg.tool_id));
+	this.name = this.tool.name;
 	this.task = _(gdata.tasks).find(by_id(cfg.task_id)) || null;
 
 	this.in_data_format_usages = cfg.in_data_format_usages_ids.map(function(dfu_id){ return _(this.pipeline.data_format_usages).find(by_id(dfu_id));}, this);

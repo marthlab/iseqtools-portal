@@ -9,8 +9,8 @@ function GraphDrawing(options) {
 }
 GraphDrawing.prototype = {
 	padRectangle: function(rect, hpf, vpf) {
-		var horz_padding_fraction = hpf || 0.12;
-  	var vert_padding_fraction = vpf || 0.08;
+		var horz_padding_fraction = hpf || 0.14;
+  	var vert_padding_fraction = vpf || 0.12;
   	return {
 	            x: Math.floor(rect.x-rect.width*horz_padding_fraction/2),
 	            y: Math.floor(rect.y-rect.height*vert_padding_fraction/2),

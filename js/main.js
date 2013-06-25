@@ -129,9 +129,10 @@
       }
     },
     graph_widget: {
-      //template: _.template($('#teams_template').html()),
+      breadcrumbs_template: _.template($('#breadcrumbs_template').html()),
       init: function() {
         this.$el = $('#graph');
+        this.$breadcrumbs_el = $('#breadcrumbs');
         this.visible = false;
         this.old_graph = null;
         this.graph = null;
@@ -173,6 +174,15 @@
         //console.log(app.content)
         this.graph = new Graph(app.content);
 
+        
+        this.$breadcrumbs_el.fadeOut(500, _.bind(function() {
+          this.$breadcrumbs_el.html(this.breadcrumbs_template({crumbs: app.content.visualRelationshipTo(gdata.summary)}));
+          this.$breadcrumbs_el.fadeIn(500);
+        }, this));
+        
+
+        var rel = app.transition_relationship;
+
         if(!this.old_graph || this.graph.overlaps_old_graph) { // old graph and new graph have visual overlap (or there is no old graph)
           this.drawing_for_layout.render(this.graph);
           this.active_drawing_for_display.render(this.graph, {
@@ -181,7 +191,6 @@
             animate_height: true
           });
         } else {
-          var rel = app.content.visualRelationshipTo(app.old_content);
           if(rel.length === 0) { // old graph content and new graph content have no ancestor-descendant relationship
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
@@ -335,6 +344,7 @@
       } else {
         this.old_content = this.content;
         this.content = item;
+        this.transition_relationship = this.content.visualRelationshipTo(app.old_content);
         this.is_transitioning = true;
         this._transition((function() {
           this.is_transitioning = false;

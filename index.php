@@ -42,7 +42,9 @@
 
         </div>
 
+        <div id="breadcrumbs">&nbsp;</div>
         <div id="graph">
+          
           <svg preserveAspectRatio="xMidYMid meet" class="display_svg" id="display_svg_1"></svg>
           <svg preserveAspectRatio="xMidYMid meet" class="display_svg" id="display_svg_2"></svg>
           <svg id="layout_svg" preserveAspectRatio="none"></svg>
@@ -61,20 +63,6 @@
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
-
-
-<!--         <div id="graph_container">
-          <div id="graph_nav"></div>
-          <div id="graph"></div>
-        </div> -->
-
-        
-
-        <!-- <nav id="breadcrumbs"></nav>
-        <div id="main">
-          <svg preserveAspectRatio="xMidYMid meet" id="display_svg"></svg>
-        </div>
-        <svg preserveAspectRatio="xMidYMid meet" id="layout_svg"></svg> -->
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
@@ -147,7 +135,7 @@
 
           <div class="carousel-inner">
           <% _(t.workflows).each(function(wf, i){ %>
-            <div class="<%= i==0 ? 'active':'' %> item"><a href="/workflows/<%= wf.id %>"><%= wf.question %></a></div>
+            <div class="<%= i==0 ? 'active':'' %> item"><a href="<%= wf.url() %>"><%= wf.question %></a></div>
           <% }); %>
           </div>
 
@@ -156,7 +144,16 @@
         </script>
 
         <script type="text/html" id='breadcrumbs_template'>
-          <div>Breadcrumbs</div>
+            &nbsp;
+            <% var crumbs = t.crumbs.reverse(); %>
+            <% _.each(crumbs, function(item, i){ %>
+              <% if(i === crumbs.length-1) { %>
+              <span><%= item.name %></span>
+              <% } else { %>
+              <a href="<%= item.url() %>"><%= item.name %></a>&nbsp;&nbsp;&gt;&gt;&nbsp;
+              <% } %>
+            <% }); %>
+             
         </script>
 
         <script type="text/html" id='info_about_template'>
