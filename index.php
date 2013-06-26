@@ -304,7 +304,7 @@ Six participant informatics groups are developing software tools for genome sequ
         </script>
 
         <script>
-        var app_json = <?php echo file_get_contents('./js/app.json'); ?>;
+        var app_data = <?php echo file_get_contents('./js/app.json'); ?>;
         var app = {};
         </script>
 

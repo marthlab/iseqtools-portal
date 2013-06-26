@@ -374,7 +374,7 @@
   // APP INITIALIZATION
 
   // initialize data
-  gdata.init(app_json);
+  gdata.init(app_data);
 
   //set up color functions
   app.colors = {
