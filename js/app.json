@@ -224,21 +224,21 @@
 			"team_id": "bc",
 			"tutorials": [
 				{
-					"label": "BamTools Introductory Tutorial",
+					"label": "BamTools Tutorial 1",
 					"url":"http://www.google.com"
 				},
 				{
-					"label": "BamTools Advanced Tutorial",
+					"label": "BamTools Tutorial 2",
 					"url":"http://www.google.com"
 				}
 			],
 			"demos": [
 				{
-					"label": "BamTools Simple Demo",
+					"label": "BamTools Demo 1",
 					"url":"http://www.google.com"
 				},
 				{
-					"label": "BamTools Advanced Demo",
+					"label": "BamTools Demo 2",
 					"url":"http://www.google.com"
 				}
 			],
@@ -383,21 +383,21 @@
 			"name": "fastq-vcf",
 			"tutorials": [
 				{
-					"label": "FASTQ-VCF Introductory Tutorial",
+					"label": "FASTQ-VCF Tutorial 1",
 					"url": "http://www.google.com"
 				},
 				{
-					"label": "FASTQ-VCF Advanced Tutorial",
+					"label": "FASTQ-VCF Tutorial 2",
 					"url": "http://www.google.com"
 				}
 			],
 			"demos": [
 				{
-					"label": "FASTQ-VCF Simple Demo",
+					"label": "FASTQ-VCF Demo 1",
 					"url": "http://www.google.com"
 				},
 				{
-					"label": "FASTQ-VCF Advanced Demo",
+					"label": "FASTQ-VCF Demo 2",
 					"url": "http://www.google.com"
 				}
 			],
