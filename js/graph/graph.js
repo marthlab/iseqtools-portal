@@ -79,7 +79,12 @@
           var tu = this.content;
 
           this.primary_nodes = [new Node({gdatum: tu, label: tu.tool.id, graph: this})];
-          this.secondary_nodes = [];
+          this.secondary_nodes = _.union(tu.in_data_format_usages, tu.out_data_format_usages)
+                                  .map(function(dfu) { return new Node({
+                                    gdatum: dfu,
+                                    label: dfu.data_format.name,
+                                    graph: this
+                                  });}, this);
           break;
 
         default:
@@ -139,9 +144,9 @@
               }, this);
             var edges_in = primary_node.gdatum.in_data_format_usages
               .filter(function(dfu){ return dfu.data_format.id !== "stream"})
-              .map(function(df_usage) {
+              .map(function(dfu) {
                 return new Edge({
-                  source: _(this.secondary_nodes).find(function(secondary_node) { return secondary_node.gdatum == df_usage;}),
+                  source: _(this.secondary_nodes).find(function(secondary_node) { return secondary_node.gdatum == dfu;}),
                   target: primary_node,
                   graph: this
                 });
@@ -150,6 +155,30 @@
             return _.union(_.union(edges_in, edges_out), stream_edges_out);
           }, this));
   
+          break;
+
+        case "tool_usage":
+
+            var primary_node = this.primary_nodes[0];
+            var edges_out = primary_node.gdatum.out_data_format_usages
+              .map(function(dfu) {
+                return new Edge({
+                  source: primary_node,
+                  target: _(this.secondary_nodes).find(function(secondary_node) { return secondary_node.gdatum == dfu;}),
+                  graph: this
+                });
+              }, this);
+            var edges_in = primary_node.gdatum.in_data_format_usages
+              .map(function(dfu) {
+                return new Edge({
+                  source: _(this.secondary_nodes).find(function(secondary_node) { return secondary_node.gdatum == dfu;}),
+                  target: primary_node,
+                  graph: this
+                });
+              }, this);
+
+            this.edges = _.union(edges_in, edges_out);
+
           break;
 
         default:
@@ -201,7 +230,10 @@
 
             break;
           case "pipeline":
-            edge.edge_paths = [new EdgePath({edge: edge, gdatum: null})];
+            edge.edge_paths = [new EdgePath({edge: edge, gdatum: this.content})];
+            break;
+          case "tool_usage":
+            edge.edge_paths = [new EdgePath({edge: edge, gdatum: this.content.pipeline})];
             break;
           default:
             edge.edge_paths = [];

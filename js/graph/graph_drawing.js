@@ -42,10 +42,12 @@ GraphDrawing.prototype = {
 		  	x: t.dagre.x-t.dagre.width/2,
 		  	y: t.dagre.y + settings.graph.path_width*(1+settings.graph.path_gap)*((t.pathOrder(e, edge_path, "in")-t.numPathsIn()/2)+1/2)
 		  };
+		  console.log(settings.nodes[s.type()].radius + ', ' + -Math.pow(s_exit.y-s.dagre.y, 2))
 		  var s_circ_intersect = {
 		  	x: s.dagre.x+Math.sqrt(Math.pow(settings.nodes[s.type()].radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2)),
 		  	y: s_exit.y
 		  };
+		  console.log(Math.pow(settings.nodes[s.type()].radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2))
 		  var t_circ_intersect = {
 		  	x: t.dagre.x-Math.sqrt(Math.pow(settings.nodes[t.type()].radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
 		  	y: t_enter.y
@@ -86,31 +88,46 @@ GraphDrawing.prototype = {
 		      	end])
 			}
 
+			function straight_curve(start, end) {
+
+				var base_offset = (end.x-start.x)*settings.graph.edge_curvature;
+				var order = e.edge_paths.indexOf(edge_path);
+				var slope = (end.y-start.y)/(end.x-start.x);
+				// FIXME: there MUST be a more theoretically sound way of calculating path_offset
+				var path_offset = order*Math.min(Math.abs(slope), 1)*1.3*settings.graph.path_width*-sign(slope);
+
+				return d3.svg.line(start, end)
+		      .x(function(d) { return d.x; })
+		      .y(function(d) { return d.y; })
+		      .interpolate("basis")
+		      ([start,
+		      	{x: start.x, y: start.y},
+		      	{x: end.x, y: end.y},
+		      	end])
+			}
+
 		  // construct path string
 		  var path_string = "";
-		  
-		  if(s_circ_intersect.x < s_exit.x) {
-	  		path_string += line(s_circ_intersect, s_exit);
-	  	}
 
-	  	path_string += line(s_exit, rank_exit)
+		  //console.log(s_circ_intersect.x + ', ' + s_exit.x + ', ' + t_circ_intersect.x + ', ' + t_enter.x + ', ' + rank_enter.x+ ', ' + rank_exit.x)
+		  
+  		path_string += line(s_circ_intersect, rank_exit)
 
 		  if(Math.abs(t.dagre.rank-s.dagre.rank) == 2) {
+			  path_string += straight_curve(rank_exit, rank_exit)
 		  	path_string += curve(rank_exit, rank_enter)
+		  	path_string += straight_curve(rank_enter, rank_enter)
+		  	//path_string += curve(points[1], rank_enter)
 		  } else {
 		  	//var connection_y = e.dagre.points[0].y; // same as e.dagre.points[1].y
 		  	var points = [{x: rank_exit.x + settings.graph.rankSep, y: e.dagre.points[0].y},
 	  								{x: rank_enter.x - settings.graph.rankSep, y: e.dagre.points[1].y}];
 		  	path_string += curve(rank_exit, points[0])
-		  	path_string += line(points[0], points[1])
+		  	path_string += straight_curve(points[0], points[1])
 		  	path_string += curve(points[1], rank_enter)
 		  }
 
-		  path_string += line(rank_enter, t_enter)
-
-		  if(t_enter.x < t_circ_intersect.x) {
-	  		path_string += line(t_enter, t_circ_intersect);
-	  	}
+		  path_string += line(rank_enter,  t_circ_intersect);
 
 		  return path_string;
 		}
