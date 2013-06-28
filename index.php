@@ -27,7 +27,7 @@ switch ($_SERVER['SERVER_NAME']) {
         <link href="<?php echo $base_url; ?>/css/bootstrap-responsive.css" rel="stylesheet">
         <link href="<?php echo $base_url; ?>/css/main.css" rel="stylesheet">
 
-        <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="<?php echo $base_url; ?>/js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
       <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
@@ -319,14 +319,14 @@ Six participant informatics groups are developing software tools for genome sequ
         var app = {};
         </script>
 
-        <script src="/js/utils.js"></script>
-        <script src="/js/settings.js"></script>
-        <script src="/js/gdata.js"></script>
-        <script src="/js/graph/graph.js"></script>
-        <script src="/js/graph/node.js"></script>
-        <script src="/js/graph/edge.js"></script>
-        <script src="/js/graph/graph_drawing.js"></script>
-        <script src="/js/main.js"></script>
+        <script src="<?php echo $base_url; ?>/js/utils.js"></script>
+        <script src="<?php echo $base_url; ?>/js/settings.js"></script>
+        <script src="<?php echo $base_url; ?>/js/gdata.js"></script>
+        <script src="<?php echo $base_url; ?>/js/graph/graph.js"></script>
+        <script src="<?php echo $base_url; ?>/js/graph/node.js"></script>
+        <script src="<?php echo $base_url; ?>/js/graph/edge.js"></script>
+        <script src="<?php echo $base_url; ?>/js/graph/graph_drawing.js"></script>
+        <script src="<?php echo $base_url; ?>/js/main.js"></script>
 
         <script>
             var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
