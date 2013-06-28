@@ -42,12 +42,10 @@ GraphDrawing.prototype = {
 		  	x: t.dagre.x-t.dagre.width/2,
 		  	y: t.dagre.y + settings.graph.path_width*(1+settings.graph.path_gap)*((t.pathOrder(e, edge_path, "in")-t.numPathsIn()/2)+1/2)
 		  };
-		  console.log(settings.nodes[s.type()].radius + ', ' + -Math.pow(s_exit.y-s.dagre.y, 2))
 		  var s_circ_intersect = {
 		  	x: s.dagre.x+Math.sqrt(Math.pow(settings.nodes[s.type()].radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2)),
 		  	y: s_exit.y
 		  };
-		  console.log(Math.pow(settings.nodes[s.type()].radius, 2)-Math.pow(s_exit.y-s.dagre.y, 2))
 		  var t_circ_intersect = {
 		  	x: t.dagre.x-Math.sqrt(Math.pow(settings.nodes[t.type()].radius, 2)-Math.pow(t_enter.y-t.dagre.y, 2)),
 		  	y: t_enter.y
@@ -109,8 +107,6 @@ GraphDrawing.prototype = {
 		  // construct path string
 		  var path_string = "";
 
-		  //console.log(s_circ_intersect.x + ', ' + s_exit.x + ', ' + t_circ_intersect.x + ', ' + t_enter.x + ', ' + rank_enter.x+ ', ' + rank_exit.x)
-		  
   		path_string += line(s_circ_intersect, rank_exit)
 
 		  if(Math.abs(t.dagre.rank-s.dagre.rank) == 2) {
@@ -429,7 +425,7 @@ GraphDrawing.prototype = {
 
 	
 			})
-  		.each("end", function() { console.log("graph animation finished"); });
+  		//.each("end", function() { console.log("graph animation finished"); });
 
 	  }
 

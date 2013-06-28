@@ -159,7 +159,6 @@
         // create new graph object
       },
       transition: function() {
-        //console.log("transition");
         var trans_completion = $.Deferred();
         var updater = this._update.bind(this, trans_completion.resolve);
 
@@ -169,9 +168,7 @@
 
       },
       _update: function(on_complete) {
-        //console.log("updated");
         this.old_graph = this.graph;
-        //console.log(app.content)
         this.graph = new Graph(app.content);
 
         
