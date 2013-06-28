@@ -326,8 +326,6 @@
     }
   }
 
-  var app = {};
-
   // PUBLIC METHODS
 
   // used to programatically change state (links/forms are handled automatically by the Davis router)

@@ -32,7 +32,6 @@ switch ($_SERVER['SERVER_NAME']) {
         <script src="<?php echo $base_url; ?>/js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
-      <?php echo $_SERVER['SERVER_NAME']; ?>
       <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
