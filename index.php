@@ -2,10 +2,12 @@
 
 switch ($_SERVER['SERVER_NAME']) {
     case '127.0.0.1':
-        $base_url = 'http://127.0.0.1:8081';
+        $base_route = '';
+        $base_url = 'http://127.0.0.1:8081' . $base_route;
         break;
     case 'bioinformatics.bc.edu':
-        $base_url = 'http://bioinformatics.bc.edu/marthlab/iseqtools-portal';
+        $base_route = '/marthlab/iseqtools-portal';
+        $base_url = 'http://bioinformatics.bc.edu' . $base_route;
         break;
 }
 
@@ -30,6 +32,7 @@ switch ($_SERVER['SERVER_NAME']) {
         <script src="<?php echo $base_url; ?>/js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
+      <?php echo $_SERVER['SERVER_NAME']; ?>
       <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
@@ -316,7 +319,7 @@ Six participant informatics groups are developing software tools for genome sequ
 
         <script>
         var app_data = <?php echo file_get_contents('./js/app.json'); ?>;
-        var app = {};
+        var app = {base_url: '<?php echo $base_url; ?>', base_route: '<?php echo $base_route; ?>'};
         </script>
 
         <script src="<?php echo $base_url; ?>/js/utils.js"></script>
