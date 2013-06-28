@@ -40,7 +40,7 @@ switch ($_SERVER['SERVER_NAME']) {
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="brand" id="logo" href="<?php echo $base_url; ?>">iSeqTools</a>
+            <a class="brand" id="logo" href="<?php echo $base_url; ?>/">iSeqTools</a>
             <div class="nav-collapse collapse">
               <ul id="main_nav" class="nav">
               </ul>
