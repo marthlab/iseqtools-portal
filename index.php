@@ -93,7 +93,7 @@ switch ($_SERVER['SERVER_NAME']) {
             <a class="dropdown-toggle" data-toggle="dropdown">Workflows <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.workflows).each(function(wf){ %>
-              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo $base_url; ?><%= wf.url() %>"><%= wf.name %></a></li>
+              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= wf.url() %>"><%= wf.name %></a></li>
             <% }); %>
             </ul>
           </li>
@@ -101,7 +101,7 @@ switch ($_SERVER['SERVER_NAME']) {
             <a class="dropdown-toggle" data-toggle="dropdown">Pipelines <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.pipelines).each(function(pl){ %>
-              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo $base_url; ?><%= pl.url() %>"><%= pl.name %></a></li>
+              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= pl.url() %>"><%= pl.name %></a></li>
             <% }); %>
             </ul>
           </li>
@@ -111,11 +111,11 @@ switch ($_SERVER['SERVER_NAME']) {
             <% _(t.root_tools).each(function(tool){ %>
               <% var has_subtools = tool.subtools.length > 0 %>
               <li class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo $base_url; ?><%= tool.url() %>"><%= tool.name %></a>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="<%= tool.url() %>"><%= tool.name %></a>
                 <% if(has_subtools) { %>
                 <ul class="dropdown-menu">
                 <% _(tool.subtools).each(function(subtool){ %>
-                  <li><a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo $base_url; ?><%= subtool.url() %>"><%= subtool.name %></a></li>
+                  <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= subtool.url() %>"><%= subtool.name %></a></li>
                 <% }); %>
                 </ul>
                 <% } %>
@@ -127,13 +127,13 @@ switch ($_SERVER['SERVER_NAME']) {
             <a class="dropdown-toggle" data-toggle="dropdown">Teams <b class="caret"></b></a>
             <ul class="dropdown-menu">
             <% _(t.teams).each(function(team){ %>
-              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo $base_url; ?><%= team.url() %>"><%= team.name %></a></li>
+              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= team.url() %>"><%= team.name %></a></li>
             <% }); %>
             </ul>
           </li>
           <% _(t.generic_pages).each(function(gp){ %>
           <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo $base_url; ?><%= gp.url() %>"><%= gp.name %></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="<%= gp.url() %>"><%= gp.name %></a>
           </li>
           <% }); %>
           
@@ -148,7 +148,7 @@ switch ($_SERVER['SERVER_NAME']) {
 
           <div class="carousel-inner">
           <% _(t.workflows).each(function(wf, i){ %>
-            <div class="<%= i==0 ? 'active':'' %> item"><a href="<?php echo $base_url; ?><%= wf.url() %>"><%= wf.question %></a></div>
+            <div class="<%= i==0 ? 'active':'' %> item"><a href="<%= wf.url() %>"><%= wf.question %></a></div>
           <% }); %>
           </div>
 
@@ -162,7 +162,7 @@ switch ($_SERVER['SERVER_NAME']) {
               <% if(i === crumbs.length-1) { %>
               <span><%= item.name %></span>
               <% } else { %>
-              <a href="<?php echo $base_url; ?><%= item.url() %>"><%= item.name %></a>&nbsp;&nbsp;&gt;&gt;&nbsp;
+              <a href="<%= item.url() %>"><%= item.name %></a>&nbsp;&nbsp;&gt;&gt;&nbsp;
               <% } %>
             <% }); %>
              
@@ -192,7 +192,7 @@ Six participant informatics groups are developing software tools for genome sequ
             <h2>Pipelines implementing this workflow:</h2>
             <ul>
             <% _(t.pipelines).each(function(pl){ %>
-              <li><a href="<?php echo $base_url; ?><%= pl.url() %>"><%= pl.name %></a></li>
+              <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
             <% }); %>
             </ul>
           </div>
@@ -202,15 +202,15 @@ Six participant informatics groups are developing software tools for genome sequ
 
         <script type="text/html" id='info_pipeline_template'>
           <h1>Pipeline: <%= t.name %></h1>
-          <% if(t.team) { %><p>Developed by: <a href="<?php echo $base_url; ?><%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
+          <% if(t.team) { %><p>Developed by: <a href="<%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
           <p>This pipeline consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
-          <p>This pipeline implements the <a href="<?php echo $base_url; ?><%= t.workflow.url() %>"><%= t.workflow.name %></a> workflow.</p>
+          <p>This pipeline implements the <a href="<%= t.workflow.url() %>"><%= t.workflow.name %></a> workflow.</p>
           <% if(t.tools.length > 0) { %>
           <div class="info_float">
             <h2>Tools incorporated:</h2>
             <ul>
             <% _(t.tools).each(function(tool){ %>
-              <li><a href="<?php echo $base_url; ?><%= tool.url() %>"><%= tool.name %></a></li>
+              <li><a href="<%= tool.url() %>"><%= tool.name %></a></li>
             <% }); %>
             </ul>
           </div>
@@ -220,7 +220,7 @@ Six participant informatics groups are developing software tools for genome sequ
               <h2>Tutorials:</h2>
               <ul>
               <% _(t.tutorials).each(function(tutorial){ %>
-                <li><a href="<?php echo $base_url; ?><%= tutorial.url %>"><%= tutorial.label %></a></li>
+                <li><a href="<%= tutorial.url %>"><%= tutorial.label %></a></li>
               <% }); %>
               </ul>
             </div>
@@ -230,7 +230,7 @@ Six participant informatics groups are developing software tools for genome sequ
               <h2>Demos:</h2>
               <ul>
               <% _(t.demos).each(function(demo){ %>
-                <li><a href="<?php echo $base_url; ?><%= demo.url %>"><%= demo.label %></a></li>
+                <li><a href="<%= demo.url %>"><%= demo.label %></a></li>
               <% }); %>
               </ul>
             </div>
@@ -245,7 +245,7 @@ Six participant informatics groups are developing software tools for genome sequ
             <h2>Tools developed:</h2>
             <ul>
             <% _(t.root_tools).each(function(root_tool){ %>
-              <li><a href="<?php echo $base_url; ?><%= root_tool.url() %>"><%= root_tool.name %></a></li>
+              <li><a href="<%= root_tool.url() %>"><%= root_tool.name %></a></li>
             <% }); %>
             </ul>
           </div>
@@ -255,7 +255,7 @@ Six participant informatics groups are developing software tools for genome sequ
             <h2>Pipelines developed:</h2>
             <ul>
             <% _(t.pipelines).each(function(pl){ %>
-              <li><a href="<?php echo $base_url; ?><%= pl.url() %>"><%= pl.name %></a></li>
+              <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
             <% }); %>
             </ul>
           </div>
@@ -265,13 +265,13 @@ Six participant informatics groups are developing software tools for genome sequ
 
         <script type="text/html" id='info_tool_template'>
           <h1>Tool: <%= t.name %></h1>
-          <% if(t.team) { %><p>Developed by: <a href="<?php echo $base_url; ?><%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
-          <% if(t.parent_tool) { %><p>Parent tool: <a href="<?php echo $base_url; ?><%= t.parent_tool.url() %>"><%= t.parent_tool.name %></a></p><% } %>
+          <% if(t.team) { %><p>Developed by: <a href="<%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
+          <% if(t.parent_tool) { %><p>Parent tool: <a href="<%= t.parent_tool.url() %>"><%= t.parent_tool.name %></a></p><% } %>
           <% if(t.subtools.length > 0) { %>
             <div class="info_float">
               <h2>Subtools:</h2>
               <% _(t.subtools).each(function(subtool){ %>
-                <li><a href="<?php echo $base_url; ?><%= subtool.url() %>"><%= subtool.name %></a></li>
+                <li><a href="<%= subtool.url() %>"><%= subtool.name %></a></li>
               <% }); %>
             </div>
           <% } %>
@@ -280,7 +280,7 @@ Six participant informatics groups are developing software tools for genome sequ
               <h2>Incorporated in pipelines:</h2>
               <ul>
               <% _(t.pipelines).each(function(pl){ %>
-                <li><a href="<?php echo $base_url; ?><%= pl.url() %>"><%= pl.name %></a></li>
+                <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
               <% }); %>
               </ul>
             </div>
@@ -290,7 +290,7 @@ Six participant informatics groups are developing software tools for genome sequ
               <h2>Tutorials:</h2>
               <ul>
               <% _(t.tutorials).each(function(tutorial){ %>
-                <li><a href="<?php echo $base_url; ?><%= tutorial.url %>"><%= tutorial.label %></a></li>
+                <li><a href="<%= tutorial.url %>"><%= tutorial.label %></a></li>
               <% }); %>
               </ul>
             </div>
@@ -300,7 +300,7 @@ Six participant informatics groups are developing software tools for genome sequ
               <h2>Demos:</h2>
               <ul>
               <% _(t.demos).each(function(demo){ %>
-                <li><a href="<?php echo $base_url; ?><%= demo.url %>"><%= demo.label %></a></li>
+                <li><a href="<%= demo.url %>"><%= demo.label %></a></li>
               <% }); %>
               </ul>
             </div>
@@ -311,7 +311,7 @@ Six participant informatics groups are developing software tools for genome sequ
         <script type="text/html" id='teams_template'>
           <% _(t.teams).each(function(team, i){ %>
             <%= i % 4 == 0 ? '<div class="row">' : '' %>
-            <div class="span3 team"><a href="<?php echo $base_url; ?><%= team.url() %>"><%= team.name %></a></div>
+            <div class="span3 team"><a href="<%= team.url() %>"><%= team.name %></a></div>
             <%= i % 4 == 3 ? '</div>' : '' %>
           <% }); %>
         </script>

@@ -3,13 +3,13 @@ var gdata_mixin = {
 	url: function() { 
 		var type = this.type();
 		if(type == "summary") {
-			return "/";
+			return app.base_url+"/";
 		} else if(type == "generic_page") {
-			return '/'+this.id;
+			return app.base_url+'/'+this.id;
 		} else if(type == "tool_usage") {
-			return '/pipelines/'+this.pipeline.id+'/tool_usages/'+this.id;
+			return app.base_url+'/pipelines/'+this.pipeline.id+'/tool_usages/'+this.id;
 		} else {
-			return '/'+type+'s/'+this.id;
+			return app.base_url+'/'+type+'s/'+this.id;
 		}
 	},
 	color: function() {
