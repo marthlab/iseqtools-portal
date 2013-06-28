@@ -187,7 +187,27 @@
 					"id": "picard-create-sequence-dictionary"
 				},
 				{
-					"id": "picard-mark-duplicates"
+					"id": "picard-mark-duplicates",
+					"tutorials": [
+						{
+							"label": "picard-mark-duplicates Tutorial 1",
+							"url": "http://www.google.com"
+						},
+						{
+							"label": "picard-mark-duplicates Tutorial 2",
+							"url": "http://www.google.com"
+						}
+					],
+					"demos": [
+						{
+							"label": "picard-mark-duplicates Demo 1",
+							"url": "http://www.google.com"
+						},
+						{
+							"label": "picard-mark-duplicates Demo 2",
+							"url": "http://www.google.com"
+						}
+					],
 				}
 			]
 		},
@@ -905,6 +925,26 @@
 		{
 			"id": "merge-bam",
 			"name": "merge-bams",
+			"tutorials": [
+				{
+					"label": "merge-bams Tutorial 1",
+					"url":"http://www.google.com"
+				},
+				{
+					"label": "merge-bams Tutorial 2",
+					"url":"http://www.google.com"
+				}
+			],
+			"demos": [
+				{
+					"label": "merge-bams Demo 1",
+					"url":"http://www.google.com"
+				},
+				{
+					"label": "merge-bams Demo 2",
+					"url":"http://www.google.com"
+				}
+			],
 			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["alignments"],
