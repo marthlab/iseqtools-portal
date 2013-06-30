@@ -196,6 +196,72 @@ GraphDrawing.prototype = {
 								.attr("r", function(n) { return settings.nodes[n.type()].radius; })
 								.attr("stroke-width", settings.graph.path_width)
 								.attr("stroke", settings.nodes.stroke)
+								//.style("fill", function() { return (n.gdatum.type() == 'task' && n.gdatum.id == "map") ? "url(#tasks_map)" : "";})
+
+						// var node_image = circle_group
+						// 	.append("foreignObject")
+						// 		.attr("x", -15)
+						// 		.attr("y", -15)
+						//     .attr("width", 30)
+						//     .attr("height", 30)
+						// 	  .append("xhtml:body")
+						// 	  	.style("padding", "0")
+						// 	  	.style("width", "30px")
+						//     	.style("height", "30px")
+						// 	  	.style("background-color", "transparent")
+						// 	  	.style("background-size", "contain")
+						// 	    .style("background-image", "url(/img/tasks/map.svg)")
+						// 	    .style("background-position", "center center")
+						// 	    .style("background-repeat", "no-repeat")
+
+
+// 							    background:url(img_flwr.gif);
+// background-size:80px 60px;
+// background-repeat:no-repeat;
+							    //.html("<p>An HTML Foreign Object in SVG</p>")
+
+							// .append("foreignObject")
+							// 	.attr("x", 0)
+							// 	.attr("y", 0)
+							// 	.attr("width", 20)
+							// 	.attr("height", 20)
+							// 		.append("object")
+							// 		.attr("type", "image/svg+xml")
+							// 		.attr("data", app.base_url+"/img/tasks/map.svg")
+
+						var node_image = circle_group
+							.append("use")
+								.attr("xlink:href", "/img/tasks/map.svg#Layer_1")
+								.each(function(n) {
+									var rad = settings.nodes[n.type()].radius*0.8;
+									d3.select(this)
+										.attr("x", -rad)
+										.attr("y", -rad)
+										.attr("width", 2*rad)
+										.attr("height", 2*rad)
+								})
+								
+
+						// var node_image = circle_group
+						// 	.append("image")
+						// 		.attr("xlink:href", "/img/tasks/map.svg")
+						// 		.attr("x", -15)
+						// 		.attr("y", -15)
+						// 		.attr("width", 30)
+						// 		.attr("height", 30)
+
+
+
+				// 		var image = document.createElement('img'); // new Image(1, 1); 
+    // image.src = "/img/tasks/map.svg";
+    // image.onload = function() {debugger;};
+
+								// .attr("x", 0)
+								// .attr("y", 0)
+								// .attr("xlink:href", "/img/tasks/map.svg")
+								// .attr("width", "60")
+								// .attr("height", "20")
+								//.attr("viewBox", "-100 -100 50 50");
 								
 					}
 				})
