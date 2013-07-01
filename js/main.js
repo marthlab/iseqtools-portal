@@ -298,16 +298,16 @@
         'summary': _.template($('#info_summary_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
         'pipeline': _.template($('#info_pipeline_template').html()),
+        'tool_usage': _.template($('#info_tool_usage_template').html()),
         'team': _.template($('#info_team_template').html()),
-        'tool': _.template($('#info_tool_template').html())
+        'tool': _.template($('#info_tool_template').html())      
       },
       init: function() {
         this.$el = $('#info_inner'); 
       },
       transition: function() {
-        var content = (app.content.type() == 'tool_usage' ? app.content.tool : app.content);
-        var type = content.type();
-        this.$el.html(this.templates[type === "generic_page" ? content.id : type](content));
+        var type = app.content.type();
+        this.$el.html(this.templates[type === "generic_page" ? app.content.id : type](app.content));
       }
     },
     teams_widget: {

@@ -240,6 +240,52 @@ Six participant informatics groups are developing software tools for genome sequ
           
         </script>
 
+        <script type="text/html" id='info_tool_usage_template'>
+          <h1>Tool used: <%= t.tool.name %></h1>
+          <% if(t.tool.team) { %><p>Developed by: <a href="<%= t.tool.team.url() %>"><%= t.tool.team.name %></a></p><% } %>
+          <p>This tool usage consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
+          <% if(t.tool.parent_tool) { %><p>Parent tool: <a href="<%= t.tool.parent_tool.url() %>"><%= t.tool.parent_tool.name %></a></p><% } %>
+          <% if(t.tool.subtools.length > 0) { %>
+            <div class="info_float">
+              <h2>Subtools:</h2>
+              <% _(t.tool.subtools).each(function(subtool){ %>
+                <li><a href="<%= subtool.url() %>"><%= subtool.name %></a></li>
+              <% }); %>
+            </div>
+          <% } %>
+          <% if(t.tool.pipelines.length > 0) { %>
+            <div class="info_float">
+              <h2>Incorporated in other pipelines:</h2>
+              <ul>
+              <% _(t.tool.pipelines).each(function(pl){ %>
+                <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
+              <% }); %>
+              </ul>
+            </div>
+          <% } %>
+          <% if(t.tool.tutorials.length > 0) { %>
+            <div class="info_float">
+              <h2>Tutorials:</h2>
+              <ul>
+              <% _(t.tool.tutorials).each(function(tutorial){ %>
+                <li><a href="<%= tutorial.url %>"><%= tutorial.label %></a></li>
+              <% }); %>
+              </ul>
+            </div>
+          <% } %>
+          <% if(t.tool.demos.length > 0) { %>
+            <div class="info_float">
+              <h2>Demos:</h2>
+              <ul>
+              <% _(t.tool.demos).each(function(demo){ %>
+                <li><a href="<%= demo.url %>"><%= demo.label %></a></li>
+              <% }); %>
+              </ul>
+            </div>
+          <% } %>
+          
+        </script>
+
         <script type="text/html" id='info_team_template'>
           <h1>Team: <%= t.name %></h1>
           <% if(t.root_tools.length > 0) { %>
