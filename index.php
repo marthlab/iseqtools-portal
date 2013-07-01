@@ -29,7 +29,14 @@ switch ($_SERVER['SERVER_NAME']) {
         <link href="<?php echo $base_url; ?>/css/bootstrap-responsive.css" rel="stylesheet">
         <link href="<?php echo $base_url; ?>/css/main.css" rel="stylesheet">
 
-        <script src="<?php echo $base_url; ?>/js/vendor/modernizr-2.6.2.min.js"></script>
+        <script>
+        var app_config = {
+          base_url: '<?php echo $base_url; ?>',
+          base_route: '<?php echo $base_route; ?>',
+          data: <?php echo file_get_contents('./js/app.json'); ?>
+        };
+        </script>
+        <script src="<?php echo $base_url; ?>/js/require.js" data-main="<?php echo $base_url; ?>/js/init.js"></script>
     </head>
     <body>
       <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
@@ -79,6 +86,7 @@ switch ($_SERVER['SERVER_NAME']) {
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
+        <!--
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="<?php echo $base_url; ?>/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
         <script src="<?php echo $base_url; ?>/js/vendor/jquery.svg.min.js"></script>
@@ -89,6 +97,7 @@ switch ($_SERVER['SERVER_NAME']) {
         <script src="<?php echo $base_url; ?>/js/vendor/dagre.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/colorbrewer.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/glow.js"></script>
+      -->
 
         <script type="text/html" id='main_nav_template'>
           <li class="dropdown">
@@ -318,11 +327,9 @@ Six participant informatics groups are developing software tools for genome sequ
           <% }); %>
         </script>
 
-        <script>
-        var app_data = <?php echo file_get_contents('./js/app.json'); ?>;
-        var app = {base_url: '<?php echo $base_url; ?>', base_route: '<?php echo $base_route; ?>'};
-        </script>
+        
 
+        <!--
         <script src="<?php echo $base_url; ?>/js/utils.js"></script>
         <script src="<?php echo $base_url; ?>/js/settings.js"></script>
         <script src="<?php echo $base_url; ?>/js/gdata.js"></script>
@@ -331,6 +338,7 @@ Six participant informatics groups are developing software tools for genome sequ
         <script src="<?php echo $base_url; ?>/js/graph/edge.js"></script>
         <script src="<?php echo $base_url; ?>/js/graph/graph_drawing.js"></script>
         <script src="<?php echo $base_url; ?>/js/main.js"></script>
+      -->
 
         <script>
             var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
