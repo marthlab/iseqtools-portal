@@ -229,17 +229,19 @@ GraphDrawing.prototype = {
 							// 		.attr("type", "image/svg+xml")
 							// 		.attr("data", app.base_url+"/img/tasks/map.svg")
 
-						var node_image = circle_group
-							.append("use")
-								.attr("xlink:href", "/img/tasks/map.svg#Layer_1")
-								.each(function(n) {
+						circle_group
+							.each(function(n) {
+								if(n.gdatum.type() == 'task') {
 									var rad = settings.nodes[n.type()].radius*0.8;
 									d3.select(this)
-										.attr("x", -rad)
-										.attr("y", -rad)
-										.attr("width", 2*rad)
-										.attr("height", 2*rad)
-								})
+										.append("use")
+											.attr("xlink:href", "/img/tasks/"+n.gdatum.id+".svg#Layer_1")
+											.attr("x", -rad)
+											.attr("y", -rad)
+											.attr("width", 2*rad)
+											.attr("height", 2*rad)
+								}
+							});
 								
 
 						// var node_image = circle_group

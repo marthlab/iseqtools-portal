@@ -57,7 +57,6 @@ switch ($_SERVER['SERVER_NAME']) {
 
         <div id="breadcrumbs"></div>
         <div id="graph">
-          <object type="image/svg+xml" data="<?php echo $base_url; ?>/img/tasks/map.svg" id="test_map"></object>
           <svg preserveAspectRatio="xMidYMid meet" class="display_svg" id="display_svg_1">
           </svg>
           <svg preserveAspectRatio="xMidYMid meet" class="display_svg" id="display_svg_2">
@@ -86,7 +85,6 @@ switch ($_SERVER['SERVER_NAME']) {
         <script src="<?php echo $base_url; ?>/js/vendor/davis.min.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/bootstrap.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/underscore-min.js"></script>
-        <script src="<?php echo $base_url; ?>/js/vendor/innersvg.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/d3.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/dagre.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/colorbrewer.js"></script>
