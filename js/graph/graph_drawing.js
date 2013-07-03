@@ -6,6 +6,8 @@ function GraphDrawing(options) {
 	this.svgGroup = this.svg.append("g");
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
+
+	this.svg.call(glow("myGlow").rgb("#ffff00").stdDeviation(4));
 }
 GraphDrawing.prototype = {
 	padRectangle: function(rect, hpf, vpf) {
@@ -158,10 +160,6 @@ GraphDrawing.prototype = {
 			}
 
 		}
-		
-
-		var myGlow = glow("myGlow").rgb("#ffff00").stdDeviation(4);
-		this.svg.call(myGlow);
 
 	  // handle nodes
     var nodes_elems = this.nodeGroup.selectAll("g .node")
