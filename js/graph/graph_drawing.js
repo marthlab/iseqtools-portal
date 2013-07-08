@@ -202,7 +202,7 @@ GraphDrawing.prototype = {
 									var rad = settings.nodes[n.type()].radius*0.73;
 									d3.select(this)
 										.append("use")
-											.attr("xlink:href", "/img/tasks/"+n.gdatum.id+".svg#Layer_1")
+											.attr("xlink:href", app.base_url+"/img/tasks/"+n.gdatum.id+".svg#Layer_1")
 											.attr("x", -rad)
 											.attr("y", -rad)
 											.attr("width", 2*rad)
