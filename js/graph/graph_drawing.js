@@ -30,6 +30,7 @@ GraphDrawing.prototype = {
 	          +Math.ceil(rect.height);
 	},
 	render: function(graph, options) { // options uses "end_rect", "container_width", and "max_height"
+		console.log(graph.edges.filter(function(e){return e.target.label == "mosaik-aligner"}).map(function(e){return e.source.label;}));
 		var options = options || {};
 
 		function edgePathSpline(edge, edge_path) {
@@ -198,7 +199,7 @@ GraphDrawing.prototype = {
 						circle_group
 							.each(function(n) {
 								if(n.gdatum.type() == 'task') {
-									var rad = settings.nodes[n.type()].radius*0.8;
+									var rad = settings.nodes[n.type()].radius*0.73;
 									d3.select(this)
 										.append("use")
 											.attr("xlink:href", "/img/tasks/"+n.gdatum.id+".svg#Layer_1")
@@ -281,7 +282,6 @@ GraphDrawing.prototype = {
     	
 		nodes_elems.each(function(n) {
 	    var bbox = this.getBBox();
-	    n.bbox = bbox;
 	    n.width = bbox.width;
 	    n.height = bbox.height;
 	  });
