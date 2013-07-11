@@ -16,7 +16,7 @@ line-height: 28px;
 #workflows_carousel .carousel-inner .item {height:100px; text-align:center;  font-size:20px;}
 #workflows_carousel .carousel-inner .item a {color:#fff; line-height:80px;}
 #workflows_carousel .carousel-control {top:50%; cursor:pointer;}
-#graph {height:auto; display:block; max-height:500px; padding:30px 0 10px; position:relative;}
+#graph {height:auto; display:block; max-height:550px; padding:30px 0 10px; position:relative; overflow-x:auto; overflow-y:hidden;}
 #breadcrumbs {position:absolute; z-index:4; line-height:40px;}
 .display_svg {height:auto; display:block; position:absolute; z-index:2; width:100%;}
 .display_svg.active {z-index:3;}

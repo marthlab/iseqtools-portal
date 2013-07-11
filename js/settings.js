@@ -16,7 +16,7 @@ settings = {
       radius: 30
     },
     secondary: {
-      radius:15
+      radius: 20
     }
   }
 };

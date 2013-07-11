@@ -7,7 +7,7 @@ function GraphDrawing(options) {
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 
-	this.svg.call(glow("myGlow").rgb("#ffff00").stdDeviation(4));
+	this.svg.call(glow("myGlow").rgb("orange").stdDeviation(3));
 }
 GraphDrawing.prototype = {
 	padRectangle: function(rect, hpf, vpf) {
@@ -30,7 +30,6 @@ GraphDrawing.prototype = {
 	          +Math.ceil(rect.height);
 	},
 	render: function(graph, options) { // options uses "end_rect", "container_width", and "max_height"
-		console.log(graph.edges.filter(function(e){return e.target.label == "mosaik-aligner"}).map(function(e){return e.source.label;}));
 		var options = options || {};
 
 		function edgePathSpline(edge, edge_path) {
@@ -139,7 +138,9 @@ GraphDrawing.prototype = {
 
 		if(options && options.start_rect) {
 			var start_rect = this.padRectangle(options.start_rect);
-			var start_height = Math.max(Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height), 1);
+
+			var start_height = Math.min(start_rect.height*(this.container_width/start_rect.width), this.max_height);
+
 			svg.attr("viewBox", this.getViewBoxString(start_rect) );
 			if(options.change_container_height && !options.end_rect) {
 				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", start_height+"px");
@@ -154,7 +155,7 @@ GraphDrawing.prototype = {
 			var end_rect = this.padRectangle(options.end_rect);
 	 		var end_viewBox = this.getViewBoxString(end_rect);
 
-			var end_height = Math.max(Math.min(end_rect.height*(this.container_width/end_rect.width) || 0, this.max_height), 1);
+			var end_height = Math.min(end_rect.height*(this.container_width/end_rect.width), this.max_height);
 
 			if(!options.animate_height) {
 				svg.style("height", end_height+"px");
@@ -420,26 +421,23 @@ GraphDrawing.prototype = {
 
    	if(this.for_display && options.end_rect) {
 
-			d3.transition()
+		d3.transition()
   		.duration(settings.graph.render_duration)
   		.each(function() {
 
   			if(end_height > 1 || !is_firefox) {
-  				svg.transition().duration(settings.graph.render_duration).attr("viewBox", end_viewBox);
+  				svg.transition().attr("viewBox", end_viewBox);
   			}
   			if(options.animate_height) {
-  				svg.transition().duration(settings.graph.render_duration).style("height", end_height+"px");
+  				svg.transition().style("height", end_height+"px");
   			}
   			if(options.change_container_height) {
-  				d3.select("#graph").transition().duration(settings.graph.render_duration).style("height", end_height+"px");
+  				d3.select("#graph").transition().style("height", end_height+"px");
   			}
-
-
 	
-			})
-  		//.each("end", function() { console.log("graph animation finished"); });
+		})
 
-	  }
+  	}
 
 	},
 	highlightWorkflow: function(workflow) {

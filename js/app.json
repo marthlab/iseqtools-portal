@@ -354,50 +354,26 @@
 			"name": "WF 3 Name",
 			"question": "What is a good question for the Map-Call SVs workflow?",
 			"tasks_ids": ["map", "call_svs"]
+		},
+		{
+			"id": 4,
+			"name": "WF 4 Name",
+			"question": "What is a good question for the Map-Call DE workflow?",
+			"tasks_ids": ["map", "call_de"]
 		}
 	],
 	"pipelines": [
-		// {
-		// 	"id": "test",
-		// 	"name": "test",
-		// 	"tasks_ids": ["sequence", "map", "call_svs", "annotate", "call_de"],
-		// 	"data_types_ids": [],
-		// 	"initial_data_format_usages": [
-		// 	],
-		// 	"tool_usages": [
-		// 	]
-		// },
-		// {
-		// 	"id": "test2",
-		// 	"name": "test2",
-		// 	"tasks_ids": ["map", "call_svs", "annotate", "call_de"],
-		// 	"data_types_ids": [],
-		// 	"initial_data_format_usages": [
-		// 	],
-		// 	"tool_usages": [
-		// 	]
-		// },
-		// {
-		// 	"id": "test3",
-		// 	"name": "test3",
-		// 	"tasks_ids": ["sequence", "map", "call_de"],["reads", "reference_genomes", "alignments"]
-		// 	"data_types_ids": [],
-		// 	"initial_data_format_usages": [
-		// 	],
-		// 	"tool_usages": [
-		// 	]
-		// },
-		// {
-		// 	"id": "test-a",
-		// 	"name": "test-a",
-		// 	"team_id": "bc",
-		// 	"workflow_id": 1,
-		// 	"data_types_ids": ["reads", "reference_genomes", "alignments"],
-		// 	"initial_data_format_usages": [
-		// 	],
-		// 	"tool_usages": [
-		// 	]
-		// },
+		{
+			"id": "test-a",
+			"name": "test-a",
+			"team_id": "bc",
+			"workflow_id": 4,
+			"data_types_ids": ["reads", "reference_genomes", "alignments"],
+			"initial_data_format_usages": [
+			],
+			"tool_usages": [
+			]
+		},
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
