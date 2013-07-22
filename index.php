@@ -41,10 +41,12 @@ switch ($_SERVER['SERVER_NAME']) {
               <span class="icon-bar"></span>
             </button>
             <a class="brand" id="logo" href="<?php echo $base_url; ?>/">iSeqTools</a>
+            <a class="brand" id="nhgri" href="http://genome.gov">an NHGRI project</a>
             <div class="nav-collapse collapse">
               <ul id="main_nav" class="nav">
               </ul>
             </div><!--/.nav-collapse -->
+
           </div>
         </div>
       </div>

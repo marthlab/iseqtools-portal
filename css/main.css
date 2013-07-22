@@ -8,6 +8,7 @@ line-height: 28px;
 }
 
 #navbar {position:static;}
+#nhgri {float:right;}
 #main {}
 #workflows_carousel {display:none; background: gray; margin:0;}
 #workflows_carousel .carousel-indicators {margin:0 auto; position: absolute; width:100%; overflow: hidden; text-align: center; top:auto; right:auto; bottom:10px;}
