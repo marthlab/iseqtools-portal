@@ -320,7 +320,7 @@ GraphDrawing.prototype = {
       if(ep.gdatum && !(ep.gdatum.type() == 'workflow' && ep.gdatum.pipelines.length == 0)) {
         d3.select(this).classed("link", true);
       } else {
-        d3.select(this).attr("stroke-dasharray", "10,10");
+        d3.select(this).attr("stroke-dasharray", "7,3");
       }
     });
 

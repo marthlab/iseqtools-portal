@@ -360,6 +360,12 @@
 			"name": "WF 4 Name",
 			"question": "What is a good question for the Map-Call DE workflow?",
 			"tasks_ids": ["map", "call_de"]
+		},
+		{
+			"id": 5,
+			"name": "WF 5 Name",
+			"question": "What is a good question for the Call SVs-Annotate workflow?",
+			"tasks_ids": ["call_svs", "annotate"]
 		}
 	],
 	"pipelines": [
