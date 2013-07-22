@@ -8,6 +8,7 @@ line-height: 28px;
 }
 
 #navbar {position:static;}
+#logo {margin-left:0;}
 #nhgri {float:right;}
 #main {}
 #workflows_carousel {display:none; background: gray; margin:0;}

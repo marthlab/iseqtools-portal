@@ -354,13 +354,13 @@
 			"name": "WF 3 Name",
 			"question": "What is a good question for the Map-Call SVs workflow?",
 			"tasks_ids": ["map", "call_svs"]
-		}/*,
+		},
 		{
 			"id": 4,
 			"name": "WF 4 Name",
 			"question": "What is a good question for the Map-Call DE workflow?",
 			"tasks_ids": ["map", "call_de"]
-		}*/
+		}
 	],
 	"pipelines": [
 		// {
