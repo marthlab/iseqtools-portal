@@ -8,7 +8,8 @@ line-height: 28px;
 }
 
 #navbar {position:static;}
-#logo {margin-left:0;}
+#navbar .navbar-inner {padding:10px 0; background:#000;}
+#logo {margin:0; padding:0; background: url(../img/logo.gif); text-indent:-5000px; width:137px; height:40px;}
 #nhgri {float:right;}
 #main {}
 #workflows_carousel {display:none; background: gray; margin:0;}

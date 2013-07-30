@@ -139,7 +139,7 @@ GraphDrawing.prototype = {
     if(options && options.start_rect) {
       var start_rect = this.padRectangle(options.start_rect);
 
-      var start_height = Math.min(start_rect.height*(this.container_width/start_rect.width), this.max_height);
+      var start_height = Math.min(start_rect.height*(this.container_width/start_rect.width) || 0, this.max_height);
 
       svg.attr("viewBox", this.getViewBoxString(start_rect) );
       if(options.change_container_height && !options.end_rect) {
