@@ -46,20 +46,13 @@
 		{
 			"id":"reference_genomes",
 			"name":"reference genomes"
+		},
+		{
+			"id":"reads",
+			"name":"reads"
 		}
 	],
 	"tasks": [
-		{
-			"id":"sequence",
-			"name":"Sequence",
-			"in_data_types_ids": [],
-			"out_data_types": [
-				{
-					"id":"reads",
-					"name":"reads"
-				}
-			]
-		},
 		{
 			"id":"map",
 			"name":"Map",
