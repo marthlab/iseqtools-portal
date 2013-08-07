@@ -144,17 +144,19 @@ switch ($_SERVER['SERVER_NAME']) {
         </script>
 
         <script type="text/html" id='workflows_carousel_template'>
-          <ol class="carousel-indicators">
-          <% _(t.workflows).each(function(wf, i){ %>
-            <li data-target="#workflows_carousel" data-slide-to="<%= i %>" class="<%= i==0 ? 'active':'' %>"></li>
-          <% }); %>
-          </ol>
+          
 
           <div class="carousel-inner">
           <% _(t.workflows).each(function(wf, i){ %>
             <div class="<%= i==0 ? 'active':'' %> item"><a href="<%= wf.url() %>"><%= wf.question %></a></div>
           <% }); %>
           </div>
+
+          <ol class="carousel-indicators">
+          <% _(t.workflows).each(function(wf, i){ %>
+            <li style="background-color:<%= wf.color() %>" data-target="#workflows_carousel" data-slide-to="<%= i %>" class="<%= i==0 ? 'active':'' %>"></li>
+          <% }); %>
+          </ol>
 
           <a class="carousel-control left" data-slide="prev">&lsaquo;</a>
           <a class="carousel-control right" data-slide="next">&rsaquo;</a>
@@ -183,8 +185,7 @@ switch ($_SERVER['SERVER_NAME']) {
 
         <script type="text/html" id='info_summary_template'>
           <p>
-Welcome to the Genome Sequencing Informatics Tools Project, funded by the National Human Genome Research Institute.<br>
-Six participant informatics groups are developing software tools for genome sequence analysis.</p>
+Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by the National Human Genome Research Institute. Six participant informatics groups are developing iSeqTools which are “researcher-friendly” versions of genome sequence analysis software.
         </script>
 
         <script type="text/html" id='info_workflow_template'>

@@ -7,7 +7,7 @@ function GraphDrawing(options) {
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 
-  this.svg.call(glow("myGlow").rgb("orange").stdDeviation(3));
+  this.svg.call(glow("myGlow").rgb("orange").stdDeviation(5));
 }
 GraphDrawing.prototype = {
   padRectangle: function(rect, hpf, vpf) {

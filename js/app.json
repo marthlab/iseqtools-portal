@@ -65,8 +65,8 @@
 			]
 		},
 		{
-			"id":"call_svs",
-			"name":"Call SVs",
+			"id":"call_variants",
+			"name":"Call Variants",
 			"in_data_types_ids": ["alignments"],
 			"out_data_types": [
 				{
@@ -340,13 +340,13 @@
 			"id": 2,
 			"name": "WF 2 Name",
 			"question": "What is a good question for the Call SVs workflow?",
-			"tasks_ids": ["call_svs"]
+			"tasks_ids": ["call_variants"]
 		},
 		{
 			"id": 3,
 			"name": "WF 3 Name",
 			"question": "What is a good question for the Map-Call SVs workflow?",
-			"tasks_ids": ["map", "call_svs"]
+			"tasks_ids": ["map", "call_variants"]
 		},
 		{
 			"id": 4,
@@ -356,23 +356,23 @@
 		},
 		{
 			"id": 5,
-			"name": "WF 5 Name",
-			"question": "What is a good question for the Call SVs-Annotate workflow?",
-			"tasks_ids": ["call_svs", "annotate"]
+			"name": "Potentially Functional Variants",
+			"question": "Annotate all potentially functional variants in a personal genome",
+			"tasks_ids": ["call_variants", "annotate"]
 		}
 	],
 	"pipelines": [
-		// {
-		// 	"id": "test-a",
-		// 	"name": "test-a",
-		// 	"team_id": "bc",
-		// 	"workflow_id": 4,
-		// 	"data_types_ids": ["reads", "reference_genomes", "alignments"],
-		// 	"initial_data_format_usages": [
-		// 	],
-		// 	"tool_usages": [
-		// 	]
-		// },
+		{
+			"id": "test-a",
+			"name": "test-a",
+			"team_id": "bc",
+			"workflow_id": 3,
+			"data_types_ids": ["alignments", "functional_features", "variants"],
+			"initial_data_format_usages": [
+			],
+			"tool_usages": [
+			]
+		},
 		{
 			"id": "fastq-vcf",
 			"name": "fastq-vcf",
