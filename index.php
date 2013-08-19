@@ -148,7 +148,7 @@ switch ($_SERVER['SERVER_NAME']) {
 
           <div class="carousel-inner">
           <% _(t.workflows).each(function(wf, i){ %>
-            <div class="<%= i==0 ? 'active':'' %> item"><a href="<%= wf.url() %>"><%= wf.question %></a></div>
+            <div class="<%= i==0 ? 'active':'' %> item"><a href="<%= wf.url() %>"><%= wf.name %></a></div>
           <% }); %>
           </div>
 
@@ -185,7 +185,7 @@ switch ($_SERVER['SERVER_NAME']) {
 
         <script type="text/html" id='info_summary_template'>
           <p>
-Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by the National Human Genome Research Institute. Six participant informatics groups are developing iSeqTools which are “researcher-friendly” versions of genome sequence analysis software.
+Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by the National Human Genome Research Institute. Six participant informatics groups are developing powerful and “researcher-friendly” sequence analysis tools. This portal is designed for users and developers to explore the tools and pipelines built by project participants.
         </script>
 
         <script type="text/html" id='info_workflow_template'>
@@ -197,7 +197,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
             <h2>Pipelines implementing this workflow:</h2>
             <ul>
             <% _(t.pipelines).each(function(pl){ %>
-              <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
+              <li><a href="<%= pl.url() %>"><%= pl.name %></a> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)</li>
             <% }); %>
             </ul>
           </div>
@@ -207,7 +207,11 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
 
         <script type="text/html" id='info_pipeline_template'>
           <h1>Pipeline: <%= t.name %></h1>
-          <% if(t.team) { %><p>Developed by: <a href="<%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
+          <% if(t.team) { %>
+            <div class="info_inline">
+            <h3>Developed by:</h3> <a href="<%= t.team.url() %>"><%= t.team.name %></a>
+            </div>
+          <% } %>
           <p>This pipeline consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
           <p>This pipeline implements the <a href="<%= t.workflow.url() %>"><%= t.workflow.name %></a> workflow.</p>
           <% if(t.tools.length > 0) { %>
@@ -215,7 +219,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
             <h2>Tools incorporated:</h2>
             <ul>
             <% _(t.tools).each(function(tool){ %>
-              <li><a href="<%= tool.url() %>"><%= tool.name %></a></li>
+              <li><a href="<%= tool.url() %>"><%= tool.name %></a><% if(tool.team) { %> (<a href="<%= tool.team.url() %>"><%= tool.team.name %></a>)<% } %></li>
             <% }); %>
             </ul>
           </div>
@@ -245,9 +249,17 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
 
         <script type="text/html" id='info_tool_usage_template'>
           <h1>Tool used: <%= t.tool.name %></h1>
-          <% if(t.tool.team) { %><p>Developed by: <a href="<%= t.tool.team.url() %>"><%= t.tool.team.name %></a></p><% } %>
-          <p>This tool usage consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
-          <% if(t.tool.parent_tool) { %><p>Parent tool: <a href="<%= t.tool.parent_tool.url() %>"><%= t.tool.parent_tool.name %></a></p><% } %>
+          <% if(t.tool.team) { %>
+            <div class="info_inline">
+            <h3>Developed by:</h3> <a href="<%= t.tool.team.url() %>"><%= t.tool.team.name %></a>
+            </div>
+          <% } %>
+          <p>In this context, <%= t.tool.name %> consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
+          <% if(t.tool.parent_tool) { %>
+            <div class="info_inline">
+            <h3>Parent tool:</h3> <a href="<%= t.tool.parent_tool.url() %>"><%= t.tool.parent_tool.name %></a>
+            </div>
+          <% } %>
           <% if(t.tool.subtools.length > 0) { %>
             <div class="info_float">
               <h2>Subtools:</h2>
@@ -261,7 +273,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
               <h2>Incorporated in other pipelines:</h2>
               <ul>
               <% _(t.tool.pipelines).each(function(pl){ %>
-                <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
+                <li><a href="<%= pl.url() %>"><%= pl.name %></a><% if(pl.team){ %> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)<% } %></li>
               <% }); %>
               </ul>
             </div>
@@ -291,6 +303,32 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
 
         <script type="text/html" id='info_team_template'>
           <h1>Team: <%= t.name %></h1>
+          <div class="info_inline">
+            <h3>Principal Investigators:</h3>
+            <ul>
+            <% _(t.principal_investigators).each(function(pi, i){ %><%= (i !== 0) ? ', ':'' %>
+              <li><a href=mailto:<%= pi.email %>><%= pi.name %></a></li><% }); %>
+            </ul>
+          </div>
+          <div class="info_inline">
+            <h3>Project Title:</h3>
+            <p><%= t.project_title %></p>
+          </div>
+          <% if(t.project_url) { %>
+            <div class="info_inline">
+            <h3>Project Site:</h3> <a href="<%= t.project_url %>"><%= t.project_url %></a>
+            </div>
+          <% } %>
+          <% if(t.group_url) { %>
+            <div class="info_inline">
+            <h3>Group Site:</h3> <a href="<%= t.group_url %>"><%= t.group_url %></a>
+            </div>
+          <% } %>
+          <% if(t.institution_url) { %>
+            <div class="info_inline">
+            <h3>Institution Site:</h3> <a href="<%= t.institution_url %>"><%= t.institution_url %></a>
+            </div>
+          <% } %>
           <% if(t.root_tools.length > 0) { %>
           <div class="info_float">
             <h2>Tools developed:</h2>
@@ -316,8 +354,16 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
 
         <script type="text/html" id='info_tool_template'>
           <h1>Tool: <%= t.name %></h1>
-          <% if(t.team) { %><p>Developed by: <a href="<%= t.team.url() %>"><%= t.team.name %></a></p><% } %>
-          <% if(t.parent_tool) { %><p>Parent tool: <a href="<%= t.parent_tool.url() %>"><%= t.parent_tool.name %></a></p><% } %>
+          <% if(t.team) { %>
+            <div class="info_inline">
+            <h3>Developed by:</h3> <a href="<%= t.team.url() %>"><%= t.team.name %></a>
+            </div>
+          <% } %>
+          <% if(t.parent_tool) { %>
+            <div class="info_inline">
+            <h3>Parent tool:</h3> <a href="<%= t.parent_tool.url() %>"><%= t.parent_tool.name %></a>
+            </div>
+          <% } %>
           <% if(t.subtools.length > 0) { %>
             <div class="info_float">
               <h2>Subtools:</h2>
@@ -331,7 +377,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
               <h2>Incorporated in pipelines:</h2>
               <ul>
               <% _(t.pipelines).each(function(pl){ %>
-                <li><a href="<%= pl.url() %>"><%= pl.name %></a></li>
+                <li><a href="<%= pl.url() %>"><%= pl.name %></a><% if(pl.team){ %> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)<% } %></li>
               <% }); %>
               </ul>
             </div>

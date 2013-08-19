@@ -11,31 +11,82 @@
 	"teams": [
 		{
 			"id": "broad",
-			"name": "Broad Institute"
+			"name": "Broad Institute",
+			"project_title": "Informatics Tools for High-Throughput Sequences Data Analysis",
+			"project_url": "http://www.broadinstitute.org/gatk/",
+			"group_url": "http://www.broadinstitute.org/science/programs/medical-and-population-genetics/program-medical-and-population-genetics",
+			"institution_url": "http://www.broadinstitute.org",
+			"principal_investigators": [
+				["Mark DePristo", "depristo@broadinstitute.org"]
+			]
 		},
 		{
 			"id": "bc",
-			"name": "Boston College"
+			"name": "Boston College",
+			"project_title": "Robust software tools for variant identification and functional assessment",
+			"project_url": "http://gkno.me",
+			"group_url": "http://bioinformatics.bc.edu/marthlab",
+			"institution_url": "http://bc.edu",
+			"principal_investigators": [
+				["Gabor Marth", "marth@bc.edu"]
+			]
 		},
 		{
 			"id": "umich",
-			"name": "University of Michigan"
+			"name": "University of Michigan",
+			"project_title": "Robust software tools for variant identification and functional assessment",
+			"project_url": "http://genome.sph.umich.edu/wiki/GotCloud",
+			"group_url": "http://www.sph.umich.edu/csg/abecasis/",
+			"institution_url": "http://www.umich.edu",
+			"principal_investigators": [
+				["Goncalo Abecasis", "goncalo@umich.edu"]
+			]
 		},
 		{
 			"id": "washu",
-			"name": "Washington University"
+			"name": "Washington University in St. Louis",
+			"project_title": "A turnkey system for high-throughput variant discovery and interpretation",
+			"project_url": "http://tvap.genome.wustl.edu/",
+			"group_url": "http://genome.wustl.edu/",
+			"institution_url": "http://wustl.edu/",
+			"principal_investigators": [
+				["Li Ding", "lding@wustl.edu"],
+				["David Dooling", "ddooling@wustl.edu"]
+			]
 		},
 		{
 			"id": "scripps",
-			"name": "The Scripps Research Institute"
+			"name": "The Scripps Research Institute",
+			"project_title": "Scripps Genome ADVISER: Annotation and Distributed Variant Interpretation Server",
+			"project_url": "http://genomics.scripps.edu/",
+			"group_url": "http://www.stsiweb.org/",
+			"institution_url": "http://www.scripps.edu",
+			"principal_investigators": [
+				["Ali Torkamani", "atorkama@scripps.edu"]
+			]
 		},
 		{
 			"id": "usc",
-			"name": "University of Southern California"
+			"name": "University of Southern California",
+			"project_title": "Robust and portable workflow-based tools for mRNA and genome resequencing",
+			"project_url": "https://code.google.com/p/rseqflow/",
+			"institution_url": "http://www.usc.edu",
+			"principal_investigators": [
+				["Ting Chen", "tingchen@usc.edu"],
+				["Ewa Deelman", "deelman@isi.edu"],
+				["James Knowles", "knowles@keck.usc.edu"]
+			]
 		},
 		{
 			"id": "harvard",
-			"name": "Harvard University"
+			"name": "Harvard University",
+			"project_title": "Accurate analysis of genome structural variation using large-scale sequence data",
+			"project_url": "http://www.broadinstitute.org/software/genomestrip/genome-strip",
+			"group_url": "http://genepath.med.harvard.edu/mccarroll",
+			"institution_url": "http://harvard.edu",
+			"principal_investigators": [
+				["Steven McCarroll", "mccarroll@genetics.med.harvard.edu"]
+			]
 		}
 	],
 	"initial_data_types": [
@@ -50,7 +101,11 @@
 		{
 			"id":"reads",
 			"name":"reads"
-		}
+		},
+		{
+			"id":"functional_features",
+			"name":"functional features"
+		},
 	],
 	"tasks": [
 		{
@@ -65,17 +120,24 @@
 			]
 		},
 		{
-			"id":"call_variants",
-			"name":"Call Variants",
+			"id":"call_structural_variants",
+			"name":"Call Structural Variants",
 			"in_data_types_ids": ["alignments"],
 			"out_data_types": [
 				{
-					"id":"functional_features",
-					"name":"functional features"
-				},
+					"id":"structural_variants",
+					"name":"Structural Variants"
+				}
+			]
+		},
+		{
+			"id":"call_short_variants",
+			"name":"Call Short Variants",
+			"in_data_types_ids": ["alignments"],
+			"out_data_types": [
 				{
-					"id":"variants",
-					"name":"variants"
+					"id":"short_variants",
+					"name":"Short Variants"
 				}
 			]
 		},
@@ -93,7 +155,7 @@
 		{
 			"id":"annotate",
 			"name":"Annotate",
-			"in_data_types_ids": ["functional_features", "variants"],
+			"in_data_types_ids": ["functional_features", "short_variants", "structural_variants"],
 			"out_data_types": [
 				{
 					"id":"annotated_variants",
@@ -170,6 +232,30 @@
 		},
 		{
 			"id":"tbi"
+		},
+		{
+			"id": "ploidy map"
+		},
+		{
+			"id": "gender map"
+		},
+		{
+			"id": "alignability mask"
+		},
+		{
+			"id": "CN2 mask"
+		},
+		{
+			"id": "metadata"
+		},
+		{
+			"id": "vcf (known sites)"
+		},
+		{
+			"id": "vcf (sites)"
+		},
+		{
+			"id": "vcf (genotypes)"
 		}
 	],
 	"tools": [
@@ -206,6 +292,7 @@
 		},
 		{
 			"id": "mosaik",
+			"team_id": "bc",
 			"subtools": [
 				{
 					"id": "mosaik-build-reference"
@@ -275,6 +362,7 @@
 		},
 		{
 			"id": "gatk",
+			"team_id": "broad",
 			"subtools": [
 				{
 					"id": "gatk-count-covariates"
@@ -294,6 +382,7 @@
 		},
 		{
 			"id": "vcflib",
+			"team_id": "bc",
 			"subtools": [
 				{
 					"id": "vcflib-filter"
@@ -301,10 +390,12 @@
 			]
 		},
 		{
-			"id": "ogap"
+			"id": "ogap",
+			"team_id": "bc"
 		},
 		{
-			"id": "bamleftalign"
+			"id": "bamleftalign",
+			"team_id": "bc"
 		},
 		{
 			"id": "freebayes",
@@ -327,50 +418,123 @@
 		},
 		{
 			"id": "tabix"
+		},
+		{
+			"id": "SVPreprocess",
+			"team_id": "harvard"
+		},
+		{
+			"id": "SVDiscovery",
+			"team_id": "harvard"
+		},
+		{
+			"id": "SVGenotyper",
+			"team_id": "harvard"
 		}
 	],
 	"workflows": [
 		{
 			"id": 1,
-			"name": "WF 1 Name",
-			"question": "What is a good question for the Map workflow?",
-			"tasks_ids": ["map"]
+			"name": "Map Sequencing Reads",
+			"tasks_ids": ["map"],
+			"featured": true
 		},
 		{
 			"id": 2,
-			"name": "WF 2 Name",
-			"question": "What is a good question for the Call SVs workflow?",
-			"tasks_ids": ["call_variants"]
+			"name": "Call Genetic Variants",
+			"tasks_ids": ["call_short_variants", "call_structural_variants"],
+			"featured": true
 		},
 		{
 			"id": 3,
-			"name": "WF 3 Name",
-			"question": "What is a good question for the Map-Call SVs workflow?",
-			"tasks_ids": ["map", "call_variants"]
+			"name": "Map -> Call Genetic Variants",
+			"tasks_ids": ["map", "call_short_variants", "call_structural_variants"],
 		},
 		{
 			"id": 4,
-			"name": "WF 4 Name",
-			"question": "What is a good question for the Map-Call DE workflow?",
-			"tasks_ids": ["map", "call_de"]
+			"name": "Call Differentially Expressed Genes",
+			"tasks_ids": ["map", "call_de"],
+			"featured": true
 		},
 		{
 			"id": 5,
-			"name": "Potentially Functional Variants",
-			"question": "Annotate all potentially functional variants in a personal genome",
-			"tasks_ids": ["call_variants", "annotate"]
+			"name": "Annotate Variants",
+			"tasks_ids": ["call_short_variants", "call_structural_variants", "annotate"],
+			"featured": true
 		}
 	],
 	"pipelines": [
 		{
-			"id": "test-a",
-			"name": "test-a",
-			"team_id": "bc",
-			"workflow_id": 3,
-			"data_types_ids": ["alignments", "functional_features", "variants"],
+			"id": "GenomeSTRIP",
+			"name": "GenomeSTRIP",
+			"team_id": "harvard",
+			"workflow_id": 2,
+			"data_types_ids": ["alignments", "structural_variants"],
 			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "fasta"
+				},
+				{
+					"id": 2,
+					"data_format_id": "ploidy map"
+				},
+				{
+					"id": 3,
+					"data_format_id": "gender map"
+				},
+				{
+					"id": 4,
+					"data_format_id": "alignability mask"
+				},
+				{
+					"id": 5,
+					"data_format_id": "CN2 mask"
+				},
+				{
+					"id": 6,
+					"data_format_id": "bam",
+					"multiple": true
+				},
+				{
+					"id": 7,
+					"data_format_id": "vcf (known sites)"
+				}
 			],
 			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "SVPreprocess",
+					"in_data_format_usages_ids": [1,2,3,4,5,6],
+					"out_data_format_usages": [
+						{
+							"id": 8,
+							"data_format_id": "metadata"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "SVDiscovery",
+					"in_data_format_usages_ids": [6,8],
+					"out_data_format_usages": [
+						{
+							"id": 9,
+							"data_format_id": "vcf (sites)"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "SVGenotyper",
+					"in_data_format_usages_ids": [6,7,8,9],
+					"out_data_format_usages": [
+						{
+							"id": 10,
+							"data_format_id": "vcf (genotypes)"
+						}
+					]
+				}
 			]
 		},
 		{
@@ -398,7 +562,7 @@
 			],
 			"team_id": "bc",
 			"workflow_id": 3,
-			"data_types_ids": ["reads", "reference_genomes", "alignments", "variants"],
+			"data_types_ids": ["reads", "reference_genomes", "alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
 					"id": 1,
@@ -997,7 +1161,7 @@
 			"name": "call-short-variants",
 			"team_id": "bc",
 			"workflow_id": 2,
-			"data_types_ids": ["alignments", "variants"],
+			"data_types_ids": ["alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",
@@ -1083,7 +1247,7 @@
 			"name": "merge-vcf",
 			"team_id": "bc",
 			"workflow_id": 2,
-			"data_types_ids": ["variants"],
+			"data_types_ids": ["short_variants"],
 			"initial_data_format_usages": [
 				{
 					"id": "1",

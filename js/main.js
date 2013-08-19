@@ -84,7 +84,7 @@
       template: _.template($('#workflows_carousel_template').html()),
       init: function() {
         this.$el = $('#workflows_carousel');
-        this.$el.html(this.template({workflows: gdata.workflows}));
+        this.$el.html(this.template({workflows: _(gdata.workflows).filter(function(wf){return wf.featured;})}));
         this.$el.carousel({interval: 3500}).on('slid', (function (e) {
           widgets.graph_widget.active_drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
         }).bind(this));

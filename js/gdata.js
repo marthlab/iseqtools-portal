@@ -114,7 +114,10 @@ _.extend(Summary.prototype, gdata_mixin);
 Summary.prototype.graphable = true;
 
 function Team(cfg) {
-	_(this).extend(_(cfg).pickStrings('id', 'name'));
+	_(this).extend(_(cfg).pickStrings('id', 'name', 'project_title', 'project_url', 'group_url', 'institution_url'));
+	this.principal_investigators = _(cfg.principal_investigators).map(function(pi_cfg) {
+		return {name: pi_cfg[0], email: pi_cfg[1]};
+	});
 }
 _.extend(Team.prototype, gdata_mixin);
 Team.prototype.graphable = false;
@@ -138,6 +141,7 @@ Task.prototype.graphable = false;
 
 function Workflow(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name', 'question'));
+	this.featured = cfg.featured;
 	this.tasks = cfg.tasks_ids.map(function(task_id){ return _(gdata.tasks).find(by_id(task_id));});
 
 	this.data_types = _.union.apply(this,
