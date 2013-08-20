@@ -3,7 +3,7 @@ settings = {
   graph: {
     nodeSep: 50,
     edgeSep: 20,
-    rankSep: 45,
+    rankSep: 35,
     path_width:3,
     path_gap: 0.5,
     edge_curvature: 0.29,

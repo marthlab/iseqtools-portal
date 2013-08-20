@@ -203,13 +203,17 @@ function Pipeline(cfg) {
   	return new ToolUsage(_.extend(tu_cfg, {pipeline: this}));
   }, this);
 
+  this.tool_usages.displaySort = function() {
+  	return _.sortBy(this, function(tu) {return tu.tool.name;});
+  };
+
   this.out_data_format_usages = this.data_format_usages.filter(function(dfu) {
   	return _(this.tool_usages.filter(function(tu){
   		return _(tu.in_data_format_usages).contains(dfu);
   	})).isEmpty();
   }, this);
 
-  this.tools = _.uniq(this.tool_usages.map(function(tu) { return tu.tool;}));
+  this.tools = _.sortBy(_.uniq(this.tool_usages.map(function(tu) { return tu.tool;})), function(t) {return t.name;});
 }
 _.extend(Pipeline.prototype, gdata_mixin);
 Pipeline.prototype.graphable = true;

@@ -100,7 +100,7 @@
 		},
 		{
 			"id":"reads",
-			"name":"reads"
+			"name":"sequencing reads"
 		},
 		{
 			"id":"functional_features",
@@ -256,6 +256,36 @@
 		},
 		{
 			"id": "vcf (genotypes)"
+		},
+		{
+			"id": "sai"
+		},
+		{
+			"id": "dbsnp"
+		},
+		{
+			"id": "UM ref"
+		},
+		{
+			"id": "HapMap sites"
+		},
+		{
+			"id": "contamination & swap stats"
+		},
+		{
+			"id": ".depthSM"
+		},
+		{
+			"id": ".selfRG"
+		},
+		{
+			"id": ".selfSM"
+		},
+		{
+			"id": "qplot stats"
+		},
+		{
+			"id": ".R"
 		}
 	],
 	"tools": [
@@ -377,6 +407,15 @@
 			"subtools": [
 				{
 					"id": "samtools-calmd"
+				},
+				{
+					"id": "samtools-index"
+				},
+				{
+					"id": "samtools-sort"
+				},
+				{
+					"id": "samtools-view"
 				}
 			]
 		},
@@ -420,16 +459,56 @@
 			"id": "tabix"
 		},
 		{
-			"id": "SVPreprocess",
+			"id": "SV-Preprocess",
 			"team_id": "harvard"
 		},
 		{
-			"id": "SVDiscovery",
+			"id": "SV-Discovery",
 			"team_id": "harvard"
 		},
 		{
-			"id": "SVGenotyper",
+			"id": "SV-Genotyper",
 			"team_id": "harvard"
+		},
+		{
+			"id": "BamUtil",
+			"team_id": "umich",
+			"subtools": [
+				{
+					"id": "BamUtil-polishBam"
+				},
+				{
+					"id": "BamUtil-mergeBam"
+				},
+				{
+					"id": "BamUtil-dedup"
+				},
+				{
+					"id": "BamUtil-recab"
+				}
+			]
+		},
+		{
+			"id": "qplot",
+			"team_id": "umich"
+		},
+		{
+			"id": "verifyBamID",
+			"team_id": "umich"
+		},
+		{
+			"id": "bwa",
+			"subtools": [
+				{
+					"id": "bwa-aln"
+				},
+				{
+					"id": "bwa-samse"
+				},
+				{
+					"id": "bwa-sampe"
+				}
+			]
 		}
 	],
 	"workflows": [
@@ -464,6 +543,236 @@
 		}
 	],
 	"pipelines": [
+		{
+			"id": "gotcloud-align",
+			"name": "gotcloud-align",
+			"team_id": "umich",
+			"workflow_id": 1,
+			"data_types_ids": ["reads", "reference_genomes", "alignments"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "fasta"
+				},
+				{
+					"id": 2,
+					"data_format_id": "fastq"
+				},
+				{
+					"id": 3,
+					"data_format_id": "fastq"
+				},
+				{
+					"id": 4,
+					"data_format_id": "fastq"
+				},
+				{
+					"id": 5,
+					"data_format_id": "dbsnp"
+				},
+				{
+					"id": 6,
+					"data_format_id": "UM ref"
+				},
+				{
+					"id": 7,
+					"data_format_id": "HapMap sites"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "bwa-aln",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 8,
+							"data_format_id": "sai"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "bwa-samse",
+					"in_data_format_usages_ids": [1,2,8],
+					"out_data_format_usages": [
+						{
+							"id": 9,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "samtools-view",
+					"in_data_format_usages_ids": [9],
+					"out_data_format_usages": [
+						{
+							"id": 10,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "samtools-sort",
+					"in_data_format_usages_ids": [10],
+					"out_data_format_usages": [
+						{
+							"id": 11,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "BamUtil-polishBam",
+					"in_data_format_usages_ids": [11],
+					"out_data_format_usages": [
+						{
+							"id": 12,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "6",
+					"tool_id": "bwa-aln",
+					"in_data_format_usages_ids": [1,3],
+					"out_data_format_usages": [
+						{
+							"id": 13,
+							"data_format_id": "sai"
+						}
+					]
+				},
+				{
+					"id": "7",
+					"tool_id": "bwa-aln",
+					"in_data_format_usages_ids": [1,4],
+					"out_data_format_usages": [
+						{
+							"id": 14,
+							"data_format_id": "sai"
+						}
+					]
+				},
+				{
+					"id": "8",
+					"tool_id": "bwa-sampe",
+					"in_data_format_usages_ids": [1,3,4,13,14],
+					"out_data_format_usages": [
+						{
+							"id": 15,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "9",
+					"tool_id": "samtools-view",
+					"in_data_format_usages_ids": [15],
+					"out_data_format_usages": [
+						{
+							"id": 16,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "10",
+					"tool_id": "samtools-sort",
+					"in_data_format_usages_ids": [16],
+					"out_data_format_usages": [
+						{
+							"id": 17,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "11",
+					"tool_id": "BamUtil-polishBam",
+					"in_data_format_usages_ids": [17],
+					"out_data_format_usages": [
+						{
+							"id": 18,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "12",
+					"tool_id": "BamUtil-mergeBam",
+					"in_data_format_usages_ids": [12,18],
+					"out_data_format_usages": [
+						{
+							"id": 19,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "13",
+					"tool_id": "BamUtil-dedup",
+					"in_data_format_usages_ids": [5,6,19],
+					"out_data_format_usages": [
+						{
+							"id": 20,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "13",
+					"tool_id": "BamUtil-recab",
+					"in_data_format_usages_ids": [20],
+					"out_data_format_usages": [
+						{
+							"id": 21,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": "14",
+					"tool_id": "verifyBamID",
+					"in_data_format_usages_ids": [7,21],
+					"out_data_format_usages": [
+						{
+							"id": 22,
+							"data_format_id": "contamination & swap stats"
+						}
+					]
+				},
+				{
+					"id": "15",
+					"tool_id": "samtools-index",
+					"in_data_format_usages_ids": [21],
+					"out_data_format_usages": [
+						{
+							"id": 23,
+							"data_format_id": "bai"
+						}
+					]
+				},
+				{
+					"id": "16",
+					"tool_id": "qplot",
+					"in_data_format_usages_ids": [5,6,21],
+					"out_data_format_usages": [
+						{
+							"id": 24,
+							"data_format_id": "qplot stats"
+						},
+						{
+							"id": 25,
+							"data_format_id": ".R"
+						}
+					]
+				}
+			]
+		},
 		{
 			"id": "GenomeSTRIP",
 			"name": "GenomeSTRIP",
@@ -504,7 +813,7 @@
 			"tool_usages": [
 				{
 					"id": "1",
-					"tool_id": "SVPreprocess",
+					"tool_id": "SV-Preprocess",
 					"in_data_format_usages_ids": [1,2,3,4,5,6],
 					"out_data_format_usages": [
 						{
@@ -515,7 +824,7 @@
 				},
 				{
 					"id": "2",
-					"tool_id": "SVDiscovery",
+					"tool_id": "SV-Discovery",
 					"in_data_format_usages_ids": [6,8],
 					"out_data_format_usages": [
 						{
@@ -526,7 +835,7 @@
 				},
 				{
 					"id": "3",
-					"tool_id": "SVGenotyper",
+					"tool_id": "SV-Genotyper",
 					"in_data_format_usages_ids": [6,7,8,9],
 					"out_data_format_usages": [
 						{

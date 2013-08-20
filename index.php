@@ -175,12 +175,27 @@ switch ($_SERVER['SERVER_NAME']) {
         </script>
 
         <script type="text/html" id='info_about_template'>
-        <p>
-          Aliquam fermentum lacus sit amet tellus porta molestie. Sed commodo lacinia egestas. Aliquam vitae varius metus. Sed faucibus imperdiet molestie. Integer dignissim, justo non facilisis tempor, magna eros viverra risus, eget viverra ipsum enim vel mauris. Cras congue odio nunc, eu pellentesque tortor elementum vitae. Etiam sagittis convallis libero, eget tristique dui fringilla id. Nullam luctus ultrices justo, vel convallis mi tempor nec. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce eleifend consequat lacus vel molestie. Curabitur vehicula eget nisi eu vestibulum. Nam eget venenatis augue.
-        </p>
-        <p>
-          Ut eget purus quis lacus rhoncus scelerisque. Integer sed odio et sapien aliquet porta et ut massa. Mauris vel congue tellus, eget egestas ipsum. Phasellus facilisis dictum sapien, a vehicula eros imperdiet quis. Maecenas eget viverra metus. Donec non mauris nec turpis blandit pharetra vitae a velit. Ut vel nisl semper, gravida tellus quis, dictum justo. Sed consectetur ullamcorper ipsum. Proin eu ligula scelerisque, tincidunt erat at, viverra felis. Nullam et arcu vel risus adipiscing fermentum. Aliquam iaculis interdum euismod. Nullam at orci pretium, tempus libero sit amet, pellentesque mauris. Vivamus vestibulum magna lectus, a iaculis leo elementum vitae. Nam turpis turpis, bibendum vitae erat ut, imperdiet placerat orci. Donec aliquam fringilla ultricies. Vestibulum non tortor eu velit congue suscipit.
-        </p>
+        
+<p>
+  Genomic analysis consists of complex problems, and involves various data types and numerous fast-changing tools.
+  This site organizes genomic analysis information around identified genomic workflows comprising nuclear genomic tasks such as read mapping or structural variant calling.
+  These tasks operate on as input, and produce as output, genomic data such as sequencing reads, alignments, or annotated variants.
+  Multiple software pipelines produced by GS-IT participants may be available as disparate implementations of the same workflow.
+  
+  The <b>visual GS-IT network explorer</b> is organized around the above-introduced concepts, in four semantic “zoom levels” corresponding to increased detail and decreased generality.
+</p>
+
+  <ul>
+<li><b>Zoom level 1: Overview.</b> This level displays all workflows implemented by GS-IT project participants. Upon selecting a colored path representing a workflow, the view will transition to the next zoom level.
+</li>
+<li><b>Zoom level 2: Workflow.</b> This level reveals the individual pipelines implementing a workflow, which are represented as differently-colored paths linking genomic tasks. Some pipelines may implement only a subset of tasks within a particular workflow. The information panel also shows these constituent pipelines as a conventional list.  Upon selecting a colored path representing a pipeline, the view will transition to the next zoom level.
+</li>
+<li><b>Zoom level 3: Pipeline.</b> This level shows how a specific pipeline links together various tools to accomplish certain tasks. The information panel shows further textual information about the pipeline, as well as a list of the tools employed. Each tool employed by the pipeline can be selected to transition to the next zoom level. The information panel may also include links to demos, downloads, and external resources such as Biostar discussions.
+</li>
+<li><b>Zoom level 4: Tool.</b> This level shows what inputs and outputs are associated with a tool in the context of a particular pipeline. The information panel shows further textual information about the tool.
+</li>
+  </ul>
+
         </script>
 
         <script type="text/html" id='info_summary_template'>
@@ -268,11 +283,11 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
               <% }); %>
             </div>
           <% } %>
-          <% if(t.tool.pipelines.length > 0) { %>
+          <% if(t.tool.pipelines.filter(function(pl){return pl !== t.pipeline;}).length > 0) { %>
             <div class="info_float">
               <h2>Incorporated in other pipelines:</h2>
               <ul>
-              <% _(t.tool.pipelines).each(function(pl){ %>
+              <% t.tool.pipelines.filter(function(pl){return pl !== t.pipeline;}).each(function(pl){ %>
                 <li><a href="<%= pl.url() %>"><%= pl.name %></a><% if(pl.team){ %> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)<% } %></li>
               <% }); %>
               </ul>

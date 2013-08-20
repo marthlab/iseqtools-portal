@@ -43,6 +43,8 @@
         return new Pipeline(pl_cfg);
       });
 
+      debugger;
+
       _(this.tools).each(function(tool) {
         tool.pipelines = _(this.pipelines).filter(function(pl) {return _(pl.tools).contains(tool); }, this);
       }, this);
@@ -375,10 +377,10 @@
   app.colors = {
     workflow: d3.scale.ordinal()
       .domain(gdata.workflows.map(function(wf){return wf.id;}))
-      .range(colorbrewer.Dark2[gdata.workflows.length]),
+      .range(d3.scale.category20().range()),
     pipeline: d3.scale.ordinal()
       .domain(gdata.pipelines.map(function(pl){return pl.id;}))
-      .range(colorbrewer.Set2[gdata.pipelines.length])
+      .range(d3.scale.category20().range())
   };
 
   // start in summary view
