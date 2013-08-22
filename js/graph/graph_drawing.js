@@ -3,11 +3,15 @@ function GraphDrawing(options) {
   this.for_display = options.for_display;
   this.container_width = options.container_width;
   this.max_height = options.max_height;
+  this.defs = this.svg.append("defs");
   this.svgGroup = this.svg.append("g");
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 
-  this.svg.call(glow("myGlow"));
+  this.svg.call(grayscale("grayscale", this.defs));
+  _.each(gdata.workflows, function(wf) {
+    this.svg.call(glow("glow-"+wf.id, this.defs).rgb(wf.color()).stdDeviation(4));
+  }, this);
 }
 GraphDrawing.prototype = {
   padRectangle: function(rect, hpf, vpf) {
@@ -457,7 +461,7 @@ GraphDrawing.prototype = {
     this.edgeGroup
       .selectAll("g.edge").selectAll("path")
       .style("filter", function(ep,i){
-        return (workflow !== null && workflow === ep.gdatum ? null : "url(#myGlow)"); 
+        return (workflow !== null && workflow === ep.gdatum ? "url(#glow-"+workflow.id+")" : "url(#grayscale)"); 
       });
   },
   getRect: function() {
