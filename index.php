@@ -25,6 +25,7 @@ switch ($_SERVER['SERVER_NAME']) {
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+        <link href='http://fonts.googleapis.com/css?family=Quicksand:300,400' rel='stylesheet' type='text/css'>
         <link href="<?php echo $base_url; ?>/css/bootstrap.css" rel="stylesheet">
         <link href="<?php echo $base_url; ?>/css/bootstrap-responsive.css" rel="stylesheet">
         <link href="<?php echo $base_url; ?>/css/main.css" rel="stylesheet">
@@ -147,14 +148,16 @@ switch ($_SERVER['SERVER_NAME']) {
           
 
           <div class="carousel-inner">
+            <div class="active item heading"><a>iSeqTools Workflows</a></div>
           <% _(t.workflows).each(function(wf, i){ %>
-            <div class="<%= i==0 ? 'active':'' %> item"><a href="<%= wf.url() %>"><%= wf.name %></a></div>
+            <div class="item"><a href="<%= wf.url() %>"><%= wf.name %></a></div>
           <% }); %>
           </div>
 
           <ol class="carousel-indicators">
+            <li data-target="#workflows_carousel" data-slide-to="0" class="active heading"></li>
           <% _(t.workflows).each(function(wf, i){ %>
-            <li style="background-color:<%= wf.color() %>" data-target="#workflows_carousel" data-slide-to="<%= i %>" class="<%= i==0 ? 'active':'' %>"></li>
+            <li style="background-color:<%= wf.color() %>; border-color:<%= wf.color() %>" data-target="#workflows_carousel" data-slide-to="<%= i+1 %>" ></li>
           <% }); %>
           </ol>
 

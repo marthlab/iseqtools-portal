@@ -509,6 +509,17 @@
 					"id": "bwa-sampe"
 				}
 			]
+		},
+		{
+			"id": "grep"
+		},
+		{
+			"id": "vcfSplit.pl",
+			"team_id": "umich"
+		},
+		{
+			"id": "run_libsvm.pl",
+			"team_id": "umich"
 		}
 	],
 	"workflows": [

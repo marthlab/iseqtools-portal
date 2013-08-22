@@ -7,7 +7,7 @@ function GraphDrawing(options) {
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 
-  this.svg.call(glow("myGlow").rgb("orange").stdDeviation(5));
+  this.svg.call(glow("myGlow"));
 }
 GraphDrawing.prototype = {
   padRectangle: function(rect, hpf, vpf) {
@@ -448,11 +448,16 @@ GraphDrawing.prototype = {
     }
 
   },
+  highlightAllWorkflows: function() {
+    this.edgeGroup
+      .selectAll("g.edge").selectAll("path")
+      .style("filter", null);
+  },
   highlightWorkflow: function(workflow) {
     this.edgeGroup
       .selectAll("g.edge").selectAll("path")
       .style("filter", function(ep,i){
-        return (workflow !== null && workflow === ep.gdatum ? "url(#myGlow)" : ""); 
+        return (workflow !== null && workflow === ep.gdatum ? null : "url(#myGlow)"); 
       });
   },
   getRect: function() {

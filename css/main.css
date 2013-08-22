@@ -12,15 +12,19 @@ line-height: 28px;
 #logo {margin:0; padding:0; background: url(../img/logo.gif); text-indent:-5000px; width:137px; height:40px;}
 #nhgri {float:right;}
 #main {}
-#workflows_carousel {display:none; background: #fff; margin:0;}
+#workflows_carousel {display:none; background: #fff; margin:0; font-family:'Quicksand';}
 #workflows_carousel .carousel-indicators {margin:0 auto; position:static; width:100%; overflow: hidden; text-align: center; padding-top:20px;}
-#workflows_carousel .carousel-indicators li {display:inline-block; float:none; border:2px solid white; background-color:#fff; border-radius:9px; width:12px; height:12px;}
-#workflows_carousel .carousel-indicators li.active {border:2px solid black;}
+#workflows_carousel .carousel-indicators li {display:inline-block; float:none; border:none; margin:2px 6px; background-color:#fff; border-radius:9px; width:12px; height:12px;}
+#workflows_carousel .carousel-indicators li.active {border:2px solid; margin:0 4px;}
+#workflows_carousel .carousel-indicators li.heading {display:none;}
 #workflows_carousel .carousel-inner {overflow:auto; width: auto; margin: 0 70px;}
-#workflows_carousel .carousel-inner .item { text-align:center;  font-size:30px; line-height:34px; padding-top:30px;}
+#workflows_carousel .carousel-inner .item { font-weight:300; text-align:center;  font-size:30px; line-height:34px; padding-top:30px;}
 #workflows_carousel .carousel-inner .item a {color:#000;}
+#workflows_carousel .carousel-inner .heading {font-weight:400;}
 #workflows_carousel .carousel-control {top:50%; cursor:pointer;}
-#graph {height:auto; display:block; max-height:550px; padding:30px 0 10px; position:relative; overflow-x:auto; overflow-y:hidden;}
+#graph {height:auto; display:block; max-height:550px; padding:30px 0 10px; position:relative; overflow-x:auto; overflow-y:hidden;
+  -webkit-transform: scale(1);
+}
 #breadcrumbs {position:absolute; z-index:4; line-height:40px;}
 .display_svg {height:auto; display:block; position:absolute; z-index:2; width:100%;}
 .display_svg.active {z-index:3;}

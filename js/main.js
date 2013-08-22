@@ -43,8 +43,6 @@
         return new Pipeline(pl_cfg);
       });
 
-      debugger;
-
       _(this.tools).each(function(tool) {
         tool.pipelines = _(this.pipelines).filter(function(pl) {return _(pl.tools).contains(tool); }, this);
       }, this);
@@ -85,10 +83,17 @@
     workflows_carousel_widget: {
       template: _.template($('#workflows_carousel_template').html()),
       init: function() {
+        var featured_workflows = _(gdata.workflows).filter(function(wf){return wf.featured;});
         this.$el = $('#workflows_carousel');
-        this.$el.html(this.template({workflows: _(gdata.workflows).filter(function(wf){return wf.featured;})}));
+        this.$el.html(this.template({workflows: featured_workflows}));
         this.$el.carousel({interval: 3500}).on('slid', (function (e) {
-          widgets.graph_widget.active_drawing_for_display.highlightWorkflow(gdata.workflows[this._currIndex()]);
+          var index = this._currIndex();
+          if(index === 0) {
+            widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
+          } else {
+            widgets.graph_widget.active_drawing_for_display.highlightWorkflow(featured_workflows[index-1]);
+          }
+          
         }).bind(this));
         this.$el.carousel('pause');
         this.$el.children('.carousel-control.left').on('click', (function(e) {
@@ -117,7 +122,7 @@
       _hide: function(on_complete) {
         this.visible = false;
         this.$el.carousel('pause');
-        widgets.graph_widget.active_drawing_for_display.highlightWorkflow(null);
+        widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
         this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
@@ -247,7 +252,7 @@
         }
 
         if(app.content.type() === "summary") {
-          this.active_drawing_for_display.highlightWorkflow(gdata.workflows[0]);
+          this.active_drawing_for_display.highlightAllWorkflows();
         }
         
         
@@ -377,7 +382,7 @@
   app.colors = {
     workflow: d3.scale.ordinal()
       .domain(gdata.workflows.map(function(wf){return wf.id;}))
-      .range(d3.scale.category20().range()),
+      .range(d3.scale.category10().range()),
     pipeline: d3.scale.ordinal()
       .domain(gdata.pipelines.map(function(pl){return pl.id;}))
       .range(d3.scale.category20().range())
