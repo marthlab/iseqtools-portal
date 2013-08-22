@@ -171,9 +171,9 @@ function Tool(cfg) {
 	this.parent_tool = cfg.parent_tool || null;
 	this.team = (this.parent_tool && this.parent_tool.team) || (!this.parent_tool && _(gdata.teams).find(by_id(cfg.team_id))) || null;
 
-	this.subtools = (cfg.subtools || []).map(function(subtool_cfg){
+	this.subtools = _.sortBy((cfg.subtools || []).map(function(subtool_cfg){
 		return new Tool(_.extend(subtool_cfg, {parent_tool: this}));
-	}, this);
+	}, this), function(t){ return t.name.toLowerCase();});
 
 }
 _.extend(Tool.prototype, gdata_mixin);
@@ -202,10 +202,6 @@ function Pipeline(cfg) {
 	this.tool_usages = cfg.tool_usages.map(function(tu_cfg) {
   	return new ToolUsage(_.extend(tu_cfg, {pipeline: this}));
   }, this);
-
-  this.tool_usages.displaySort = function() {
-  	return _.sortBy(this, function(tu) {return tu.tool.name;});
-  };
 
   this.out_data_format_usages = this.data_format_usages.filter(function(dfu) {
   	return _(this.tool_usages.filter(function(tu){

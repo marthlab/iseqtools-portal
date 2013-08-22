@@ -31,10 +31,10 @@
       //  dt.data_formats = _(app.data_formats).filter(function(df) {return df.data_type === dt; });
       // });
 
-      this.root_tools = cfg.tools.map(function(tool_cfg){ return new Tool(tool_cfg);});
-      this.subtools = _.flatten(this.root_tools.map(function(tool) {return tool.subtools;}));
-      this.tools = _.union(this.root_tools, this.subtools);
-      
+      this.root_tools = _.sortBy(cfg.tools.map(function(tool_cfg){ return new Tool(tool_cfg);}), function(t){return t.name.toLowerCase();});
+      this.subtools = _.sortBy(_.flatten(this.root_tools.map(function(tool) {return tool.subtools;})), function(t){return t.name.toLowerCase();});
+      this.tools = _.sortBy(_.union(this.root_tools, this.subtools), function(t){return t.name.toLowerCase();});
+    
       this.workflows = cfg.workflows.map(function(wf_cfg) {
         return new Workflow(wf_cfg);
       });
@@ -334,6 +334,7 @@
 
   // used to programatically change state (links/forms are handled automatically by the Davis router)
   app.requestResource = function(url) {
+    console.log(url);
     Davis.location.assign(new Davis.Request(url));
   }
 

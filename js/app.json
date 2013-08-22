@@ -286,6 +286,39 @@
 		},
 		{
 			"id": ".R"
+		},
+		{
+			"id": "beagle.gz"
+		},
+		{
+			"id": "pop.vcf.gz"
+		},
+		{
+			"id": "split.#.vcf.gz"
+		},
+		{
+			"id": "glf"
+		},
+		{
+			"id": "stats.vcf"
+		},
+		{
+			"id": "sites.vcf"
+		},
+		{
+			"id": "sites.vcf.summary"
+		},
+		{
+			"id": "svm model"
+		},
+		{
+			"id": "OMNI sites"
+		},
+		{
+			"id": "PASS.vcf.gz"
+		},
+		{
+			"id": "PASS.split.#.vcf.gz"
 		}
 	],
 	"tools": [
@@ -416,6 +449,9 @@
 				},
 				{
 					"id": "samtools-view"
+				},
+				{
+					"id": "samtools-pileup"
 				}
 			]
 		},
@@ -485,6 +521,9 @@
 				},
 				{
 					"id": "BamUtil-recab"
+				},
+				{
+					"id": "BamUtil-clipOverlap"
 				}
 			]
 		},
@@ -511,10 +550,66 @@
 			]
 		},
 		{
-			"id": "grep"
+			"id": "vcf2Beagle.pl",
+			"team_id": "umich"
+		},
+		{
+			"id": "beagle.jar",
+			"team_id": "umich"
+		},
+		{
+			"id": "beagle2Vcf.pl",
+			"team_id": "umich"
+		},
+		{
+			"id": "ligateVcf.pl",
+			"team_id": "umich"
+		},
+		{
+			"id": "VcfCooker",
+			"team_id": "umich"
 		},
 		{
 			"id": "vcfSplit.pl",
+			"team_id": "umich"
+		},
+		{
+			"id": "thunderVCF",
+			"team_id": "umich"
+		},
+		{
+			"id": "glfMerge",
+			"team_id": "umich"
+		},
+		{
+			"id": "glfMultiples",
+			"team_id": "umich"
+		},
+		{
+			"id": "vcfPileup",
+			"team_id": "umich"
+		},
+		{
+			"id": "infoCollector",
+			"team_id": "umich"
+		},
+		{
+			"id": "vcfMerge"
+		},
+		{
+			"id": "vcfCooker",
+			"team_id": "umich"
+		},
+		{
+			"id": "cut",
+			"team_id": "umich"
+		},
+		{
+			"id": "vcfPaste",
+			"team_id": "umich"
+		},
+		{
+			"id": "vcf-summary",
 			"team_id": "umich"
 		},
 		{
@@ -554,6 +649,200 @@
 		}
 	],
 	"pipelines": [
+		{
+			"id": "gotcloud-snpcall",
+			"name": "gotcloud-snpcall",
+			"team_id": "umich",
+			"workflow_id": 3,
+			"data_types_ids": ["alignments", "short_variants"],
+			"initial_data_format_usages": [],
+			"tool_usages": []
+		},
+		{
+			"id": "gotcloud-ldrefine",
+			"name": "gotcloud-ldrefine",
+			"team_id": "umich",
+			"workflow_id": 3,
+			"data_types_ids": ["short_variants"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "vcf",
+					"multiple": true
+				},
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "vcf2Beagle.pl",
+					"in_data_format_usages_ids": [1],
+					"out_data_format_usages": [
+						{
+							"id": 2,
+							"data_format_id": "beagle.gz"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "beagle.jar",
+					"in_data_format_usages_ids": [2],
+					"out_data_format_usages": [
+						{
+							"id": 3,
+							"data_format_id": "beagle.gz"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "beagle2Vcf.pl",
+					"in_data_format_usages_ids": [1,3],
+					"out_data_format_usages": [
+						{
+							"id": 4,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "bgzip",
+					"in_data_format_usages_ids": [4],
+					"out_data_format_usages": [
+						{
+							"id": 5,
+							"data_format_id": "vcf.gz",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "tabix",
+					"in_data_format_usages_ids": [5],
+					"out_data_format_usages": [
+						{
+							"id": 6,
+							"data_format_id": "tbi"
+						}
+					]
+				},
+				{
+					"id": "6",
+					"tool_id": "ligateVcf.pl",
+					"in_data_format_usages_ids": [5],
+					"out_data_format_usages": [
+						{
+							"id": 7,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "7",
+					"tool_id": "bgzip",
+					"in_data_format_usages_ids": [7],
+					"out_data_format_usages": [
+						{
+							"id": 8,
+							"data_format_id": "vcf.gz"
+						}
+					]
+				},
+				{
+					"id": "8",
+					"tool_id": "tabix",
+					"in_data_format_usages_ids": [8],
+					"out_data_format_usages": [
+						{
+							"id": 9,
+							"data_format_id": "tbi"
+						}
+					]
+				},
+				{
+					"id": "9",
+					"tool_id": "VcfCooker",
+					"in_data_format_usages_ids": [8],
+					"out_data_format_usages": [
+						{
+							"id": 10,
+							"data_format_id": "pop.vcf.gz",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": "10",
+					"tool_id": "tabix",
+					"in_data_format_usages_ids": [10],
+					"out_data_format_usages": [
+						{
+							"id": 11,
+							"data_format_id": "tbi"
+						}
+					]
+				},
+				{
+					"id": "10",
+					"tool_id": "vcfSplit.pl",
+					"in_data_format_usages_ids": [10],
+					"out_data_format_usages": [
+						{
+							"id": 12,
+							"data_format_id": "split.#.vcf.gz",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": "11",
+					"tool_id": "thunderVCF",
+					"in_data_format_usages_ids": [12],
+					"out_data_format_usages": [
+						{
+							"id": 13,
+							"data_format_id": "vcf.gz",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": "12",
+					"tool_id": "ligateVcf.pl",
+					"in_data_format_usages_ids": [13],
+					"out_data_format_usages": [
+						{
+							"id": 14,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "12",
+					"tool_id": "bgzip",
+					"in_data_format_usages_ids": [14],
+					"out_data_format_usages": [
+						{
+							"id": 15,
+							"data_format_id": "vcf.gz"
+						}
+					]
+				},
+				{
+					"id": "13",
+					"tool_id": "tabix",
+					"in_data_format_usages_ids": [15],
+					"out_data_format_usages": [
+						{
+							"id": 16,
+							"data_format_id": "tbi"
+						}
+					]
+				}
+			]
+		},
 		{
 			"id": "gotcloud-align",
 			"name": "gotcloud-align",
