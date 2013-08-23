@@ -455,12 +455,12 @@ GraphDrawing.prototype = {
   highlightAllWorkflows: function() {
     this.edgeGroup
       .selectAll("g.edge").selectAll("path")
-      .style("filter", null);
+      .attr("filter", null);
   },
   highlightWorkflow: function(workflow) {
     this.edgeGroup
       .selectAll("g.edge").selectAll("path")
-      .style("filter", function(ep,i){
+      .attr("filter", function(ep,i){
         return (workflow !== null && workflow === ep.gdatum ? "url(#glow-"+workflow.id+")" : "url(#grayscale)"); 
       });
   },
