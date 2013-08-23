@@ -303,6 +303,9 @@
 			"id": "stats.vcf"
 		},
 		{
+			"id": "indel sites.vcf"
+		},
+		{
 			"id": "sites.vcf"
 		},
 		{
@@ -615,6 +618,9 @@
 		{
 			"id": "run_libsvm.pl",
 			"team_id": "umich"
+		},
+		{
+			"id": "grep"
 		}
 	],
 	"workflows": [
@@ -655,8 +661,409 @@
 			"team_id": "umich",
 			"workflow_id": 3,
 			"data_types_ids": ["alignments", "short_variants"],
-			"initial_data_format_usages": [],
-			"tool_usages": []
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "fasta"
+				},
+				{
+					"id": 2,
+					"data_format_id": "bam"
+				},
+				{
+					"id": 3,
+					"data_format_id": "bam"
+				},
+				{
+					"id": 4,
+					"data_format_id": "bam"
+				},
+				{
+					"id": 5,
+					"data_format_id": "bam"
+				},
+				{
+					"id": 6,
+					"data_format_id": "indel sites.vcf"
+				},
+				{
+					"id": 7,
+					"data_format_id": "dbsnp"
+				},
+				{
+					"id": 8,
+					"data_format_id": "fasta"
+				},
+				{
+					"id": 9,
+					"data_format_id": "HapMap sites"
+				},
+				{
+					"id": 10,
+					"data_format_id": "svm model"
+				},
+				{
+					"id": 11,
+					"data_format_id": "OMNI sites"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": "1",
+					"tool_id": "samtools-view",
+					"in_data_format_usages_ids": [2],
+					"out_data_format_usages": [
+						{
+							"id": 12,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "2",
+					"tool_id": "samtools-calmd",
+					"in_data_format_usages_ids": [1,12],
+					"out_data_format_usages": [
+						{
+							"id": 13,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "3",
+					"tool_id": "BamUtil-clipOverlap",
+					"in_data_format_usages_ids": [13],
+					"out_data_format_usages": [
+						{
+							"id": 14,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "4",
+					"tool_id": "samtools-pileup",
+					"in_data_format_usages_ids": [1,14],
+					"out_data_format_usages": [
+						{
+							"id": 15,
+							"data_format_id": "glf"
+						}
+					]
+				},
+				{
+					"id": "5",
+					"tool_id": "samtools-view",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": 16,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "6",
+					"tool_id": "samtools-calmd",
+					"in_data_format_usages_ids": [1,16],
+					"out_data_format_usages": [
+						{
+							"id": 17,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "7",
+					"tool_id": "BamUtil-clipOverlap",
+					"in_data_format_usages_ids": [17],
+					"out_data_format_usages": [
+						{
+							"id": 18,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "8",
+					"tool_id": "samtools-pileup",
+					"in_data_format_usages_ids": [1,18],
+					"out_data_format_usages": [
+						{
+							"id": 19,
+							"data_format_id": "glf"
+						}
+					]
+				},
+				{
+					"id": "9",
+					"tool_id": "glfMerge",
+					"in_data_format_usages_ids": [15,19],
+					"out_data_format_usages": [
+						{
+							"id": 20,
+							"data_format_id": "glf"
+						}
+					]
+				},
+				{
+					"id": "10",
+					"tool_id": "samtools-view",
+					"in_data_format_usages_ids": [4],
+					"out_data_format_usages": [
+						{
+							"id": 21,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "11",
+					"tool_id": "samtools-calmd",
+					"in_data_format_usages_ids": [1,21],
+					"out_data_format_usages": [
+						{
+							"id": 22,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "12",
+					"tool_id": "BamUtil-clipOverlap",
+					"in_data_format_usages_ids": [22],
+					"out_data_format_usages": [
+						{
+							"id": 23,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "13",
+					"tool_id": "samtools-pileup",
+					"in_data_format_usages_ids": [1,23],
+					"out_data_format_usages": [
+						{
+							"id": 24,
+							"data_format_id": "glf"
+						}
+					]
+				},
+				{
+					"id": "14",
+					"tool_id": "glfMultiples",
+					"in_data_format_usages_ids": [20,24],
+					"out_data_format_usages": [
+						{
+							"id": 25,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "15",
+					"tool_id": "vcfMerge",
+					"in_data_format_usages_ids": [25],
+					"out_data_format_usages": [
+						{
+							"id": 26,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": "16",
+					"tool_id": "cut",
+					"in_data_format_usages_ids": [26],
+					"out_data_format_usages": [
+						{
+							"id": 27,
+							"data_format_id": "sites.vcf"
+						}
+					]
+				},
+				{
+					"id": "17",
+					"tool_id": "vcfPileup",
+					"in_data_format_usages_ids": [5,25],
+					"out_data_format_usages": [
+						{
+							"id": 28,
+							"data_format_id": "vcf.gz",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": "18",
+					"tool_id": "infoCollector",
+					"in_data_format_usages_ids": [5,25],
+					"out_data_format_usages": [
+						{
+							"id": 29,
+							"data_format_id": "stats.vcf",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": "19",
+					"tool_id": "vcfMerge",
+					"in_data_format_usages_ids": [29],
+					"out_data_format_usages": [
+						{
+							"id": 30,
+							"data_format_id": "stats.vcf"
+						}
+					]
+				},
+				{
+					"id": "20",
+					"tool_id": "vcfCooker",
+					"in_data_format_usages_ids": [6,30],
+					"out_data_format_usages": [
+						{
+							"id": 31,
+							"data_format_id": "sites.vcf"
+						}
+					]
+				},
+				{
+					"id": "21",
+					"tool_id": "vcfPaste",
+					"in_data_format_usages_ids": [26,31],
+					"out_data_format_usages": [
+						{
+							"id": 32,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "22",
+					"tool_id": "bgzip",
+					"in_data_format_usages_ids": [32],
+					"out_data_format_usages": [
+						{
+							"id": 33,
+							"data_format_id": "vcf.gz"
+						}
+					]
+				},
+				{
+					"id": "23",
+					"tool_id": "tabix",
+					"in_data_format_usages_ids": [33],
+					"out_data_format_usages": [
+						{
+							"id": 34,
+							"data_format_id": "tbi"
+						}
+					]
+				},
+				{
+					"id": "24",
+					"tool_id": "vcf-summary",
+					"in_data_format_usages_ids": [7,8,9,31],
+					"out_data_format_usages": [
+						{
+							"id": 35,
+							"data_format_id": "sites.vcf.summary"
+						}
+					]
+				},
+				{
+					"id": "25",
+					"tool_id": "run_libsvm.pl",
+					"in_data_format_usages_ids": [9,10,11,31],
+					"out_data_format_usages": [
+						{
+							"id": 36,
+							"data_format_id": "sites.vcf"
+						}
+					]
+				},
+				{
+					"id": "26",
+					"tool_id": "vcfPaste",
+					"in_data_format_usages_ids": [26,36],
+					"out_data_format_usages": [
+						{
+							"id": 37,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "27",
+					"tool_id": "bgzip",
+					"in_data_format_usages_ids": [37],
+					"out_data_format_usages": [
+						{
+							"id": 38,
+							"data_format_id": "vcf.gz"
+						}
+					]
+				},
+				{
+					"id": "28",
+					"tool_id": "tabix",
+					"in_data_format_usages_ids": [38],
+					"out_data_format_usages": [
+						{
+							"id": 39,
+							"data_format_id": "tbi"
+						}
+					]
+				},
+				{
+					"id": "29",
+					"tool_id": "vcf-summary",
+					"in_data_format_usages_ids": [36,7,8,9],
+					"out_data_format_usages": [
+						{
+							"id": 40,
+							"data_format_id": "sites.vcf.summary"
+						}
+					]
+				},
+				{
+					"id": "30",
+					"tool_id": "grep",
+					"in_data_format_usages_ids": [38],
+					"out_data_format_usages": [
+						{
+							"id": 41,
+							"data_format_id": "stream"
+						}
+					]
+				},
+				{
+					"id": "31",
+					"tool_id": "bgzip",
+					"in_data_format_usages_ids": [41],
+					"out_data_format_usages": [
+						{
+							"id": 42,
+							"data_format_id": "PASS.vcf.gz"
+						}
+					]
+				},
+				{
+					"id": "32",
+					"tool_id": "vcfSplit.pl",
+					"in_data_format_usages_ids": [42],
+					"out_data_format_usages": [
+						{
+							"id": 43,
+							"data_format_id": "PASS.split.#.vcf.gz",
+							"multiple": true
+						}
+					]
+				}
+			]
 		},
 		{
 			"id": "gotcloud-ldrefine",
@@ -669,7 +1076,7 @@
 					"id": 1,
 					"data_format_id": "vcf",
 					"multiple": true
-				},
+				}
 			],
 			"tool_usages": [
 				{

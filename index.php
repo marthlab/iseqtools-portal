@@ -290,7 +290,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
             <div class="info_float">
               <h2>Incorporated in other pipelines:</h2>
               <ul>
-              <% t.tool.pipelines.filter(function(pl){return pl !== t.pipeline;}).each(function(pl){ %>
+              <% _(t.tool.pipelines.filter(function(pl){return pl !== t.pipeline;})).each(function(pl){ %>
                 <li><a href="<%= pl.url() %>"><%= pl.name %></a><% if(pl.team){ %> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)<% } %></li>
               <% }); %>
               </ul>
