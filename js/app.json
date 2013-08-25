@@ -639,7 +639,7 @@
 		{
 			"id": 3,
 			"name": "Map -> Call Genetic Variants",
-			"tasks_ids": ["map", "call_short_variants", "call_structural_variants"],
+			"tasks_ids": ["map", "call_short_variants"],
 		},
 		{
 			"id": 4,
@@ -659,7 +659,7 @@
 			"id": "gotcloud-snpcall",
 			"name": "gotcloud-snpcall",
 			"team_id": "umich",
-			"workflow_id": 3,
+			"workflow_id": 2,
 			"data_types_ids": ["alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1069,7 +1069,7 @@
 			"id": "gotcloud-ldrefine",
 			"name": "gotcloud-ldrefine",
 			"team_id": "umich",
-			"workflow_id": 3,
+			"workflow_id": 2,
 			"data_types_ids": ["short_variants"],
 			"initial_data_format_usages": [
 				{

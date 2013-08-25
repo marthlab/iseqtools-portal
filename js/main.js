@@ -68,7 +68,13 @@
       template: _.template($('#main_nav_template').html()),
       init: function() {
         this.$el = $('#main_nav'); 
-        this.$el.html(this.template(_(gdata).pick('workflows', 'pipelines', 'root_tools', 'teams', 'generic_pages')));
+        this.$el.html(this.template({
+          workflows: _.filter(gdata.workflows, function(wf) {return wf.pipelines.length > 0;}),
+          pipelines: gdata.pipelines,
+          root_tools: gdata.root_tools,
+          teams: gdata.teams,
+          generic_pages: gdata.generic_pages
+        }));
       },
       transition: function() {
         // var complete = $.Deferred();
