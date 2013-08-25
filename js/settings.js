@@ -1,12 +1,12 @@
 settings = {
   trans_dur: 1000,
   graph: {
-    nodeSep: 50,
+    nodeSep: 55,
     edgeSep: 20,
-    rankSep: 35,
+    rankSep: 30,
     path_width:3,
     path_gap: 0.5,
-    edge_curvature: 0.29,
+    edge_curvature: 0.47,
     render_duration: 2000
   },
   nodes: {

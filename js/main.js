@@ -89,6 +89,7 @@
         this.$el.carousel({interval: 3500}).on('slid', (function (e) {
           var index = this._currIndex();
           if(index === 0) {
+            this.$el.carousel('pause');
             widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
           } else {
             widgets.graph_widget.active_drawing_for_display.highlightWorkflow(featured_workflows[index-1]);
