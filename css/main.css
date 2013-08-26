@@ -85,11 +85,15 @@ line-height: 28px;
 }
 
 .node.primary text {
-  font: 600 30px "Helvetica Neue";
+  font-weight: 600;
+  font-size:30px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .node.secondary text {
-  font: 600 22px "Helvetica Neue";
+  font-weight: 600;
+  font-size:22px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /*.node:hover circle, .node:hover text {

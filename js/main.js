@@ -39,9 +39,9 @@
         return new Workflow(wf_cfg);
       });
 
-      this.pipelines = cfg.pipelines.map(function(pl_cfg) {
+      this.pipelines = _.sortBy(cfg.pipelines.map(function(pl_cfg) {
         return new Pipeline(pl_cfg);
-      });
+      }), function(pl) {return pl.name.toUpperCase(); });
 
       _(this.tools).each(function(tool) {
         tool.pipelines = _(this.pipelines).filter(function(pl) {return _(pl.tools).contains(tool); }, this);

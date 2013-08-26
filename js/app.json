@@ -633,7 +633,7 @@
 		{
 			"id": 2,
 			"name": "Call Genetic Variants",
-			"tasks_ids": ["call_short_variants", "call_structural_variants"],
+			"tasks_ids": ["call_structural_variants", "call_short_variants"],
 			"featured": true
 		},
 		{
@@ -650,7 +650,7 @@
 		{
 			"id": 5,
 			"name": "Annotate Variants",
-			"tasks_ids": ["call_short_variants", "call_structural_variants", "annotate"],
+			"tasks_ids": ["call_structural_variants", "call_short_variants", "annotate"],
 			"featured": true
 		}
 	],
