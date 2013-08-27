@@ -114,7 +114,8 @@ _.extend(Summary.prototype, gdata_mixin);
 Summary.prototype.graphable = true;
 
 function Team(cfg) {
-	_(this).extend(_(cfg).pickStrings('id', 'name', 'project_title', 'project_url', 'group_url', 'institution_url'));
+	_(this).extend(_(cfg).pickStrings('id', 'name', 'project_title', 'project_url', 'group_url'));
+	this.institution_urls = cfg.institution_urls;
 	this.principal_investigators = _(cfg.principal_investigators).map(function(pi_cfg) {
 		return {name: pi_cfg[0], email: pi_cfg[1]};
 	});

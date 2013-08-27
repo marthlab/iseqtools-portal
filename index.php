@@ -322,7 +322,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
         <script type="text/html" id='info_team_template'>
           <h1>Team: <%= t.name %></h1>
           <div class="info_inline">
-            <h3>Principal Investigators:</h3>
+            <h3>Principal Investigator<%= t.principal_investigators.length > 1 ? 's':'' %>:</h3>
             <ul>
             <% _(t.principal_investigators).each(function(pi, i){ %><%= (i !== 0) ? ', ':'' %>
               <li><a href=mailto:<%= pi.email %>><%= pi.name %></a></li><% }); %>
@@ -342,9 +342,11 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
             <h3>Group Site:</h3> <a href="<%= t.group_url %>"><%= t.group_url %></a>
             </div>
           <% } %>
-          <% if(t.institution_url) { %>
+          <% if(t.institution_urls.length > 0) { %>
             <div class="info_inline">
-            <h3>Institution Site:</h3> <a href="<%= t.institution_url %>"><%= t.institution_url %></a>
+            <h3>Institution Site<%= t.institution_urls.length > 1 ? 's':'' %>:</h3> <%= _(t.institution_urls).map(function(url){
+              return '<a href="'+url+'">'+url+'</a>';
+            }).join(', ') %>
             </div>
           <% } %>
           <% if(t.root_tools.length > 0) { %>

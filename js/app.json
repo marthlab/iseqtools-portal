@@ -15,7 +15,7 @@
 			"project_title": "Informatics Tools for High-Throughput Sequences Data Analysis",
 			"project_url": "http://www.broadinstitute.org/gatk/",
 			"group_url": "http://www.broadinstitute.org/science/programs/medical-and-population-genetics/program-medical-and-population-genetics",
-			"institution_url": "http://www.broadinstitute.org",
+			"institution_urls": ["http://www.broadinstitute.org"],
 			"principal_investigators": [
 				["Mark DePristo", "depristo@broadinstitute.org"]
 			]
@@ -26,7 +26,7 @@
 			"project_title": "Robust software tools for variant identification and functional assessment",
 			"project_url": "http://gkno.me",
 			"group_url": "http://bioinformatics.bc.edu/marthlab",
-			"institution_url": "http://bc.edu",
+			"institution_urls": ["http://bc.edu"],
 			"principal_investigators": [
 				["Gabor Marth", "marth@bc.edu"]
 			]
@@ -37,7 +37,7 @@
 			"project_title": "Robust software tools for variant identification and functional assessment",
 			"project_url": "http://genome.sph.umich.edu/wiki/GotCloud",
 			"group_url": "http://www.sph.umich.edu/csg/abecasis/",
-			"institution_url": "http://www.umich.edu",
+			"institution_urls": ["http://www.umich.edu"],
 			"principal_investigators": [
 				["Goncalo Abecasis", "goncalo@umich.edu"]
 			]
@@ -48,10 +48,9 @@
 			"project_title": "A turnkey system for high-throughput variant discovery and interpretation",
 			"project_url": "http://tvap.genome.wustl.edu/",
 			"group_url": "http://genome.wustl.edu/",
-			"institution_url": "http://wustl.edu/",
+			"institution_urls": ["http://wustl.edu/"],
 			"principal_investigators": [
-				["Li Ding", "lding@wustl.edu"],
-				["David Dooling", "ddooling@wustl.edu"]
+				["Li Ding", "lding@wustl.edu"]
 			]
 		},
 		{
@@ -60,7 +59,7 @@
 			"project_title": "Scripps Genome ADVISER: Annotation and Distributed Variant Interpretation Server",
 			"project_url": "http://genomics.scripps.edu/",
 			"group_url": "http://www.stsiweb.org/",
-			"institution_url": "http://www.scripps.edu",
+			"institution_urls": ["http://www.scripps.edu"],
 			"principal_investigators": [
 				["Ali Torkamani", "atorkama@scripps.edu"]
 			]
@@ -70,7 +69,7 @@
 			"name": "University of Southern California",
 			"project_title": "Robust and portable workflow-based tools for mRNA and genome resequencing",
 			"project_url": "https://code.google.com/p/rseqflow/",
-			"institution_url": "http://www.usc.edu",
+			"institution_urls": ["http://www.usc.edu"],
 			"principal_investigators": [
 				["Ting Chen", "tingchen@usc.edu"],
 				["Ewa Deelman", "deelman@isi.edu"],
@@ -79,11 +78,11 @@
 		},
 		{
 			"id": "harvard",
-			"name": "Harvard University",
+			"name": "Harvard Medical School",
 			"project_title": "Accurate analysis of genome structural variation using large-scale sequence data",
-			"project_url": "http://www.broadinstitute.org/software/genomestrip/genome-strip",
+			"project_url": "http://www.broadinstitute.org/software/genomestrip",
 			"group_url": "http://genepath.med.harvard.edu/mccarroll",
-			"institution_url": "http://harvard.edu",
+			"institution_urls": ["http://hms.harvard.edu", "http://www.broadinstitute.org/mpg"],
 			"principal_investigators": [
 				["Steven McCarroll", "mccarroll@genetics.med.harvard.edu"]
 			]
@@ -1930,6 +1929,26 @@
 		{
 			"id": "align-pe",
 			"name": "align-pe",
+			"tutorials": [
+				{
+					"label": "align-pe Introductory Tutorial",
+					"url":"http://blog.gkno.me/post/32258593741/align-pe"
+				},
+				{
+					"label": "align-pe Advanced Tutorial",
+					"url":"http://blog.gkno.me/post/32258593741/align-pe"
+				}
+			],
+			"demos": [
+				{
+					"label": "Demo 1",
+					"url":"http://www.google.com"
+				},
+				{
+					"label": "Demo 2",
+					"url":"http://www.google.com"
+				}
+			],
 			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["reads", "reference_genomes", "alignments"],
