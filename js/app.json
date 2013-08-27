@@ -377,14 +377,6 @@
 			"id": "premo"
 		},
 		{
-			"id": "samtools",
-			"subtools": [
-				{
-					"id": "samtools-index-fasta"
-				}
-			]
-		},
-		{
 			"id": "bamtools",
 			"team_id": "bc",
 			"tutorials": [
@@ -447,6 +439,9 @@
 					"id": "samtools-index"
 				},
 				{
+					"id": "samtools-index-fasta"
+				},
+				{
 					"id": "samtools-sort"
 				},
 				{
@@ -497,17 +492,21 @@
 			"id": "tabix"
 		},
 		{
-			"id": "SV-Preprocess",
-			"team_id": "harvard"
+			"id": "GenomeSTRiP",
+			"team_id": "harvard",
+			"subtools": [
+				{
+					"id": "SV-Preprocess"
+				},
+				{
+					"id": "SV-Discovery"
+				},
+				{
+					"id": "SV-Genotyper"
+				}
+			]
 		},
-		{
-			"id": "SV-Discovery",
-			"team_id": "harvard"
-		},
-		{
-			"id": "SV-Genotyper",
-			"team_id": "harvard"
-		},
+		
 		{
 			"id": "BamUtil",
 			"team_id": "umich",
@@ -565,10 +564,6 @@
 		},
 		{
 			"id": "ligateVcf.pl",
-			"team_id": "umich"
-		},
-		{
-			"id": "VcfCooker",
 			"team_id": "umich"
 		},
 		{
@@ -1169,7 +1164,7 @@
 				},
 				{
 					"id": "9",
-					"tool_id": "VcfCooker",
+					"tool_id": "vcfCooker",
 					"in_data_format_usages_ids": [8],
 					"out_data_format_usages": [
 						{
@@ -1480,8 +1475,8 @@
 			]
 		},
 		{
-			"id": "GenomeSTRIP",
-			"name": "GenomeSTRIP",
+			"id": "GenomeSTRiP-Deletion-Calling",
+			"name": "GenomeSTRiP Deletion Calling",
 			"team_id": "harvard",
 			"workflow_id": 2,
 			"data_types_ids": ["alignments", "structural_variants"],
@@ -1553,8 +1548,8 @@
 			]
 		},
 		{
-			"id": "fastq-vcf",
-			"name": "fastq-vcf",
+			"id": "gkno-fastq-vcf",
+			"name": "gkno fastq-vcf",
 			"tutorials": [
 				{
 					"label": "FASTQ-VCF Tutorial 1",
@@ -1819,8 +1814,8 @@
 			]
 		},
 		{
-			"id": "build-moblist-reference",
-			"name": "build-moblist-reference",
+			"id": "gkno-build-moblist-reference",
+			"name": "gkno build-moblist-reference",
 			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["reference_genomes"],
@@ -1890,8 +1885,8 @@
 			]
 		},
 		{
-			"id": "build-reference",
-			"name": "build-reference",
+			"id": "gkno-build-reference",
+			"name": "gkno build-reference",
 			"team_id": "bc",
 			"workflow_id": 1,
 			"data_types_ids": ["reference_genomes"],
@@ -1927,8 +1922,8 @@
 			]
 		},
 		{
-			"id": "align-pe",
-			"name": "align-pe",
+			"id": "gkno-align-pe",
+			"name": "gkno align-pe",
 			"tutorials": [
 				{
 					"label": "align-pe Introductory Tutorial",
@@ -2097,8 +2092,8 @@
 			]
 		},
 		{
-			"id": "merge-bam",
-			"name": "merge-bams",
+			"id": "gkno-merge-bam",
+			"name": "gkno merge-bams",
 			"tutorials": [
 				{
 					"label": "merge-bams Tutorial 1",
@@ -2192,8 +2187,8 @@
 			]
 		},
 		{
-			"id": "call-short-variants",
-			"name": "call-short-variants",
+			"id": "gkno-call-short-variants",
+			"name": "gkno call-short-variants",
 			"team_id": "bc",
 			"workflow_id": 2,
 			"data_types_ids": ["alignments", "short_variants"],
@@ -2278,8 +2273,8 @@
 			]
 		},
 		{
-			"id": "merge-vcf",
-			"name": "merge-vcf",
+			"id": "gkno-merge-vcf",
+			"name": "gkno merge-vcf",
 			"team_id": "bc",
 			"workflow_id": 2,
 			"data_types_ids": ["short_variants"],
