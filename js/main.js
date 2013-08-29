@@ -43,6 +43,11 @@
         return new Pipeline(pl_cfg);
       }), function(pl) {return pl.name.toUpperCase(); });
 
+      _(this.data_types).each(function(dt) {
+        dt.pipelines = _(this.pipelines).filter(function(pl) {return _(pl.data_types).contains(dt); }, this);
+        dt.pipelines_dedicated = _(this.pipelines).filter(function(pl) {return _.isEqual(pl.data_types, [dt]); }, this);
+      }, this);
+
       _(this.tools).each(function(tool) {
         tool.pipelines = _(this.pipelines).filter(function(pl) {return _(pl.tools).contains(tool); }, this);
       }, this);
@@ -73,7 +78,8 @@
           pipelines: gdata.pipelines,
           root_tools: gdata.root_tools,
           teams: gdata.teams,
-          generic_pages: gdata.generic_pages
+          generic_pages: gdata.generic_pages,
+          data_types: gdata.data_types
         }));
       },
       transition: function() {
@@ -202,7 +208,7 @@
             animate_height: true
           });
         } else {
-          if(rel.length === 0) { // old graph content and new graph content have no ancestor-descendant relationship
+          if(rel.length === 0 || this.graph.nodes.length === 0) { // old graph content and new graph content have no ancestor-descendant relationship, OR new graph is empty
             this.drawing_for_layout.render(this.graph);
             this._switchActiveDisplayDrawing();
             this.inactive_drawing_for_display.render(new Graph());
@@ -214,6 +220,7 @@
           } else if(rel.length === 1) { // content is itself - illegal transition
             //throw "Illegal transition: cannot transition from content item to itself";
           } else if(rel[0] === app.content) { // content is visual descendant of old content
+          
             this.drawing_for_layout.render(this.graph);
 
             var old_start_rect = this.active_drawing_for_display.getRect();
@@ -314,7 +321,8 @@
         'pipeline': _.template($('#info_pipeline_template').html()),
         'tool_usage': _.template($('#info_tool_usage_template').html()),
         'team': _.template($('#info_team_template').html()),
-        'tool': _.template($('#info_tool_template').html())      
+        'tool': _.template($('#info_tool_template').html()),
+        'data_type': _.template($('#info_data_type_template').html())     
       },
       init: function() {
         this.$el = $('#info_inner'); 
@@ -401,6 +409,11 @@
   app.content = null;
   app.queued_content = null;
   app.is_transitioning = false;
+
+  // bootstrap tooltips
+  $('body').tooltip({
+    selector: '[data-toggle=tooltip]'
+  });
 
   // initialize widgets
   Object.keys(widgets).forEach(function(w_name) {

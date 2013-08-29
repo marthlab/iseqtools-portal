@@ -2,16 +2,13 @@
     this.content = content;
     this.content_type = this.content && this.content.type();
     this._createNodes();
-    this._createNodePaths();
     this._createEdges();
     this._createEdgePaths();
     this._assignKeys();
 
     var edge_path_gdatum_ids = _.uniq(this.edge_paths.map( function(ep){ return (ep.gdatum && ep.gdatum.id) || '';}));
-    var node_path_gdatum_ids = _.uniq(this.node_paths.map(function(np){ return (np.gdatum && np.gdatum.id) || '';}));
-    var path_gdatum_ids = _.union(edge_path_gdatum_ids, node_path_gdatum_ids);
 
-    this.pathColors = d3.scale.category10().domain(path_gdatum_ids);
+    this.pathColors = d3.scale.category10().domain(edge_path_gdatum_ids);
 
   }
   Graph.prototype = {
@@ -59,6 +56,25 @@
             });
           }, this);
 
+          break;
+
+        case "data_type":
+          var dt = this.content;
+
+          this.primary_nodes = [];
+
+          if(this.content.pipelines_dedicated.length > 0) {
+            this.secondary_nodes = [dt, dt].map(function(dt) {
+              return new Node({
+                gdatum: dt,
+                label: dt.name.toTitleCase(),
+                graph: this
+              });
+            }, this);
+          } else {
+            this.secondary_nodes = [];
+          }
+          
           break;
 
         case "pipeline":
@@ -118,6 +134,19 @@
             }, this);
             return _.union(edges_in, edges_out);
           }, this));
+
+          break;
+
+        case "data_type":
+
+          this.edges = [];
+          if(this.secondary_nodes.length === 2) {
+            this.edges.push(new Edge({
+              source: this.secondary_nodes[0],
+              target: this.secondary_nodes[1],
+              graph: this
+            }));    
+          }
 
           break;
 
@@ -185,24 +214,6 @@
           this.edges = [];
       }
     },
-    _createNodePaths: function() {
-      this.nodes.forEach(function(node) {
-        switch(this.content_type) {
-          case "workflow":
-            var workflow = this.content; 
-            node.node_paths = workflow.pipelines.filter(function(pl){
-              return pl.data_types.length === 1 && node.gdatum === pl.data_types[0];
-            }).map(function(pl){
-              return new NodePath({node: node, gdatum: pl});
-            });
-            break;
-          default:
-            node.node_paths = [];
-        }
-      }, this);
-
-      this.node_paths = _.flatten(this.nodes.map(function(node){return node.node_paths;}));
-    },
     _createEdgePaths: function() {
       this.edges.forEach(function(edge) {
         switch(this.content_type) {
@@ -229,11 +240,17 @@
             }, this);
 
             break;
+          case "data_type":
+            var dt = this.content;
+            edge.edge_paths = dt.pipelines_dedicated.map(function(pl){return new EdgePath({edge: edge, gdatum: pl})});
+            break
           case "pipeline":
-            edge.edge_paths = [new EdgePath({edge: edge, gdatum: this.content})];
+            var pl = this.content;
+            edge.edge_paths = [new EdgePath({edge: edge, gdatum: pl})];
             break;
           case "tool_usage":
-            edge.edge_paths = [new EdgePath({edge: edge, gdatum: this.content.pipeline})];
+            var tu = this.content;
+            edge.edge_paths = [new EdgePath({edge: edge, gdatum: tu.pipeline})];
             break;
           default:
             edge.edge_paths = [];
@@ -256,7 +273,7 @@
           var match = node.gdatum && _(old_nodes).find(function(old_node){
             return old_node.gdatum == node.gdatum;
           });
-          if(match) {
+          if(match && !_(this.nodes).some(function(n){return n.key === match.key;})) {
             node.key = match.key;
             this.overlaps_old_graph = true;
           }
@@ -277,12 +294,9 @@
 
       }
 
-      // all nodes, node_paths, and edge_paths that have no corresponding member in the old graph are assigned a random GUID for the key
+      // all nodes and edge_paths that have no corresponding member in the old graph are assigned a random GUID for the key
       this.nodes.forEach(function(node) {
         node.key = node.key || guid();
-        node.node_paths.forEach(function(node_path) {
-          node_path.key = node_path.key || guid();
-        });
       });
       this.edges.forEach(function(edge) {
         edge.key = edge.key || guid();

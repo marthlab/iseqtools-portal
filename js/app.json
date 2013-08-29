@@ -90,20 +90,24 @@
 	],
 	"initial_data_types": [
 		{
-			"id":"gene_models",
-			"name":"gene models"
+			"id": "gene_models",
+			"name": "gene models",
+			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 		},
 		{
-			"id":"reference_genomes",
-			"name":"reference genomes"
+			"id": "reference_genomes",
+			"name": "reference genomes",
+			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 		},
 		{
-			"id":"reads",
-			"name":"sequencing reads"
+			"id": "reads",
+			"name": "sequencing reads",
+			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 		},
 		{
-			"id":"functional_features",
-			"name":"functional features"
+			"id": "functional_features",
+			"name": "functional features",
+			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 		},
 	],
 	"tasks": [
@@ -114,7 +118,8 @@
 			"out_data_types": [
 				{
 					"id":"alignments",
-					"name":"alignments"
+					"name":"alignments",
+					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 				}
 			]
 		},
@@ -125,7 +130,8 @@
 			"out_data_types": [
 				{
 					"id":"structural_variants",
-					"name":"Structural Variants"
+					"name":"structural variants",
+					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 				}
 			]
 		},
@@ -136,7 +142,8 @@
 			"out_data_types": [
 				{
 					"id":"short_variants",
-					"name":"Short Variants"
+					"name":"short variants",
+					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 				}
 			]
 		},
@@ -147,7 +154,8 @@
 			"out_data_types": [
 				{
 					"id":"de_genes",
-					"name":"differentially expressed genes"
+					"name":"differentially expressed genes",
+					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 				}
 			]
 		},
@@ -158,7 +166,8 @@
 			"out_data_types": [
 				{
 					"id":"annotated_variants",
-					"name":"annotated variants"
+					"name":"annotated variants",
+					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
 				}
 			]
 		}
@@ -1063,7 +1072,6 @@
 			"id": "gotcloud-ldrefine",
 			"name": "gotcloud-ldrefine",
 			"team_id": "umich",
-			"workflow_id": 2,
 			"data_types_ids": ["short_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1817,7 +1825,6 @@
 			"id": "gkno-build-moblist-reference",
 			"name": "gkno build-moblist-reference",
 			"team_id": "bc",
-			"workflow_id": 1,
 			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
 				{
@@ -1888,7 +1895,6 @@
 			"id": "gkno-build-reference",
 			"name": "gkno build-reference",
 			"team_id": "bc",
-			"workflow_id": 1,
 			"data_types_ids": ["reference_genomes"],
 			"initial_data_format_usages": [
 				{
@@ -2115,7 +2121,6 @@
 				}
 			],
 			"team_id": "bc",
-			"workflow_id": 1,
 			"data_types_ids": ["alignments"],
 			"initial_data_format_usages": [
 				{
@@ -2276,7 +2281,6 @@
 			"id": "gkno-merge-vcf",
 			"name": "gkno merge-vcf",
 			"team_id": "bc",
-			"workflow_id": 2,
 			"data_types_ids": ["short_variants"],
 			"initial_data_format_usages": [
 				{

@@ -222,30 +222,30 @@ GraphDrawing.prototype = {
 
     nodes_elems.classed("link", function(n) { return n.gdatum && n.gdatum !== graph.content && n.gdatum.type() === "tool_usage"; })
 
-    var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
-      .selectAll("circle.circle_path")
-      .data(function(n) { return n.node_paths; }, NodePath.key);
+    // var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
+    //   .selectAll("circle.circle_path")
+    //   .data(function(n) { return n.node_paths; }, NodePath.key);
 
-    var new_circle_paths = circle_paths
-        .enter()
-          .append("circle")
-          .attr("class", "circle_path")
-          .attr("cx", 0)
-          .attr("cy", 0)
-          .attr("r", function(node_path) {
-            var node = d3.select(this.parentNode).datum();
-            return settings.nodes[node.type()].radius+(node.node_paths.indexOf(node_path)+1)*settings.graph.path_width;
-          })
-          .attr("stroke", function(node_path) {
-            var node = d3.select(this.parentNode).datum();
-            return graph.pathColors(node_path.gdatum && node_path.gdatum.id);
-          })
-          .attr("stroke-width", settings.graph.path_width);
+    // var new_circle_paths = circle_paths
+    //     .enter()
+    //       .append("circle")
+    //       .attr("class", "circle_path")
+    //       .attr("cx", 0)
+    //       .attr("cy", 0)
+    //       .attr("r", function(node_path) {
+    //         var node = d3.select(this.parentNode).datum();
+    //         return settings.nodes[node.type()].radius+(node.node_paths.indexOf(node_path)+1)*settings.graph.path_width;
+    //       })
+    //       .attr("stroke", function(node_path) {
+    //         var node = d3.select(this.parentNode).datum();
+    //         return graph.pathColors(node_path.gdatum && node_path.gdatum.id);
+    //       })
+    //       .attr("stroke-width", settings.graph.path_width);
 
-    circle_paths.classed("link", function(np) { return true; })
+    // circle_paths.classed("link", function(np) { return true; })
 
-    var old_circle_paths = circle_paths
-      .exit();
+    // var old_circle_paths = circle_paths
+    //   .exit();
 
     var new_labels = new_nodes_elems
       .append("g")
@@ -289,6 +289,9 @@ GraphDrawing.prototype = {
       var bbox = this.getBBox();
       n.width = bbox.width;
       n.height = bbox.height;
+      if(n.gdatum && n.gdatum.type() === 'data_type') {
+        d3.select(this).classed("link", true);
+      }
     });
 
     // handle edges
@@ -318,6 +321,10 @@ GraphDrawing.prototype = {
         .append("path")
         .attr("stroke-width", settings.graph.path_width);
 
+    // new_edges_paths.each
+    //   .append("svg:title")
+    //     .text(function(d) { return d.gdatum.name; });
+
     edges_paths.classed("link", function(ep) { return ep.gdatum && !(ep.gdatum.type() == 'workflow' && ep.gdatum.pipelines.length == 0);});
 
     edges_paths.each(function(ep){
@@ -326,7 +333,22 @@ GraphDrawing.prototype = {
       } else {
         d3.select(this).attr("stroke-dasharray", "7,3");
       }
+
+      if(ep.gdatum) {
+        $(this).tipsy({ 
+          gravity: 's',
+          offset: 10,
+          html: false, 
+          title: function() {
+            return d3.select(this).datum().gdatum.name; 
+          },
+          trigger: 'manual'
+        });
+      }
+
     });
+
+
 
     var old_edges_paths = edges_paths.exit()
 
@@ -349,9 +371,9 @@ GraphDrawing.prototype = {
       .remove();
 
 
-    (this.for_display ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
-      .style("stroke-opacity", 0)
-      .remove();
+    // (this.for_display ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
+    //   .style("stroke-opacity", 0)
+    //   .remove();
    
 
     (this.for_display ? old_edges_paths.transition().duration(settings.graph.render_duration) : old_edges_paths)
@@ -381,8 +403,8 @@ GraphDrawing.prototype = {
       updated_nodes_elems.attr("transform", getTransform);
     }
 
-    (this.for_display ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
-      .style("stroke-opacity", 1);
+    // (this.for_display ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
+    //   .style("stroke-opacity", 1);
 
     (this.for_display ? updated_labels.transition().duration(settings.graph.render_duration) : updated_labels)
      .attr("transform", function(d,i) { return "translate(0, "+(-d3.select(this.parentNode).select('.circles').node().getBBox().height/2 - 9)+")";});  
@@ -409,18 +431,37 @@ GraphDrawing.prototype = {
       .each(function(edge_path) {
         var edge_path_elem = this;
         this.onclick = function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } };
-        this.onmouseover = function() { edges_paths.classed("hover", function(ep) { return ep.gdatum === edge_path.gdatum; }); };
-        this.onmouseout = function() { edges_paths.classed("hover", false); };
+        this.onmouseover = function() {
+          $(edge_path_elem).tipsy("show");
+          edges_paths.classed("hover", function(ep) {
+            return ep.gdatum === edge_path.gdatum; }
+          );
+        };
+        this.onmouseout = function edge_path_mouseout(e) {
+          if(!$(e.toElement).hasClass('tipsy') && !$(e.toElement).parents().hasClass('tipsy')){
+            $(edge_path_elem).tipsy("hide");
+            edges_paths.classed("hover", false);
+          } else {
+            $('.tipsy').on('mouseleave', edge_path_mouseout);
+          }
+        };
       });
 
-    circle_paths
-      .each(function(node_path) {
-        var node_path_elem = this;
-        this.onclick = function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } };
-      })
-      .attr("stroke", function(node_path) {
-        return node_path.gdatum ? node_path.gdatum.color() : graph.content.color();
-      })
+    nodes_elems.each(function(node) {
+      var node_elem = this;
+      this.onclick = function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } };
+      // this.onmouseover = function() { edges_paths.classed("hover", function(ep) { return ep.gdatum === edge_path.gdatum; }); };
+      // this.onmouseout = function() { edges_paths.classed("hover", false); };
+    });
+
+    // circle_paths
+    //   .each(function(node_path) {
+    //     var node_path_elem = this;
+    //     this.onclick = function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } };
+    //   })
+    //   .attr("stroke", function(node_path) {
+    //     return node_path.gdatum ? node_path.gdatum.color() : graph.content.color();
+    //   })
 
     nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
       .each(function(node) {
@@ -471,7 +512,7 @@ GraphDrawing.prototype = {
   },
   getInnerRect: function(gdatum) {
 
-    var node_path_elems = this.nodeGroup.selectAll("circle.circle_path").filter(function(np) { return np.gdatum === gdatum; });
+    //var node_path_elems = this.nodeGroup.selectAll("circle.circle_path").filter(function(np) { return np.gdatum === gdatum; });
     var edge_path_elems = this.edgeGroup.selectAll("path").filter(function(ep) { return ep.gdatum === gdatum; });
 
     var x_min = Number.POSITIVE_INFINITY;
@@ -479,19 +520,19 @@ GraphDrawing.prototype = {
     var x_max = Number.NEGATIVE_INFINITY;
     var y_max = Number.NEGATIVE_INFINITY;
 
-    node_path_elems.each(function(d, i) {
-      var dagre_data = this.parentElement.parentElement.parentElement.__data__.dagre;
-      var path_bbox = {
-        x: dagre_data.x-dagre_data.width/2,
-        y: dagre_data.y-dagre_data.height/2,
-        width: dagre_data.width,
-        height: dagre_data.height
-      };
-      x_min = Math.min(x_min, path_bbox.x);
-      x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
-      y_min = Math.min(y_min, path_bbox.y);
-      y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
-    })
+    // node_path_elems.each(function(d, i) {
+    //   var dagre_data = this.parentElement.parentElement.parentElement.__data__.dagre;
+    //   var path_bbox = {
+    //     x: dagre_data.x-dagre_data.width/2,
+    //     y: dagre_data.y-dagre_data.height/2,
+    //     width: dagre_data.width,
+    //     height: dagre_data.height
+    //   };
+    //   x_min = Math.min(x_min, path_bbox.x);
+    //   x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
+    //   y_min = Math.min(y_min, path_bbox.y);
+    //   y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
+    // })
     edge_path_elems.each(function(d, i) {
       var path_bbox = this.getBBox();
       x_min = Math.min(x_min, path_bbox.x);
@@ -499,6 +540,16 @@ GraphDrawing.prototype = {
       y_min = Math.min(y_min, path_bbox.y);
       y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
     })
+
+    // paths are one-dimensional objects, so we need to prevent possibilities of zero width or height
+    if(x_max-x_min === 0) {
+      x_min -= 5;
+      x_max += 5;
+    }
+    if(y_max-y_min === 0) {
+      y_min -= 5;
+      y_max += 5;
+    }
 
     return {x: x_min, y: y_min, width: x_max-x_min, height: y_max-y_min};
 

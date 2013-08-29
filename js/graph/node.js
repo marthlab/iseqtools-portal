@@ -27,9 +27,3 @@ Node.prototype = {
 	}
 }
 Node.key = function(node) {	return node.key; }
-
-function NodePath(options) {
-	this.node = options.node;
-	this.gdatum = options.gdatum;
-}
-NodePath.key = function(node_path) {	return node_path.key; }

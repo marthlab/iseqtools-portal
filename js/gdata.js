@@ -31,6 +31,9 @@ var gdata_mixin = {
 			case "workflow":
 				return 2;
 				break;
+			case "data_type":
+				return 2;
+				break;
 			case "summary":
 				return 3;
 				break;
@@ -76,10 +79,22 @@ var gdata_mixin = {
 			if(item_to_add === end_content) {
 				return relationship;
 			}
-			item_to_add = item_to_add.workflow;
+			if(!item_to_add.workflow){
+				item_to_add = item_to_add.data_types[0];
+			} else {
+				item_to_add = item_to_add.workflow;
+			}
 		}
 
 		if(item_to_add.type() == 'workflow') {
+			relationship.push(item_to_add);
+			if(item_to_add === end_content) {
+				return relationship;
+			}
+			item_to_add = gdata.summary;
+		}
+
+		if(item_to_add.type() == 'data_type') {
 			relationship.push(item_to_add);
 			if(item_to_add === end_content) {
 				return relationship;
@@ -124,7 +139,7 @@ _.extend(Team.prototype, gdata_mixin);
 Team.prototype.graphable = false;
 
 function DataType(cfg) {
-	_(this).extend(_(cfg).pickStrings('id', 'name'));
+	_(this).extend(_(cfg).pickStrings('id', 'name', 'description'));
 }
 _.extend(DataType.prototype, gdata_mixin);
 DataType.prototype.graphable = false;
@@ -161,7 +176,7 @@ function DataFormat(cfg) {
 	//this.data_type = _(gdata.tasks).find(by_id(cfg.data_type_id)) || null;
 }
 _.extend(DataFormat.prototype, gdata_mixin);
-DataFormat.prototype.graphable = false;
+DataFormat.prototype.graphable = true;
 
 function Tool(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
@@ -187,7 +202,7 @@ function Pipeline(cfg) {
 	cfg.initial_data_format_usages = cfg.initial_data_format_usages || [];
 
 	this.team = _(gdata.teams).find(by_id(cfg.team_id)) || null;
-	this.workflow = _(gdata.workflows).find(by_id(cfg.workflow_id));
+	this.workflow = _(gdata.workflows).find(by_id(cfg.workflow_id)) || null;
 	this.data_types = cfg.data_types_ids.map(function(dt_id){ return _(gdata.data_types).find(by_id(dt_id));});
 
 	var create_dfu = function(dfu_cfg){

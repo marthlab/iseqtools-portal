@@ -85,6 +85,7 @@ switch ($_SERVER['SERVER_NAME']) {
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="<?php echo $base_url; ?>/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
         <script src="<?php echo $base_url; ?>/js/vendor/jquery.svg.min.js"></script>
+        <script src="<?php echo $base_url; ?>/js/vendor/jquery.tipsy.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/davis.min.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/bootstrap.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/underscore-min.js"></script>
@@ -125,6 +126,14 @@ switch ($_SERVER['SERVER_NAME']) {
                 </ul>
                 <% } %>
               </li>
+            <% }); %>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown">Data Types <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            <% _(t.data_types).each(function(dt){ %>
+              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= dt.url() %>"><%= dt.name.toTitleCase() %></a></li>
             <% }); %>
             </ul>
           </li>
@@ -206,9 +215,35 @@ switch ($_SERVER['SERVER_NAME']) {
 Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by the National Human Genome Research Institute. Six participant informatics groups are developing powerful and “researcher-friendly” sequence analysis tools. This portal is designed for users and developers to explore the tools and pipelines built by project participants.
         </script>
 
+        <script type="text/html" id='info_data_type_template'>
+          <h1>Data Type: <%= t.name.toTitleCase() %></h1>
+          <p><%= t.description %></p>
+          <% if(t.pipelines_dedicated.length > 0) { %>
+          <div class="info_float">
+            <h2><a href="#" class="tooltipped" data-toggle="tooltip" data-placement="right" title="Pipelines that both consume and produce the same type of data">Utility pipelines</a> for <%= t.name %>:</h2>
+            <ul>
+            <% _(t.pipelines_dedicated).each(function(pl){ %>
+              <li><a href="<%= pl.url() %>"><%= pl.name %></a> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)</li>
+            <% }); %>
+            </ul>
+          </div>
+          <% } %>
+          <% if(t.pipelines.length > 0) { %>
+          <div class="info_float">
+            <h2>All pipelines involving <%= t.name %>:</h2>
+            <ul>
+            <% _(t.pipelines).each(function(pl){ %>
+              <li><a href="<%= pl.url() %>"><%= pl.name %></a> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)</li>
+            <% }); %>
+            </ul>
+          </div>
+          <% } %>
+          
+        </script>
+
         <script type="text/html" id='info_workflow_template'>
           <h1>Workflow: <%= t.name %></h1>
-          <h2><%= t.question %></h1>
+          <h2><%= t.question %></h2>
           <p>This workflow consumes <%= t.in_data_types.map(function(dt){return dt.name;}).toEnglishList() %> and produces <%= t.out_data_types.map(function(dt){return dt.name}).toEnglishList()%>.</p>
           <% if(t.pipelines.length > 0) { %>
           <div class="info_float">
@@ -231,7 +266,9 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
             </div>
           <% } %>
           <p>This pipeline consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.data_format.id.toUpperCase();}).toEnglishList() %> files.</p>
+          <% if(t.workflow) { %>
           <p>This pipeline implements the <a href="<%= t.workflow.url() %>"><%= t.workflow.name %></a> workflow.</p>
+          <% } %>
           <% if(t.tools.length > 0) { %>
           <div class="info_float">
             <h2>Tools incorporated:</h2>
