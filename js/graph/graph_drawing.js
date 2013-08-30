@@ -333,15 +333,16 @@ GraphDrawing.prototype = {
       }
 
       if(ep.gdatum) {
-        $(this).tipsy({ 
-          gravity: 'w',
-          offset: 0,
-          html: false, 
-          title: function() {
-            return d3.select(this).datum().gdatum.name; 
+        var that = this;
+        $(this).qtip({
+          content: {
+              text: function(event, api) {
+                return d3.select(that).datum().gdatum.name; 
+              }
           },
-          trigger: 'manual',
-          opacity: 1
+          position: {
+            target: 'mouse'
+          }
         });
       }
 
@@ -443,18 +444,14 @@ GraphDrawing.prototype = {
         var edge_path_elem = this;
         this.onclick = function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } };
         this.onmouseover = function() {
-          $(edge_path_elem).tipsy("show");
+          $(edge_path_elem).qtip('api').show();
           edges_paths.classed("hover", function(ep) {
             return ep.gdatum === edge_path.gdatum; }
           );
         };
-        this.onmouseout = function edge_path_mouseout(e) {
-          if(!$(e.toElement).hasClass('tipsy') && !$(e.toElement).parents().hasClass('tipsy')){
-            $(edge_path_elem).tipsy("hide");
-            edges_paths.classed("hover", false);
-          } else {
-            $('.tipsy').on('mouseleave', edge_path_mouseout);
-          }
+        this.onmouseout = function() {
+          $(edge_path_elem).qtip('api').hide();
+          edges_paths.classed("hover", false);
         };
       });
 

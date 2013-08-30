@@ -85,7 +85,7 @@ switch ($_SERVER['SERVER_NAME']) {
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="<?php echo $base_url; ?>/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
         <script src="<?php echo $base_url; ?>/js/vendor/jquery.svg.min.js"></script>
-        <script src="<?php echo $base_url; ?>/js/vendor/jquery.tipsy.js"></script>
+        <script src="<?php echo $base_url; ?>/js/vendor/jquery.qtip.min.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/davis.min.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/bootstrap.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/underscore-min.js"></script>
@@ -178,7 +178,7 @@ switch ($_SERVER['SERVER_NAME']) {
             <% var crumbs = t.crumbs.reverse(); %>
             <% _.each(crumbs, function(item, i){ %>
               <% if(i === crumbs.length-1) { %>
-              <span><%= item.name %></span>
+              <span><%= item.name.toTitleCase() %></span>
               <% } else { %>
               <a href="<%= item.url() %>"><%= item.name %></a>&nbsp;&nbsp;&gt;&gt;&nbsp;
               <% } %>
