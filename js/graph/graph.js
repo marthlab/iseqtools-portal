@@ -246,11 +246,11 @@
             break
           case "pipeline":
             var pl = this.content;
-            edge.edge_paths = [new EdgePath({edge: edge, gdatum: pl})];
+            edge.edge_paths = [new EdgePath({edge: edge, gdatum: null})];
             break;
           case "tool_usage":
             var tu = this.content;
-            edge.edge_paths = [new EdgePath({edge: edge, gdatum: tu.pipeline})];
+            edge.edge_paths = [new EdgePath({edge: edge, gdatum: null})];
             break;
           default:
             edge.edge_paths = [];

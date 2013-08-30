@@ -325,24 +325,23 @@ GraphDrawing.prototype = {
     //   .append("svg:title")
     //     .text(function(d) { return d.gdatum.name; });
 
-    edges_paths.classed("link", function(ep) { return ep.gdatum && !(ep.gdatum.type() == 'workflow' && ep.gdatum.pipelines.length == 0);});
-
     edges_paths.each(function(ep){
-      if(ep.gdatum && !(ep.gdatum.type() == 'workflow' && ep.gdatum.pipelines.length == 0)) {
-        d3.select(this).classed("link", true);
-      } else {
+      if(ep.gdatum && ep.gdatum.type() === 'workflow' && ep.gdatum.pipelines.length == 0) {
         d3.select(this).attr("stroke-dasharray", "7,3");
+      } else if(ep.gdatum) {
+        d3.select(this).classed("link", true);
       }
 
       if(ep.gdatum) {
         $(this).tipsy({ 
-          gravity: 's',
-          offset: 10,
+          gravity: 'w',
+          offset: 0,
           html: false, 
           title: function() {
             return d3.select(this).datum().gdatum.name; 
           },
-          trigger: 'manual'
+          trigger: 'manual',
+          opacity: 1
         });
       }
 
@@ -415,7 +414,13 @@ GraphDrawing.prototype = {
         return edgePathSpline(edge, edge_path);
       })
       .attr("stroke", function(edge_path) {
-        return edge_path.gdatum ? edge_path.gdatum.color() : graph.content.color();
+        if(edge_path.gdatum) {
+          return edge_path.gdatum.color();
+        } else if(graph.content_type === "pipeline") {
+          return graph.content.color();
+        } else if(graph.content_type === "tool_usage") {
+          return graph.content.pipeline.color();
+        }
       })
     
     new_edges_paths
@@ -424,7 +429,13 @@ GraphDrawing.prototype = {
         return edgePathSpline(edge, edge_path);
       })
       .attr("stroke", function(edge_path) {
-        return edge_path.gdatum ? edge_path.gdatum.color() : graph.content.color();
+        if(edge_path.gdatum) {
+          return edge_path.gdatum.color();
+        } else if(graph.content_type === "pipeline") {
+          return graph.content.color();
+        } else if(graph.content_type === "tool_usage") {
+          return graph.content.pipeline.color();
+        }
       })
 
     edges_paths
