@@ -80,12 +80,12 @@
         case "pipeline":
           var pl = this.content;
 
-          this.primary_nodes = pl.tool_usages.map(function(tu) { return new Node({gdatum: tu, label: tu.tool.id, graph: this});}, this);
+          this.primary_nodes = pl.tool_usages.map(function(tu) { return new Node({gdatum: tu, label: tu.tool.name, graph: this});}, this);
           this.secondary_nodes = pl.data_format_usages
             .filter(function(dfu){ return dfu.data_format.id !== "stream"})
             .map(function(dfu) { return new Node({
               gdatum: dfu,
-              label: dfu.data_format.name,
+              label: dfu.description || dfu.data_format.name,
               graph: this
             });}, this);
 

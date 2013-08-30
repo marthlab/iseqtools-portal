@@ -263,7 +263,7 @@ GraphDrawing.prototype = {
         var label_lines = [[]];
         for (var i=0; i<fragments.length; i++) {
           text_elem.text(label_lines[label_lines.length-1].join("") + fragments[i].trim());
-          if (text_elem.node().getBBox().width > settings.nodes.label_max_width) {
+          if (text_elem.node().getBBox().width > settings.nodes[n.type()].label_max_width) {
             label_lines.push([]); 
           }
           label_lines[label_lines.length-1].push(fragments[i]);
@@ -444,13 +444,13 @@ GraphDrawing.prototype = {
         var edge_path_elem = this;
         this.onclick = function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } };
         this.onmouseover = function() {
-          $(edge_path_elem).qtip('api').show();
+          $(edge_path_elem).qtip('api') && $(edge_path_elem).qtip('api').show();
           edges_paths.classed("hover", function(ep) {
             return ep.gdatum === edge_path.gdatum; }
           );
         };
         this.onmouseout = function() {
-          $(edge_path_elem).qtip('api').hide();
+          $(edge_path_elem).qtip('api') && $(edge_path_elem).qtip('api').hide();
           edges_paths.classed("hover", false);
         };
       });

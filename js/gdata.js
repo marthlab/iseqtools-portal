@@ -5,11 +5,11 @@ var gdata_mixin = {
 		if(type == "summary") {
 			return app.base_url+"/";
 		} else if(type == "generic_page") {
-			return app.base_url+'/'+this.id;
+			return app.base_url+'/'+encodeURIComponent(this.id);
 		} else if(type == "tool_usage") {
-			return app.base_url+'/pipelines/'+this.pipeline.id+'/tool_usages/'+this.id;
+			return app.base_url+'/pipelines/'+encodeURIComponent(this.pipeline.id)+'/tool_usages/'+encodeURIComponent(this.id);
 		} else {
-			return app.base_url+'/'+type+'s/'+this.id;
+			return app.base_url+'/'+type+'s/'+encodeURIComponent(this.id);
 		}
 	},
 	color: function() {
@@ -220,6 +220,7 @@ function DataFormatUsage(cfg) {
 	this.multiple = cfg.multiple || false;
 	this.pipeline = cfg.pipeline;
 	this.data_format = _(gdata.data_formats).find(by_id(cfg.data_format_id));
+	this.description = cfg.description || null;
 }
 _.extend(DataFormatUsage.prototype, gdata_mixin);
 DataFormatUsage.prototype.graphable = false;
