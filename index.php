@@ -177,10 +177,11 @@ switch ($_SERVER['SERVER_NAME']) {
         <script type="text/html" id='breadcrumbs_template'>
             <% var crumbs = t.crumbs.reverse(); %>
             <% _.each(crumbs, function(item, i){ %>
+              <% var item_name = _(["pipeline", "tool", "tool_usage"]).contains(item.type()) ? item.name : item.name.toTitleCase() %>
               <% if(i === crumbs.length-1) { %>
-              <span><%= item.name.toTitleCase() %></span>
+              <span><%= item_name %></span>
               <% } else { %>
-              <a href="<%= item.url() %>"><%= item.name %></a>&nbsp;&nbsp;&gt;&gt;&nbsp;
+              <a href="<%= item.url() %>"><%= item_name %></a>&nbsp;&nbsp;&gt;&gt;&nbsp;
               <% } %>
             <% }); %>
              
