@@ -525,11 +525,25 @@ GraphDrawing.prototype = {
 
     //var node_path_elems = this.nodeGroup.selectAll("circle.circle_path").filter(function(np) { return np.gdatum === gdatum; });
     var edge_path_elems = this.edgeGroup.selectAll("path").filter(function(ep) { return ep.gdatum === gdatum; });
-
+    var node_elems = this.nodeGroup.selectAll("g .node").filter(function(ep) { return ep.gdatum === gdatum; });
     var x_min = Number.POSITIVE_INFINITY;
     var y_min = Number.POSITIVE_INFINITY;
     var x_max = Number.NEGATIVE_INFINITY;
     var y_max = Number.NEGATIVE_INFINITY;
+
+    node_elems.each(function(d, i) {
+      var dagre_data = this.__data__.dagre;
+      var path_bbox = {
+        x: dagre_data.x-dagre_data.width/2,
+        y: dagre_data.y-dagre_data.height/2,
+        width: dagre_data.width,
+        height: dagre_data.height
+      };
+      x_min = Math.min(x_min, path_bbox.x);
+      x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
+      y_min = Math.min(y_min, path_bbox.y);
+      y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
+    })
 
     // node_path_elems.each(function(d, i) {
     //   var dagre_data = this.parentElement.parentElement.parentElement.__data__.dagre;

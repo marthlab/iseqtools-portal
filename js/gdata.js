@@ -42,6 +42,17 @@ var gdata_mixin = {
 				break;
 		}
 	},
+	getBreadcrumbs: function() {
+		var breadcrumbs = [];
+		var curr = this;
+		while(curr !== null) {
+			if(breadcrumbs.length > 0 || curr.type() !== "summary") {
+				breadcrumbs.push(curr);
+			}
+			var curr = curr.pageParent();
+		}
+		return breadcrumbs;
+	},
 	visualRelationshipTo: function(other_content) {
 
 		if(!other_content) { // other content is not defined, so no relationship
@@ -64,50 +75,14 @@ var gdata_mixin = {
 		}
 
 		var relationship = [];
-		var item_to_add = start_content;
 
-		if(item_to_add.type() == 'tool_usage') {
-			relationship.push(item_to_add);
-			if(item_to_add === end_content) {
+		var curr = start_content;
+		while(curr !== null) {
+			relationship.push(curr);
+			if(curr === end_content) {
 				return relationship;
 			}
-			item_to_add = item_to_add.pipeline;
-		}
-
-		if(item_to_add.type() == 'pipeline') {
-			relationship.push(item_to_add);
-			if(item_to_add === end_content) {
-				return relationship;
-			}
-			if(!item_to_add.workflow){
-				item_to_add = item_to_add.data_types[0];
-			} else {
-				item_to_add = item_to_add.workflow;
-			}
-		}
-
-		if(item_to_add.type() == 'workflow') {
-			relationship.push(item_to_add);
-			if(item_to_add === end_content) {
-				return relationship;
-			}
-			item_to_add = gdata.summary;
-		}
-
-		if(item_to_add.type() == 'data_type') {
-			relationship.push(item_to_add);
-			if(item_to_add === end_content) {
-				return relationship;
-			}
-			item_to_add = gdata.summary;
-		}
-
-		if(item_to_add.type() == 'summary') {
-			relationship.push(item_to_add);
-			if(item_to_add === end_content) {
-				return relationship;
-			}
-			// nowhere else to go
+			curr = curr.pageParent();
 		}
 
 		// if we got this far, start_content and end_content are not related, so ignore the relationship array
@@ -121,12 +96,14 @@ function GenericPage(cfg) {
 }
 _.extend(GenericPage.prototype, gdata_mixin);
 Summary.prototype.graphable = false;
+Summary.prototype.pageParent = function() { return gdata.summary; };
 
 function Summary(cfg) {
 	_(this).extend(_(cfg).pickStrings('name'));
 }
 _.extend(Summary.prototype, gdata_mixin);
 Summary.prototype.graphable = true;
+Summary.prototype.pageParent = function() { return null; };
 
 function Team(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name', 'project_title', 'project_url', 'group_url'));
@@ -137,12 +114,14 @@ function Team(cfg) {
 }
 _.extend(Team.prototype, gdata_mixin);
 Team.prototype.graphable = false;
+Team.prototype.pageParent = function() { return gdata.summary; };
 
 function DataType(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name', 'description'));
 }
 _.extend(DataType.prototype, gdata_mixin);
 DataType.prototype.graphable = false;
+DataType.prototype.pageParent = function() { return gdata.summary; };
 
 function Task(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
@@ -153,7 +132,7 @@ function Task(cfg) {
 	this.workflows = {};
 }
 _.extend(Task.prototype, gdata_mixin);
-Task.prototype.graphable = false;
+Task.prototype.graphable = false;;
 
 function Workflow(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name', 'question'));
@@ -169,6 +148,7 @@ function Workflow(cfg) {
 }
 _.extend(Workflow.prototype, gdata_mixin);
 Workflow.prototype.graphable = true;
+Workflow.prototype.pageParent = function() { return gdata.summary; };
 
 function DataFormat(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
@@ -177,6 +157,7 @@ function DataFormat(cfg) {
 }
 _.extend(DataFormat.prototype, gdata_mixin);
 DataFormat.prototype.graphable = true;
+DataFormat.prototype.pageParent = function() { return gdata.summary; };
 
 function Tool(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
@@ -194,6 +175,7 @@ function Tool(cfg) {
 }
 _.extend(Tool.prototype, gdata_mixin);
 Tool.prototype.graphable = false;
+Tool.prototype.pageParent = function() { return gdata.summary; };
 
 function Pipeline(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
@@ -229,6 +211,9 @@ function Pipeline(cfg) {
 }
 _.extend(Pipeline.prototype, gdata_mixin);
 Pipeline.prototype.graphable = true;
+Pipeline.prototype.pageParent = function() { 
+	return this.workflow ? this.workflow : this.data_types[0];
+};
 
 function DataFormatUsage(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
@@ -251,3 +236,4 @@ function ToolUsage(cfg) {
 }
 _.extend(ToolUsage.prototype, gdata_mixin);
 ToolUsage.prototype.graphable = true;
+ToolUsage.prototype.pageParent = function() { return this.pipeline; };

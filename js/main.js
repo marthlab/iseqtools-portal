@@ -193,7 +193,7 @@
 
         
         this.$breadcrumbs_el.fadeOut(500, _.bind(function() {
-          this.$breadcrumbs_el.html(this.breadcrumbs_template({crumbs: app.content.visualRelationshipTo(gdata.summary)}));
+          this.$breadcrumbs_el.html(this.breadcrumbs_template({crumbs: app.content.getBreadcrumbs()}));
           this.$breadcrumbs_el.fadeIn(500);
         }, this));
         
