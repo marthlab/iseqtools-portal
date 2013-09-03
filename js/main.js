@@ -103,7 +103,7 @@
           if(index === 0) {
             this.$el.carousel('pause');
             widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
-          } else {
+          } else if(app.content.type() === "summary"){
             widgets.graph_widget.active_drawing_for_display.highlightWorkflow(featured_workflows[index-1]);
           }
           
@@ -122,9 +122,9 @@
         
         var trans_completion = $.Deferred();
 
-        if(!this.visible && app.content.type() === "summary") {
+        if(app.content.type() === "summary") {
           this._show(trans_completion.resolve);
-        } else if(this.visible && app.content.type() !== "summary") {
+        } else if(app.content.type() !== "summary") {
           this._hide(trans_completion.resolve);
         }
 
@@ -133,13 +133,10 @@
         return this.$el.find(".carousel-inner > .active").index(".carousel-inner > div");
       },
       _hide: function(on_complete) {
-        this.visible = false;
         this.$el.carousel('pause');
-        widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
         this.$el.slideUp(1000, on_complete);
       },
       _show: function(on_complete) {
-        this.visible = true;
         this.$el.carousel(0);
         this.$el.slideDown(1000, (function() {
           this.$el.mouseover();
@@ -265,11 +262,9 @@
           }
         }
 
-        if(app.content.type() === "summary") {
+        if(_(["summary", "workflow", "data_type"]).contains(app.content.type())) {
           this.active_drawing_for_display.highlightAllWorkflows();
         }
-        
-        
         
         on_complete();
       },
