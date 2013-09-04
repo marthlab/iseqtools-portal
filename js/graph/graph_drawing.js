@@ -134,6 +134,8 @@ GraphDrawing.prototype = {
       return path_string;
     }
 
+    function getTransform(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; };
+
     var self = this;
 
     var svg = this.svg;
@@ -294,6 +296,13 @@ GraphDrawing.prototype = {
       }
     });
 
+    new_nodes_elems.each(function(n){
+      var twins = nodes_elems.filter(function(d) { return d.gdatum === n.gdatum && d !== n});
+      if(twins && twins.data().length === 1) {
+        d3.select(this).attr("transform", d3.select(twins[0][0]).attr("transform"));
+      }
+    })
+
     // handle edges
 
     var edges_elems = this.edgeGroup
@@ -320,6 +329,12 @@ GraphDrawing.prototype = {
       .enter()
         .append("path")
         .attr("stroke-width", settings.graph.path_width);
+
+    // new_edges_paths
+    //   .attr("d", function(edge_path) {
+    //     var edge = d3.select(this.parentNode).datum();
+    //     return edgePathSpline(edge, edge_path);
+    //   });
 
     // new_edges_paths.each
     //   .append("svg:title")
@@ -349,13 +364,12 @@ GraphDrawing.prototype = {
     });
 
 
-
     var old_edges_paths = edges_paths.exit()
 
     var updated_edges_paths = edges_paths.filter(function(d, i) {
       return !new_edges_paths.map(function(nep) { return _(nep).contains(this); }, this).reduce(function(memo, val) {return memo || val;}, false);
     })
-//debugger; 
+
     dagre.layout()
       .nodeSep(settings.graph.nodeSep)
       .edgeSep(settings.graph.edgeSep)
@@ -366,9 +380,25 @@ GraphDrawing.prototype = {
       .debugLevel(0)
       .run();
 
-    (this.for_display ? old_nodes_elems.transition().duration(settings.graph.render_duration) : old_nodes_elems)
-      .style("opacity", 0)
-      .remove();
+    old_nodes_elems.each(function(n){
+      var twins = nodes_elems.filter(function(d) { return d.gdatum === n.gdatum && d !== n});
+      if(twins && twins.data().length === 1) {
+        n.dagre = {x: twins.datum().dagre.x, y: twins.datum().dagre.y};
+      }
+    })
+
+    if(this.for_display) {
+      old_nodes_elems
+        .transition()
+        .duration(settings.graph.render_duration)
+        .style("opacity", 0)
+        .attrTween("transform", function tween(d, i, a) {
+          return d3.interpolateString(this.getAttribute("transform"), getTransform(d) );
+        })
+        .remove();
+    } else {
+      old_nodes_elems.style("opacity", 0).attr("transform", getTransform).remove();
+    }
 
 
     // (this.for_display ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
@@ -384,23 +414,21 @@ GraphDrawing.prototype = {
       .style("opacity", 0)
       .remove();
 
+    // new_nodes_elems.attr("transform", getTransform);
 
-    var getTransform = function(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; };
-
-    new_nodes_elems.attr("transform", getTransform);
-
-    (this.for_display ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
-      .style("opacity", 1);
+    // (this.for_display ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
+    //   .style("opacity", 1);
 
     if(this.for_display) {
-      updated_nodes_elems
+      nodes_elems
         .transition()
         .duration(settings.graph.render_duration)
+        .style("opacity", 1)
         .attrTween("transform", function tween(d, i, a) {
           return d3.interpolateString(this.getAttribute("transform"), getTransform(d) );
         });
     } else {
-      updated_nodes_elems.attr("transform", getTransform);
+      nodes_elems.style("opacity", 1).attr("transform", getTransform);
     }
 
     // (this.for_display ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
@@ -409,7 +437,7 @@ GraphDrawing.prototype = {
     (this.for_display ? updated_labels.transition().duration(settings.graph.render_duration) : updated_labels)
      .attr("transform", function(d,i) { return "translate(0, "+(-d3.select(this.parentNode).select('.circles').node().getBBox().height/2 - 9)+")";});  
 
-    (this.for_display ? updated_edges_paths.transition().duration(settings.graph.render_duration) : updated_edges_paths)
+    (this.for_display ? edges_paths.transition().duration(settings.graph.render_duration) : edges_paths)
       .attr("d", function(edge_path) {
         var edge = d3.select(this.parentNode).datum();
         return edgePathSpline(edge, edge_path);
@@ -423,21 +451,7 @@ GraphDrawing.prototype = {
           return graph.content.pipeline.color();
         }
       })
-    
-    new_edges_paths
-      .attr("d", function(edge_path) {
-        var edge = d3.select(this.parentNode).datum();
-        return edgePathSpline(edge, edge_path);
-      })
-      .attr("stroke", function(edge_path) {
-        if(edge_path.gdatum) {
-          return edge_path.gdatum.color();
-        } else if(graph.content_type === "pipeline") {
-          return graph.content.color();
-        } else if(graph.content_type === "tool_usage") {
-          return graph.content.pipeline.color();
-        }
-      })
+      .style("stroke-opacity", 1);
 
     edges_paths
       .each(function(edge_path) {
@@ -476,9 +490,6 @@ GraphDrawing.prototype = {
         var node_elem = this;
         this.onclick = function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } };
       });
-
-    (this.for_display ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
-      .style("stroke-opacity", 1)
 
     if(this.for_display && options.end_rect) {
 
