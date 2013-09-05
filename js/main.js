@@ -199,17 +199,17 @@
 
         if(!this.old_graph || this.graph.overlaps_old_graph) { // old graph and new graph have visual overlap (or there is no old graph)
           this.drawing_for_layout.render(this.graph);
-          this.active_drawing_for_display.render(this.graph, {
+          this.active_drawing_for_display.render(this.graph, this.old_graph, {
             end_rect: this.drawing_for_layout.getRect(),
             change_container_height: true,
             animate_height: true
           });
         } else {
           if(rel.length === 0 || this.graph.nodes.length === 0) { // old graph content and new graph content have no ancestor-descendant relationship, OR new graph is empty
-            this.drawing_for_layout.render(this.graph);
+            this.drawing_for_layout.render(this.graph, this.old_graph);
             this._switchActiveDisplayDrawing();
-            this.inactive_drawing_for_display.render(new Graph());
-            this.active_drawing_for_display.render(this.graph, {
+            this.inactive_drawing_for_display.render(new Graph(), this.old_graph);
+            this.active_drawing_for_display.render(this.graph, this.old_graph, {
               start_rect: this.drawing_for_layout.getRect(),
               change_container_height: true,
               animate_height: false
@@ -218,7 +218,7 @@
             //throw "Illegal transition: cannot transition from content item to itself";
           } else if(rel[0] === app.content) { // content is visual descendant of old content
           
-            this.drawing_for_layout.render(this.graph);
+            this.drawing_for_layout.render(this.graph, this.old_graph);
 
             var old_start_rect = this.active_drawing_for_display.getRect();
             var old_end_rect = this.active_drawing_for_display.getInnerRect(rel[rel.length-2]);
@@ -227,19 +227,19 @@
 
             this._switchActiveDisplayDrawing();
 
-            this.inactive_drawing_for_display.render(new Graph(), {
+            this.inactive_drawing_for_display.render(new Graph(), this.old_graph, {
               end_rect: old_end_rect,
               change_container_height: false,
               animate_height: true
             });
-            this.active_drawing_for_display.render(this.graph, {
+            this.active_drawing_for_display.render(this.graph, this.old_graph, {
               start_rect: new_start_rect,
               end_rect: new_end_rect,
               change_container_height: true,
               animate_height: true
             });
           } else if(rel[0] === app.old_content){ // content is visual ancestor of old content
-            this.drawing_for_layout.render(this.graph);
+            this.drawing_for_layout.render(this.graph, this.old_graph);
 
             var old_start_rect = this.active_drawing_for_display.getRect();
             var new_end_rect = this.drawing_for_layout.getRect();
@@ -247,13 +247,13 @@
             var old_end_rect = this._correspondingOuterRect(new_start_rect, new_end_rect, _.clone(old_start_rect));   
 
             this._switchActiveDisplayDrawing();
-            this.inactive_drawing_for_display.render(new Graph(), {
+            this.inactive_drawing_for_display.render(new Graph(), this.old_graph, {
               end_rect: old_end_rect,
               change_container_height: false,
               animate_height: true
             });
             //debugger;
-            this.active_drawing_for_display.render(this.graph, {
+            this.active_drawing_for_display.render(this.graph, this.old_graph, {
               start_rect: new_start_rect,
               end_rect: new_end_rect,
               change_container_height: true,

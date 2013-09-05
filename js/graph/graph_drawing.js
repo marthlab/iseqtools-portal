@@ -33,12 +33,14 @@ GraphDrawing.prototype = {
             +" "
             +Math.ceil(rect.height);
   },
-  render: function(graph, options) { // options uses "end_rect", "container_width", and "max_height"
+  render: function(graph, old_graph, options) { // options uses "end_rect", "container_width", and "max_height"
     var options = options || {};
 
     function edgePathSpline(edge, edge_path) {
 
       var e = edge, s = e.source, t = e.target;
+      // console.log(s.dagre);
+      // console.log(t.dagre);
       
       var s_exit = {
         x: s.dagre.x+s.dagre.width/2,
@@ -67,6 +69,7 @@ GraphDrawing.prototype = {
 
 
       function line(start, end) {
+        console.log("test 1");
         return d3.svg.line()
           .x(function(d) { return d.x; })
           .y(function(d) { return d.y; })
@@ -93,12 +96,7 @@ GraphDrawing.prototype = {
       }
 
       function straight_curve(start, end) {
-
-        var base_offset = (end.x-start.x)*settings.graph.edge_curvature;
-        var order = e.edge_paths.indexOf(edge_path);
-        var slope = (end.y-start.y)/(end.x-start.x);
-        // FIXME: there MUST be a more theoretically sound way of calculating path_offset
-        var path_offset = order*Math.min(Math.abs(slope), 1)*1.3*settings.graph.path_width*-sign(slope);
+        console.log("test 2");
 
         return d3.svg.line(start, end)
           .x(function(d) { return d.x; })
@@ -112,10 +110,9 @@ GraphDrawing.prototype = {
 
       // construct path string
       var path_string = "";
-
       path_string += line(s_circ_intersect, rank_exit)
-
-      if(Math.abs(t.dagre.rank-s.dagre.rank) == 2) {
+      //console.log(Math.abs(t.dagre.rank-s.dagre.rank));
+      if(Math.abs(t.dagre.rank-s.dagre.rank) <= 2) {
         path_string += straight_curve(rank_exit, rank_exit)
         path_string += curve(rank_exit, rank_enter)
         path_string += straight_curve(rank_enter, rank_enter)
@@ -294,12 +291,24 @@ GraphDrawing.prototype = {
       if(n.gdatum && n.gdatum.type() === 'data_type') {
         d3.select(this).classed("link", true);
       }
+      // populate graph nodes with dagre data from old graph to facilitate pre-animation positioning of new nodes/edges
+      if(old_graph) {
+        old_node = _.find(old_graph.nodes, function(old_node){ return old_node.key === n.key;});
+        if(old_node) {
+          n.dagre = _.clone(old_node.dagre);
+          n.dagre.id = "old";
+        }
+      }
     });
 
     new_nodes_elems.each(function(n){
-      var twins = nodes_elems.filter(function(d) { return d.gdatum === n.gdatum && d !== n});
-      if(twins && twins.data().length === 1) {
-        d3.select(this).attr("transform", d3.select(twins[0][0]).attr("transform"));
+      var twins = updated_nodes_elems.filter(function(d) { return d.gdatum === n.gdatum; });
+      if(twins && twins.data().length === 1 && old_graph) {
+        var twin_datum = d3.select(twins[0][0]).datum();
+        n.dagre = _.clone(twin_datum.dagre);
+        n.dagre.id = "copy";
+        n.dagre.rank += 2;
+        d3.select(this).attr("transform", getTransform);
       }
     })
 
@@ -330,11 +339,17 @@ GraphDrawing.prototype = {
         .append("path")
         .attr("stroke-width", settings.graph.path_width);
 
-    // new_edges_paths
-    //   .attr("d", function(edge_path) {
-    //     var edge = d3.select(this.parentNode).datum();
-    //     return edgePathSpline(edge, edge_path);
-    //   });
+    // try scoping to edges between identical gdata
+    new_edges_paths
+      .filter(function(d) {
+        var edge = d3.select(this.parentNode).datum();
+        return edge.source.gdatum === edge.target.gdatum && edge.source.dagre && edge.target.dagre;
+      })
+      .attr("d", function(edge_path) {
+        //debugger;
+        var edge = d3.select(this.parentNode).datum();
+        return edgePathSpline(edge, edge_path);
+      });
 
     // new_edges_paths.each
     //   .append("svg:title")
@@ -383,7 +398,10 @@ GraphDrawing.prototype = {
     old_nodes_elems.each(function(n){
       var twins = nodes_elems.filter(function(d) { return d.gdatum === n.gdatum && d !== n});
       if(twins && twins.data().length === 1) {
-        n.dagre = {x: twins.datum().dagre.x, y: twins.datum().dagre.y};
+        //n.dagre = {x: twins.datum().dagre.x, y: twins.datum().dagre.y};
+        n.dagre = _.clone(twins.datum().dagre);
+        n.dagre.id = "old_copy";
+        n.dagre.rank += 2;
       }
     })
 
@@ -404,7 +422,46 @@ GraphDrawing.prototype = {
     // (this.for_display ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
     //   .style("stroke-opacity", 0)
     //   .remove();
-   
+
+  // (this.for_display ? old_edges_elems.selectAll('path').transition().duration(settings.graph.render_duration) : old_edges_elems.selectAll('path'))
+  //     .attr("d", function(edge_path) {
+  //       var edge = d3.select(this.parentNode).datum();
+  //       debugger;
+  //       return edgePathSpline(edge, edge_path);
+  //     })
+  //     .style("stroke-opacity", 0)
+  //     .remove();
+
+    var paths_of_old_edges = old_edges_elems.selectAll('path').filter(function(p) {
+      return p.edge.source.gdatum === p.edge.target.gdatum;
+    });
+
+    (this.for_display ? paths_of_old_edges.transition().duration(settings.graph.render_duration) : paths_of_old_edges)
+      .attr("d", function(edge_path) {
+        var node = edge_path.edge.source.dagre.id !== "old_copy" ? edge_path.edge.target : edge_path.edge.source;
+        var path_string = '';
+        var point = {x: node.dagre.x+node.dagre.width/2, y: node.dagre.y+node.dagre.height/2};
+        path_string += d3.svg.line()
+          .x(function(d) { return d.x; })
+          .y(function(d) { return d.y; })
+          .interpolate("linear")
+          ([point, point]);
+        for(var i=0; i<3; i++) {
+          path_string += d3.svg.line(point, point)
+          .x(function(d) { return d.x; })
+          .y(function(d) { return d.y; })
+          .interpolate("basis")
+          ([point, point, point, point]);
+        }
+        path_string += d3.svg.line()
+          .x(function(d) { return d.x; })
+          .y(function(d) { return d.y; })
+          .interpolate("linear")
+          ([point, point]);
+        return path_string;
+      })
+      .style("stroke-opacity", 0)
+      .remove();
 
     (this.for_display ? old_edges_paths.transition().duration(settings.graph.render_duration) : old_edges_paths)
       .style("stroke-opacity", 0)
@@ -437,7 +494,23 @@ GraphDrawing.prototype = {
     (this.for_display ? updated_labels.transition().duration(settings.graph.render_duration) : updated_labels)
      .attr("transform", function(d,i) { return "translate(0, "+(-d3.select(this.parentNode).select('.circles').node().getBBox().height/2 - 9)+")";});  
 
-    (this.for_display ? edges_paths.transition().duration(settings.graph.render_duration) : edges_paths)
+    (this.for_display ? new_edges_paths.transition().duration(settings.graph.render_duration) : new_edges_paths)
+      .attr("d", function(edge_path) {
+        var edge = d3.select(this.parentNode).datum();
+        return edgePathSpline(edge, edge_path);
+      })
+      .attr("stroke", function(edge_path) {
+        if(edge_path.gdatum) {
+          return edge_path.gdatum.color();
+        } else if(graph.content_type === "pipeline") {
+          return graph.content.color();
+        } else if(graph.content_type === "tool_usage") {
+          return graph.content.pipeline.color();
+        }
+      })
+      .style("stroke-opacity", 1);
+
+    (this.for_display ? updated_edges_paths.transition().duration(settings.graph.render_duration) : updated_edges_paths)
       .attr("d", function(edge_path) {
         var edge = d3.select(this.parentNode).datum();
         return edgePathSpline(edge, edge_path);
