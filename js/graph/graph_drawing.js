@@ -432,11 +432,11 @@ GraphDrawing.prototype = {
   //     .style("stroke-opacity", 0)
   //     .remove();
 
-    var paths_of_old_edges = old_edges_elems.selectAll('path').filter(function(p) {
-      return p.edge.source.gdatum === p.edge.target.gdatum;
+    var exiting_edges_to_animate = old_edges_elems.selectAll('path').filter(function(p) {
+      return p.edge.source.gdatum === p.edge.target.gdatum && _.find(graph.nodes, function(node){ return node.gdatum === p.edge.source.gdatum || node.gdatum === p.edge.target.gdatum});
     });
 
-    (this.for_display ? paths_of_old_edges.transition().duration(settings.graph.render_duration) : paths_of_old_edges)
+    (this.for_display ? exiting_edges_to_animate.transition().duration(settings.graph.render_duration) : exiting_edges_to_animate)
       .attr("d", function(edge_path) {
         var node = edge_path.edge.source.dagre.id !== "old_copy" ? edge_path.edge.target : edge_path.edge.source;
         var path_string = '';
