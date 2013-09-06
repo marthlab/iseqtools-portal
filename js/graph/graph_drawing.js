@@ -69,7 +69,6 @@ GraphDrawing.prototype = {
 
 
       function line(start, end) {
-        console.log("test 1");
         return d3.svg.line()
           .x(function(d) { return d.x; })
           .y(function(d) { return d.y; })
@@ -96,8 +95,6 @@ GraphDrawing.prototype = {
       }
 
       function straight_curve(start, end) {
-        console.log("test 2");
-
         return d3.svg.line(start, end)
           .x(function(d) { return d.x; })
           .y(function(d) { return d.y; })

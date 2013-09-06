@@ -98,7 +98,7 @@
           this.secondary_nodes = _.union(tu.in_data_format_usages, tu.out_data_format_usages)
                                   .map(function(dfu) { return new Node({
                                     gdatum: dfu,
-                                    label: dfu.data_format.name,
+                                    label: dfu.label,
                                     graph: this
                                   });}, this);
           break;

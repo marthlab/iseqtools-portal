@@ -221,16 +221,10 @@
 			"id":"fai"
 		},
 		{
-			"id":"metrics"
-		},
-		{
 			"id":"stats"
 		},
 		{
 			"id":"md5"
-		},
-		{
-			"id":"gzip"
 		},
 		{
 			"id":"vcf.gz"
@@ -239,97 +233,16 @@
 			"id":"tbi"
 		},
 		{
-			"id": "ploidy map"
-		},
-		{
-			"id": "gender map"
-		},
-		{
-			"id": "alignability mask"
-		},
-		{
-			"id": "CN2 mask"
-		},
-		{
-			"id": "metadata"
-		},
-		{
-			"id": "vcf (known sites)"
-		},
-		{
-			"id": "vcf (sites)"
-		},
-		{
-			"id": "vcf (genotypes)"
-		},
-		{
 			"id": "sai"
 		},
 		{
 			"id": "dbsnp"
 		},
 		{
-			"id": "UM ref"
-		},
-		{
-			"id": "HapMap sites"
-		},
-		{
-			"id": "contamination & swap stats"
-		},
-		{
-			"id": ".depthSM"
-		},
-		{
-			"id": ".selfRG"
-		},
-		{
-			"id": ".selfSM"
-		},
-		{
-			"id": "qplot stats"
-		},
-		{
-			"id": ".R"
-		},
-		{
-			"id": "beagle.gz"
-		},
-		{
-			"id": "pop.vcf.gz"
-		},
-		{
-			"id": "split.#.vcf.gz"
+			"id": "R"
 		},
 		{
 			"id": "glf"
-		},
-		{
-			"id": "stats.vcf"
-		},
-		{
-			"id": "indel sites.vcf"
-		},
-		{
-			"id": "sites.vcf"
-		},
-		{
-			"id": "sites.vcf.summary"
-		},
-		{
-			"id": "svm model"
-		},
-		{
-			"id": "OMNI sites"
-		},
-		{
-			"id": "PASS.vcf.gz"
-		},
-		{
-			"id": "PASS.split.#.vcf.gz"
-		},
-		{
-			"id": "intervals"
 		}
 	],
 	"tools": [
@@ -756,7 +669,7 @@
 				{
 					"id": 1,
 					"data_format_id": "bam",
-					"description": "Original BAM file"
+					"description": "Original alignments"
 				}
 			],
 			"tool_usages": [
@@ -767,7 +680,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 2,
-							"data_format_id": "intervals",
+							"description": "intervals",
 						}
 					]
 				},
@@ -779,7 +692,7 @@
 						{
 							"id": 3,
 							"data_format_id": "bam",
-							"description": "Realigned BAM file"
+							"description": "Local realignments"
 						}
 					]
 				}
@@ -814,7 +727,8 @@
 				},
 				{
 					"id": 6,
-					"data_format_id": "indel sites.vcf"
+					"data_format_id": "vcf",
+					"description": "indel sites"
 				},
 				{
 					"id": 7,
@@ -826,15 +740,16 @@
 				},
 				{
 					"id": 9,
-					"data_format_id": "HapMap sites"
+					"data_format_id": "vcf.gz",
+					"description": "HapMap sites"
 				},
 				{
 					"id": 10,
-					"data_format_id": "svm model"
+					"description": "svm model"
 				},
 				{
 					"id": 11,
-					"data_format_id": "OMNI sites"
+					"description": "OMNI sites"
 				}
 			],
 			"tool_usages": [
@@ -1010,7 +925,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 27,
-							"data_format_id": "sites.vcf"
+							"data_format_id": "vcf",
+							"description": "sites"
 						}
 					]
 				},
@@ -1033,7 +949,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 29,
-							"data_format_id": "stats.vcf",
+							"data_format_id": "vcf",
+							"description": "stats",
 							"multiple": true
 						}
 					]
@@ -1045,7 +962,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 30,
-							"data_format_id": "stats.vcf"
+							"data_format_id": "vcf",
+							"description": "stats"
 						}
 					]
 				},
@@ -1056,7 +974,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 31,
-							"data_format_id": "sites.vcf"
+							"data_format_id": "vcf",
+							"description": "sites"
 						}
 					]
 				},
@@ -1100,7 +1019,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 35,
-							"data_format_id": "sites.vcf.summary"
+							"description": "summary statistics"
 						}
 					]
 				},
@@ -1111,7 +1030,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 36,
-							"data_format_id": "sites.vcf"
+							"data_format_id": "vcf",
+							"description": "sites"
 						}
 					]
 				},
@@ -1177,7 +1097,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 42,
-							"data_format_id": "PASS.vcf.gz"
+							"data_format_id": "vcf.gz",
+							"description": "PASS"
 						}
 					]
 				},
@@ -1188,7 +1109,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 43,
-							"data_format_id": "PASS.split.#.vcf.gz",
+							"data_format_id": "vcf.gz",
+							"description": "PASS.split.#",
 							"multiple": true
 						}
 					]
@@ -1215,7 +1137,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 2,
-							"data_format_id": "beagle.gz"
+							"description": "beagle.gz"
 						}
 					]
 				},
@@ -1226,7 +1148,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 3,
-							"data_format_id": "beagle.gz"
+							"description": "beagle.gz"
 						}
 					]
 				},
@@ -1304,7 +1226,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 10,
-							"data_format_id": "pop.vcf.gz",
+							"data_format_id": "vcf.gz",
+							"description": "pop",
 							"multiple": true
 						}
 					]
@@ -1327,7 +1250,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 12,
-							"data_format_id": "split.#.vcf.gz",
+							"data_format_id": "vcf.gz",
+							"description": "split.#",
 							"multiple": true
 						}
 					]
@@ -1408,11 +1332,12 @@
 				},
 				{
 					"id": 6,
-					"data_format_id": "UM ref"
+					"data_format_id": "fasta"
 				},
 				{
 					"id": 7,
-					"data_format_id": "HapMap sites"
+					"data_format_id": "vcf.gz",
+					"description": "HapMap sites"
 				}
 			],
 			"tool_usages": [
@@ -1577,7 +1502,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 22,
-							"data_format_id": "contamination & swap stats"
+							"description": "contamination & swap stats"
 						}
 					]
 				},
@@ -1599,11 +1524,11 @@
 					"out_data_format_usages": [
 						{
 							"id": 24,
-							"data_format_id": "qplot stats"
+							"description": "qplot stats"
 						},
 						{
 							"id": 25,
-							"data_format_id": ".R"
+							"data_format_id": "R"
 						}
 					]
 				}
@@ -1622,19 +1547,19 @@
 				},
 				{
 					"id": 2,
-					"data_format_id": "ploidy map"
+					"description": "ploidy map"
 				},
 				{
 					"id": 3,
-					"data_format_id": "gender map"
+					"description": "gender map"
 				},
 				{
 					"id": 4,
-					"data_format_id": "alignability mask"
+					"description": "alignability mask"
 				},
 				{
 					"id": 5,
-					"data_format_id": "CN2 mask"
+					"description": "CN2 mask"
 				},
 				{
 					"id": 6,
@@ -1643,7 +1568,8 @@
 				},
 				{
 					"id": 7,
-					"data_format_id": "vcf (known sites)"
+					"data_format_id": "vcf",
+					"description": "known sites"
 				}
 			],
 			"tool_usages": [
@@ -1654,7 +1580,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 8,
-							"data_format_id": "metadata"
+							"description": "metadata"
 						}
 					]
 				},
@@ -1665,7 +1591,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 9,
-							"data_format_id": "vcf (sites)"
+							"data_format_id": "vcf",
+							"description": "sites"
 						}
 					]
 				},
@@ -1676,7 +1603,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 10,
-							"data_format_id": "vcf (genotypes)"
+							"data_format_id": "vcf",
+							"description": "genotypes"
 						}
 					]
 				}
@@ -1872,7 +1800,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 18,
-							"data_format_id": "metrics"
+							"description": "metrics"
 						},
 						{
 							"id": 19,
@@ -2290,7 +2218,7 @@
 						},
 						{
 							"id": "5",
-							"data_format_id": "metrics"
+							"description": "metrics"
 						}
 					]
 				},

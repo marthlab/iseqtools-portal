@@ -229,6 +229,8 @@ function DataFormatUsage(cfg) {
 		}
 	} else if(this.data_format) {
 		this.label = this.data_format.name;
+	} else if(this.stream) {
+		this.label = 'stream';
 	} else {
 		this.label = '';
 	}
