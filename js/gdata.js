@@ -218,9 +218,20 @@ Pipeline.prototype.pageParent = function() {
 function DataFormatUsage(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
 	this.multiple = cfg.multiple || false;
+	this.stream = cfg.stream || false;
 	this.pipeline = cfg.pipeline;
-	this.data_format = _(gdata.data_formats).find(by_id(cfg.data_format_id));
+	this.data_format = _(gdata.data_formats).find(by_id(cfg.data_format_id)) || null;
 	this.description = cfg.description || null;
+	if(this.description) {
+		this.label = this.description;
+		if(this.data_format) {
+			this.label += (' ('+this.data_format.name+')');
+		}
+	} else if(this.data_format) {
+		this.label = this.data_format.name;
+	} else {
+		this.label = '';
+	}
 }
 _.extend(DataFormatUsage.prototype, gdata_mixin);
 DataFormatUsage.prototype.graphable = false;

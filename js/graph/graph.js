@@ -82,10 +82,10 @@
 
           this.primary_nodes = pl.tool_usages.map(function(tu) { return new Node({gdatum: tu, label: tu.tool.name, graph: this});}, this);
           this.secondary_nodes = pl.data_format_usages
-            .filter(function(dfu){ return dfu.data_format.id !== "stream"})
+            .filter(function(dfu){ return !dfu.stream;})
             .map(function(dfu) { return new Node({
               gdatum: dfu,
-              label: dfu.description || dfu.data_format.name,
+              label: dfu.label,
               graph: this
             });}, this);
 
@@ -154,7 +154,7 @@
 
           this.edges = _.union.apply(this, this.primary_nodes.map(function(primary_node) {
             var edges_out = primary_node.gdatum.out_data_format_usages
-              .filter(function(dfu){ return dfu.data_format.id !== "stream"})
+              .filter(function(dfu){ return !dfu.stream})
               .map(function(dfu) {
                 return new Edge({
                   source: primary_node,
@@ -163,7 +163,7 @@
                 });
               }, this);
             var stream_edges_out = primary_node.gdatum.out_data_format_usages
-              .filter(function(dfu){ return dfu.data_format.id === "stream"})
+              .filter(function(dfu){ return dfu.stream})
               .map(function(dfu) {
                 return new Edge({
                   source: primary_node,
@@ -172,7 +172,7 @@
                 });
               }, this);
             var edges_in = primary_node.gdatum.in_data_format_usages
-              .filter(function(dfu){ return dfu.data_format.id !== "stream"})
+              .filter(function(dfu){ return !dfu.stream})
               .map(function(dfu) {
                 return new Edge({
                   source: _(this.secondary_nodes).find(function(secondary_node) { return secondary_node.gdatum == dfu;}),
