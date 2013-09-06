@@ -356,8 +356,43 @@
 				{
 					"id": "gatk-indel-realigner",
 					"name": "GATK Indel Realigner"
+				},
+				{
+					"id": "gatk-base-recalibrator",
+					"name": "GATK Base Recalibrator"
+				},
+				{
+					"id": "gatk-print-reads",
+					"name": "GATK Print Reads"
+				},
+				{
+					"id": "gatk-reduce-reads",
+					"name": "GATK Reduce Reads"
+				},
+				{
+					"id": "gatk-variant-annotator",
+					"name": "GATK Variant Annotator"
+				},
+				{
+					"id": "gatk-haplotype-caller",
+					"name": "GATK Haplotype Caller"
+				},
+				{
+					"id": "gatk-unified-genotyper",
+					"name": "GATK Unified Genotyper"
+				},
+				{
+					"id": "gatk-variant-recalibrator",
+					"name": "GATK Variant Recalibrator"
+				},
+				{
+					"id": "gatk-apply-recalibration",
+					"name": "GATK Apply Recalibration"
 				}
 			]
+		},
+		{
+			"id": "snpEff"
 		},
 		{
 			"id": "samtools",
@@ -597,6 +632,221 @@
 		}
 	],
 	"pipelines": [
+		{
+			"id": "gatk-base-recalibration",
+			"name": "GATK Base Recalibration",
+			"team_id": "broad",
+			"data_types_ids": ["alignments"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "bam",
+					"description": "original alignments"
+				},
+				{
+					"id": 2,
+					"data_format_id": "vcf",
+					"description": "known sites"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "gatk-base-recalibrator",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 3,
+							"description": "recalibration table"
+						}
+					]
+				},
+				{
+					"id": 2,
+					"tool_id": "gatk-print-reads",
+					"in_data_format_usages_ids": [1,2,3],
+					"out_data_format_usages": [
+						{
+							"id": 4,
+							"data_format_id": "bam",
+							"description": "recalibrated alignments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "gatk-compression",
+			"name": "GATK Compression",
+			"team_id": "broad",
+			"data_types_ids": ["alignments"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "bam",
+					"description": "original alignments"
+				},
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "gatk-reduce-reads",
+					"in_data_format_usages_ids": [1],
+					"out_data_format_usages": [
+						{
+							"id": 2,
+							"data_format_id": "bam",
+							"description": "compressed alignments"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "gatk-functional-annotation",
+			"name": "GATK Functional Annotation",
+			"team_id": "broad",
+			"workflow_id": 5,
+			"data_types_ids": ["short_variants", "functional_features", "annotations"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"description": "transcript database"
+				},
+				{
+					"id": 2,
+					"data_format_id": "vcf",
+					"description": "original variants"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "snpEff",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 3,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 2,
+					"tool_id": "gatk-variant-annotator",
+					"in_data_format_usages_ids": [2,3],
+					"out_data_format_usages": [
+						{
+							"id": 4,
+							"data_format_id": "vcf",
+							"description": "annotated variants"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "gatk-variant-calling-hc",
+			"name": "GATK Variant Calling (HC)",
+			"team_id": "broad",
+			"workflow_id": 2,
+			"data_types_ids": ["alignments", "short_variants"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "bam"
+				},
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "gatk-haplotype-caller",
+					"in_data_format_usages_ids": [1],
+					"out_data_format_usages": [
+						{
+							"id": 2,
+							"data_format_id": "vcf"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "gatk-variant-calling-ug",
+			"name": "GATK Variant Calling (UG)",
+			"team_id": "broad",
+			"workflow_id": 2,
+			"data_types_ids": ["alignments", "short_variants"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "bam"
+				},
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "gatk-unified-genotyper",
+					"in_data_format_usages_ids": [1],
+					"out_data_format_usages": [
+						{
+							"id": 2,
+							"data_format_id": "vcf"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "gatk-variant-recalibration",
+			"name": "GATK Variant Recalibration",
+			"team_id": "broad",
+			"data_types_ids": ["short_variants"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "vcf",
+					"description": "uncalibrated variants"
+				},
+				{
+					"id": 2,
+					"description": "resources"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "gatk-variant-recalibrator",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 3,
+							"description": "recalibration"
+						},
+						{
+							"id": 4,
+							"description": "traches"
+						},
+						{
+							"id": 5,
+							"description": "recalibration plots"
+						}
+					]
+				},
+				{
+					"id": 2,
+					"tool_id": "gatk-apply-recalibration",
+					"in_data_format_usages_ids": [1,2,3,4,5],
+					"out_data_format_usages": [
+						{
+							"id": 6,
+							"data_format_id": "vcf",
+							"description": "recalibrated variants"
+						}
+					]
+				}
+			]
+		},
 		{
 			"id": "sg-adviser-annotation-interpretation",
 			"name": "SG Adviser Annotation & Interpretation",
