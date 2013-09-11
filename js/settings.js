@@ -6,7 +6,7 @@ settings = {
     rankSep: 30,
     path_width:3,
     path_gap: 0.5,
-    edge_curvature: 0.47,
+    edge_curvature: 0.55,
     render_duration: 2000
   },
   nodes: {

@@ -61,7 +61,7 @@ line-height: 28px;
 
 
 
-.edge path {stroke-opacity:0;}
+.edge path {stroke-opacity:0; stroke-linecap: round;}
 .node {opacity:0;}
 
 .node.link:hover circle , .node.link:hover text {

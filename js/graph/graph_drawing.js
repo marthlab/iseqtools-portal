@@ -82,16 +82,19 @@ GraphDrawing.prototype = {
         var order = e.edge_paths.indexOf(edge_path);
         var slope = (end.y-start.y)/(end.x-start.x);
         // FIXME: there MUST be a more theoretically sound way of calculating path_offset
-        var path_offset = order*Math.min(Math.abs(slope), 1)*1.3*settings.graph.path_width*-sign(slope);
+        var path_offset_base = Math.min(Math.abs(slope), 1.4)*1.2*settings.graph.path_width*sign(slope);
+        var path_offset_start = (e.edge_paths.length-1-order)*path_offset_base;
+        var path_offset_end = order*path_offset_base;
 
         return d3.svg.line(start, end)
           .x(function(d) { return d.x; })
           .y(function(d) { return d.y; })
           .interpolate("basis")
           ([start,
-            {x: start.x + base_offset + path_offset, y: start.y},
-            {x: end.x - base_offset + path_offset, y: end.y},
+            {x: start.x + base_offset + path_offset_start, y: start.y},
+            {x: end.x - base_offset - path_offset_end, y: end.y},
             end])
+                 
       }
 
       function straight_curve(start, end) {
