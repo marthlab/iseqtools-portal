@@ -89,13 +89,13 @@ line-height: 28px;
 
 .node.primary text {
   font-weight: 600;
-  font-size:30px;
+  font-size:28px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .node.secondary text {
   font-weight: 600;
-  font-size:22px;
+  font-size:20px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 

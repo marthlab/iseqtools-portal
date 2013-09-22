@@ -252,32 +252,32 @@ GraphDrawing.prototype = {
       .each(function(n) {
         var text_elem = d3.select(this).append("text");
 
-        // split by spaces
+        // split on spaces
         var fragments = n.label.split(" ");
+        fragments = fragments.map(function(word, index) {
+            return word + (index == fragments.length-1 ? "" : " "); 
+        });
 
-        //split by hyphens
+        //split on hyphens
         var fragments = _.flatten(fragments.map(function(fragment) {
           hypenated_fragments = fragment.split("-");
           return hypenated_fragments.map(function(word, index) {
-            return word + (index == hypenated_fragments.length-1 ? " " : "-"); 
+            return word + (index == hypenated_fragments.length-1 ? "" : "-"); 
           })
         }), true);
 
-        // split by underscores
+        // split on underscores
         fragments = _.flatten(fragments.map(function(fragment) {
           underscored_fragments = fragment.split("_");
           return underscored_fragments.map(function(word, index) {
-            return word + (index == underscored_fragments.length-1 ? " " : "_"); 
+            return word + (index == underscored_fragments.length-1 ? "" : "_"); 
           })
         }), true);
-        
+
         // split on uppercase letter preceded by lowercase letter
         fragments = _.flatten(fragments.map(function(fragment) {
-          var components = [];
+          var components = [fragment[0]];
           for(var i=1; i<fragment.length; i++) {
-            if(i === 1) {
-              components.push(fragment[0]);
-            }
             if(fragment[i] !== fragment[i].toLowerCase() && fragment[i-1] !== fragment[i-1].toUpperCase()) {
               components.push(fragment[i]);
             } else {
@@ -286,10 +286,6 @@ GraphDrawing.prototype = {
           }
           return components;
         }), true);
-
-        fragments = _.map(fragments, function(fragment){ return fragment.trim(); });
-
-        console.log(fragments)
 
         var label_lines = [[]];
         for (var i=0; i<fragments.length; i++) {
