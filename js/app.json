@@ -243,6 +243,21 @@
 		},
 		{
 			"id": "glf"
+		},
+		{
+			"id": "txt"
+		},
+		{
+			"id": "bt2"
+		},
+		{
+			"id": "gtf"
+		},
+		{
+			"id": "sam"
+		},
+		{
+			"id": "log"
 		}
 	],
 	"tools": [
@@ -599,6 +614,73 @@
 				}
 			]
 		},
+		{
+			"id": "Bowtie_2",
+			"name": "Bowtie 2",
+			"subtools": [
+				{
+					"id": "bowtie2"
+				},
+				{
+					"id": "bowtie2-align"
+				},
+				{
+					"id": "bowtie2-build"
+				},
+				{
+					"id": "bowtie2-inspect"
+				}
+			]
+		},
+		{
+			"id": "RseqFlow_tools",
+			"name": "RseqFlow tools",
+			"team_id": "usc",
+			"subtools": [
+				{
+					"id": "Check_for_reads_file.py"
+				},
+				{
+					"id": "SplitByChromosome_for_annotationGtfFile.py"
+				},
+				{
+					"id": "Check_for_reference_annotation_withoutGenome.py"
+				},
+				{
+					"id": "Get_ReadsMappingInformation.py"
+				},
+				{
+					"id": "SplitByChromosome_for_transcriptomeSamFile.py"
+				},
+				{
+					"id": "ExonCombination.py"
+				},
+				{
+					"id": "JunctionCombination.py"
+				},
+				{
+					"id": "ExonIndex.py"
+				},
+				{
+					"id": "JunctionIndex.py"
+				},
+				{
+					"id": "SamSplitEvenly_and_Randomly_gencode_modify.py"
+				},
+				{
+					"id": "GeneExpressionLevel.py"
+				},
+				{
+					"id": "ExonExpressionLevel.py"
+				},
+				{
+					"id": "JunctionExpressionLevel.py"
+				},
+				{
+					"id": "Merge.sh"
+				}
+			]
+		}
 	],
 	"workflows": [
 		{
@@ -632,6 +714,279 @@
 		}
 	],
 	"pipelines": [
+		{
+			"id": "rna-seq-expression-estimation",
+			"name": "RNA-seq Expression Estimation",
+			"team_id": "usc",
+			"workflow_id": 4,
+			"data_types_ids": ["reference_genomes", "reads", "alignments", "gene_models", "de_genes"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "gtf"
+				},
+				{
+					"id": 2,
+					"data_format_id": "fasta"
+				},
+				{
+					"id": 3,
+					"data_format_id": "fastq"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "SplitByChromosome_for_annotationGtfFile.py",
+					"in_data_format_usages_ids": [1],
+					"out_data_format_usages": [
+						{
+							"id": 4,
+							"data_format_id": "txt",
+							"description": "chrList_gtf"
+						},
+						{
+							"id": 5,
+							"data_format_id": "gtf",
+							"description": "chr[1-24]_annotation",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 2,
+					"tool_id": "Check_for_reference_annotation_withoutGenome.py",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 6,
+							"data_format_id": "txt",
+							"description": "without_genome"
+						}
+					]
+				},
+				{
+					"id": 3,
+					"tool_id": "bowtie2-build",
+					"in_data_format_usages_ids": [2,3],
+					"out_data_format_usages": [
+						{
+							"id": 7,
+							"data_format_id": "bt2",
+							"description": "ucsc_gencode.v14_transcripts.[1-4]",
+							"multiple": true
+						},
+						{
+							"id": 8,
+							"data_format_id": "bt2",
+							"description": "ucsc_gencode.v14_transcripts.rev.[1-2]",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 4,
+					"tool_id": "Check_for_reads_file.py",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": 9,
+							"data_format_id": "fastq",
+							"description": "SEPL600_1_CGATGT_L008_R1"
+						}
+					]
+				},
+				{
+					"id": 5,
+					"tool_id": "bowtie2",
+					"in_data_format_usages_ids": [3,7,8],
+					"out_data_format_usages": [
+						{
+							"id": 10,
+							"data_format_id": "sam",
+							"description": "Bowtie2_transcriptome",
+						}
+					]
+				},
+				{
+					"id": 6,
+					"tool_id": "Get_ReadsMappingInformation.py",
+					"in_data_format_usages_ids": [10],
+					"out_data_format_usages": [
+						{
+							"id": 11,
+							"data_format_id": "log",
+							"description": "mapping_info",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 7,
+					"tool_id": "SplitByChromosome_for_transcriptomeSamFile.py",
+					"in_data_format_usages_ids": [10],
+					"out_data_format_usages": [
+						{
+							"id": 12,
+							"data_format_id": "sam",
+							"description": "chr[1-24]_alignment",
+							"multiple": true
+						},
+						{
+							"id": 13,
+							"data_format_id": "txt",
+							"description": "chrList_sam.txt"
+						}
+					]
+				},
+				{
+					"id": 8,
+					"tool_id": "ExonCombination.py",
+					"in_data_format_usages_ids": [5],
+					"out_data_format_usages": [
+						{
+							"id": 14,
+							"data_format_id": "txt",
+							"description": "ExonCombination_chr[n]",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 9,
+					"tool_id": "JunctionCombination.py",
+					"in_data_format_usages_ids": [5],
+					"out_data_format_usages": [
+						{
+							"id": 15,
+							"data_format_id": "txt",
+							"description": "JunctionCombination_chr[n]",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 10,
+					"tool_id": "ExonIndex.py",
+					"in_data_format_usages_ids": [5,14],
+					"out_data_format_usages": [
+						{
+							"id": 18,
+							"data_format_id": "txt",
+							"description": "ExonIndex_chr[n]",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 11,
+					"tool_id": "JunctionIndex.py",
+					"in_data_format_usages_ids": [5,15],
+					"out_data_format_usages": [
+						{
+							"id": 19,
+							"data_format_id": "txt",
+							"description": "JunctionIndex_chr[n]",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 12,
+					"tool_id": "SamSplitEvenly_and_Randomly_gencode_modify.py",
+					"in_data_format_usages_ids": [5,12],
+					"out_data_format_usages": [
+						{
+							"id": 16,
+							"data_format_id": "sam",
+							"description": "chr[n]_uniqGene",
+							"multiple": true
+						},
+						{
+							"id": 17,
+							"data_format_id": "txt",
+							"description": "chr[n]_reads_multiGene",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 13,
+					"tool_id": "GeneExpressionLevel.py",
+					"in_data_format_usages_ids": [11,14,18,16],
+					"out_data_format_usages": [
+						{
+							"id": 20,
+							"data_format_id": "txt",
+							"description": "chr[1]_GeneExpressionLevel_unique",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 14,
+					"tool_id": "ExonExpressionLevel.py",
+					"in_data_format_usages_ids": [18,16,11],
+					"out_data_format_usages": [
+						{
+							"id": 21,
+							"data_format_id": "txt",
+							"description": "chr[1]_ExonExpressionLevel_unique",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 15,
+					"tool_id": "JunctionExpressionLevel.py",
+					"in_data_format_usages_ids": [16,19,11],
+					"out_data_format_usages": [
+						{
+							"id": 22,
+							"data_format_id": "txt",
+							"description": "chr[1]_JunctionExpressionLevel_unique",
+							"multiple": true
+						}
+					]
+				},
+				{
+					"id": 16,
+					"tool_id": "Merge.sh",
+					"in_data_format_usages_ids": [20],
+					"out_data_format_usages": [
+						{
+							"id": 23,
+							"data_format_id": "txt",
+							"description": "whole_GeneExpressionLevel_unique"
+						}
+					]
+				},
+				{
+					"id": 17,
+					"tool_id": "Merge.sh",
+					"in_data_format_usages_ids": [21],
+					"out_data_format_usages": [
+						{
+							"id": 24,
+							"data_format_id": "txt",
+							"description": "whole_GeneExpressionLevel_unique"
+						}
+					]
+				},
+				{
+					"id": 18,
+					"tool_id": "Merge.sh",
+					"in_data_format_usages_ids": [22],
+					"out_data_format_usages": [
+						{
+							"id": 25,
+							"data_format_id": "txt",
+							"description": "whole_GeneExpressionLevel_unique"
+						}
+					]
+				}
+			]
+		},
 		{
 			"id": "gatk-base-recalibration",
 			"name": "GATK Base Recalibration",
