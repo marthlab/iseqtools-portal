@@ -748,7 +748,7 @@
 						{
 							"id": 5,
 							"data_format_id": "gtf",
-							"description": "chr[1-24]_annotation",
+							"description": "chr[1–24]_annotation",
 							"multiple": true
 						}
 					]
@@ -773,13 +773,13 @@
 						{
 							"id": 7,
 							"data_format_id": "bt2",
-							"description": "ucsc_gencode.v14_transcripts.[1-4]",
+							"description": "ucsc_gencode.v14_transcripts.[1–4]",
 							"multiple": true
 						},
 						{
 							"id": 8,
 							"data_format_id": "bt2",
-							"description": "ucsc_gencode.v14_transcripts.rev.[1-2]",
+							"description": "ucsc_gencode.v14_transcripts.rev.[1–2]",
 							"multiple": true
 						}
 					]
@@ -829,7 +829,7 @@
 						{
 							"id": 12,
 							"data_format_id": "sam",
-							"description": "chr[1-24]_alignment",
+							"description": "chr[1–24]_alignment",
 							"multiple": true
 						},
 						{
@@ -918,7 +918,7 @@
 						{
 							"id": 20,
 							"data_format_id": "txt",
-							"description": "chr[1]_GeneExpressionLevel_unique",
+							"description": "chr[n]_GeneExpressionLevel_unique",
 							"multiple": true
 						}
 					]
@@ -931,7 +931,7 @@
 						{
 							"id": 21,
 							"data_format_id": "txt",
-							"description": "chr[1]_ExonExpressionLevel_unique",
+							"description": "chr[n]_ExonExpressionLevel_unique",
 							"multiple": true
 						}
 					]
@@ -944,7 +944,7 @@
 						{
 							"id": 22,
 							"data_format_id": "txt",
-							"description": "chr[1]_JunctionExpressionLevel_unique",
+							"description": "chr[n]_JunctionExpressionLevel_unique",
 							"multiple": true
 						}
 					]
