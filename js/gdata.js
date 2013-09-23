@@ -15,9 +15,9 @@ var gdata_mixin = {
 	color: function() {
 		var type = this.type();
 		if(app.colors[type]) {
-			return app.colors[type](this.id);
+			return d3.rgb(app.colors[type](this.id));
 		} else {
-			return "#000";
+			return d3.rgb("#000");
 		}
 	},
 	visualHierarchyLevel: function() {

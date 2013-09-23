@@ -8,7 +8,7 @@ function GraphDrawing(options) {
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 
-  this.svg.call(grayscale("grayscale", this.defs));
+  //this.svg.call(grayscale("grayscale", this.defs));
   _.each(gdata.workflows, function(wf) {
     this.svg.call(glow("glow-"+wf.id, this.defs).rgb(wf.color()).stdDeviation(4));
   }, this);
@@ -129,7 +129,7 @@ GraphDrawing.prototype = {
       return path_string;
     }
 
-    function getTransform(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; };
+    function getTransform(d) { return 'translate('+ d.dagre.x +','+ d.dagre.y +')'; }
 
     var self = this;
 
@@ -556,13 +556,22 @@ GraphDrawing.prototype = {
   highlightAllWorkflows: function() {
     this.edgeGroup
       .selectAll("g.edge").selectAll("path")
+      .attr("stroke", function(ep,i){
+        return ep.gdatum.color();
+      })
       .attr("filter", null);
   },
   highlightWorkflow: function(workflow) {
     this.edgeGroup
       .selectAll("g.edge").selectAll("path")
+      .attr("stroke", function(ep,i){
+        var color = ep.gdatum.color();
+        var grayscale = rgbToGrayscale(color);
+        console.log((workflow !== null && workflow === ep.gdatum ? color : grayscale));
+        return (workflow !== null && workflow === ep.gdatum ? color : grayscale); 
+      })
       .attr("filter", function(ep,i){
-        return (workflow !== null && workflow === ep.gdatum ? "url(#glow-"+workflow.id+")" : "url(#grayscale)"); 
+        return (workflow !== null && workflow === ep.gdatum ? "url(#glow-"+workflow.id+")" : ""); 
       });
   },
   getRect: function() {
