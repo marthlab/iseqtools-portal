@@ -111,14 +111,12 @@ GraphDrawing.prototype = {
       // construct path string
       var path_string = "";
       path_string += line(s_circ_intersect, rank_exit)
-      //console.log(Math.abs(t.dagre.rank-s.dagre.rank));
+
       if(Math.abs(t.dagre.rank-s.dagre.rank) <= 2) {
         path_string += straight_curve(rank_exit, rank_exit)
         path_string += curve(rank_exit, rank_enter)
         path_string += straight_curve(rank_enter, rank_enter)
-        //path_string += curve(points[1], rank_enter)
       } else {
-        //var connection_y = e.dagre.points[0].y; // same as e.dagre.points[1].y
         var points = [{x: rank_exit.x + settings.graph.rankSep, y: e.dagre.points[0].y},
                     {x: rank_enter.x - settings.graph.rankSep, y: e.dagre.points[1].y}];
         path_string += curve(rank_exit, points[0])
@@ -220,31 +218,6 @@ GraphDrawing.prototype = {
           .attr("class", "circle_paths");
 
     nodes_elems.classed("link", function(n) { return n.gdatum && n.gdatum !== graph.content && n.gdatum.type() === "tool_usage"; })
-
-    // var circle_paths = nodes_elems.select("g.circles").select("g.circle_paths")
-    //   .selectAll("circle.circle_path")
-    //   .data(function(n) { return n.node_paths; }, NodePath.key);
-
-    // var new_circle_paths = circle_paths
-    //     .enter()
-    //       .append("circle")
-    //       .attr("class", "circle_path")
-    //       .attr("cx", 0)
-    //       .attr("cy", 0)
-    //       .attr("r", function(node_path) {
-    //         var node = d3.select(this.parentNode).datum();
-    //         return settings.nodes[node.type()].radius+(node.node_paths.indexOf(node_path)+1)*settings.graph.path_width;
-    //       })
-    //       .attr("stroke", function(node_path) {
-    //         var node = d3.select(this.parentNode).datum();
-    //         return graph.pathColors(node_path.gdatum && node_path.gdatum.id);
-    //       })
-    //       .attr("stroke-width", settings.graph.path_width);
-
-    // circle_paths.classed("link", function(np) { return true; })
-
-    // var old_circle_paths = circle_paths
-    //   .exit();
 
     var new_labels = new_nodes_elems
       .append("g")
@@ -446,20 +419,6 @@ GraphDrawing.prototype = {
       old_nodes_elems.style("opacity", 0).attr("transform", getTransform).remove();
     }
 
-
-    // (this.for_display ? old_circle_paths.transition().duration(settings.graph.render_duration) : old_circle_paths)
-    //   .style("stroke-opacity", 0)
-    //   .remove();
-
-  // (this.for_display ? old_edges_elems.selectAll('path').transition().duration(settings.graph.render_duration) : old_edges_elems.selectAll('path'))
-  //     .attr("d", function(edge_path) {
-  //       var edge = d3.select(this.parentNode).datum();
-  //       debugger;
-  //       return edgePathSpline(edge, edge_path);
-  //     })
-  //     .style("stroke-opacity", 0)
-  //     .remove();
-
     var exiting_edges_to_animate = old_edges_elems.selectAll('path').filter(function(p) {
       return p.edge.source.gdatum === p.edge.target.gdatum && _.find(graph.nodes, function(node){ return node.gdatum === p.edge.source.gdatum || node.gdatum === p.edge.target.gdatum});
     });
@@ -499,11 +458,6 @@ GraphDrawing.prototype = {
       .style("opacity", 0)
       .remove();
 
-    // new_nodes_elems.attr("transform", getTransform);
-
-    // (this.for_display ? new_nodes_elems.transition().duration(settings.graph.render_duration) : new_nodes_elems)
-    //   .style("opacity", 1);
-
     if(this.for_display) {
       nodes_elems
         .transition()
@@ -515,9 +469,6 @@ GraphDrawing.prototype = {
     } else {
       nodes_elems.style("opacity", 1).attr("transform", getTransform);
     }
-
-    // (this.for_display ? new_circle_paths.transition().duration(settings.graph.render_duration) : new_circle_paths)
-    //   .style("stroke-opacity", 1);
 
     (this.for_display ? updated_labels.transition().duration(settings.graph.render_duration) : updated_labels)
      .attr("transform", function(d,i) { return "translate(0, "+(-d3.select(this.parentNode).select('.circles').node().getBBox().height/2 - 9)+")";});  
@@ -573,20 +524,9 @@ GraphDrawing.prototype = {
     nodes_elems.each(function(node) {
       var node_elem = this;
       this.onclick = function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } };
-      // this.onmouseover = function() { edges_paths.classed("hover", function(ep) { return ep.gdatum === edge_path.gdatum; }); };
-      // this.onmouseout = function() { edges_paths.classed("hover", false); };
     });
 
-    // circle_paths
-    //   .each(function(node_path) {
-    //     var node_path_elem = this;
-    //     this.onclick = function() { if(hasClassSVG(node_path_elem, 'link')) { app.requestResource(node_path.gdatum.url()); } };
-    //   })
-    //   .attr("stroke", function(node_path) {
-    //     return node_path.gdatum ? node_path.gdatum.color() : graph.content.color();
-    //   })
-
-    nodes_elems // node.gdatum && node.gdatum.type() == "tool_usage"
+    nodes_elems
       .each(function(node) {
         var node_elem = this;
         this.onclick = function() { if(hasClassSVG(node_elem, 'link')) { app.requestResource(node.gdatum.url()); } };
@@ -654,19 +594,6 @@ GraphDrawing.prototype = {
       y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
     })
 
-    // node_path_elems.each(function(d, i) {
-    //   var dagre_data = this.parentElement.parentElement.parentElement.__data__.dagre;
-    //   var path_bbox = {
-    //     x: dagre_data.x-dagre_data.width/2,
-    //     y: dagre_data.y-dagre_data.height/2,
-    //     width: dagre_data.width,
-    //     height: dagre_data.height
-    //   };
-    //   x_min = Math.min(x_min, path_bbox.x);
-    //   x_max = Math.max(x_max, path_bbox.x+path_bbox.width);
-    //   y_min = Math.min(y_min, path_bbox.y);
-    //   y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
-    // })
     edge_path_elems.each(function(d, i) {
       var path_bbox = this.getBBox();
       x_min = Math.min(x_min, path_bbox.x);
