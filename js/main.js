@@ -415,7 +415,10 @@
     widgets[w_name].init();
   });
 
+
+
   //initialize router
+  Davis.extend(Davis.hashRouting());
   app.router = Davis(function () {
     this.configure(function(){
       this.generateRequestOnPageLoad = true;
