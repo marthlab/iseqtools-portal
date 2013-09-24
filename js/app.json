@@ -262,6 +262,9 @@
 		},
 		{
 			"id": "log"
+		},
+		{
+			"id": "bed"
 		}
 	],
 	"tools": [
@@ -787,7 +790,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 4,
-							"data_format_id": "bed"
+							"data_format_id": "bed",
+							"stream": true
 						}
 					]
 				},
@@ -809,7 +813,8 @@
 					"out_data_format_usages": [
 						{
 							"id": 6,
-							"data_format_id": "bed"
+							"data_format_id": "bed",
+							"stream": true
 						}
 					]
 				},
@@ -827,7 +832,7 @@
 				{
 					"id": 7,
 					"tool_id": "annotate_adapter",
-					"in_data_format_usages_ids": [7],
+					"in_data_format_usages_ids": [5,7],
 					"out_data_format_usages": [
 						{
 							"id": 8,
