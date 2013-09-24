@@ -266,6 +266,26 @@
 	],
 	"tools": [
 		{
+			"id": "GMS",
+			"team_id": "washu",
+			"subtools": [
+				{
+					"id": "snp_filter"
+				},
+				{
+					"id": "indel_filter"
+				},
+				{
+					"id": "annotate_adapter",
+					"name": "annotate adapter"
+				},
+				{
+					"id": "annotate_transcript_variants",
+					"name": "annotate transcript variants"
+				}
+			]
+		},
+		{
 			"id": "picard",
 			"subtools": [
 				{
@@ -433,6 +453,12 @@
 				},
 				{
 					"id": "samtools-pileup"
+				},
+				{
+					"id": "samtools-indel"
+				},
+				{
+					"id": "samtools-SNV"
 				}
 			]
 		},
@@ -718,6 +744,110 @@
 		}
 	],
 	"pipelines": [
+		{
+			"id": "gms-referencealignment",
+			"name": "GMS ReferenceAlignment",
+			"team_id": "washu",
+			"workflow_id": 5,
+			"data_types_ids": ["alignments", "short_variants", "functional_features", "annotated_variants"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "bam",
+					"description": "read"
+				}
+			],
+			"tool_usages": [
+				{
+					"id": 1,
+					"tool_id": "bwa",
+					"in_data_format_usages_ids": [1],
+					"out_data_format_usages": [
+						{
+							"id": 2,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": 2,
+					"tool_id": "picard",
+					"in_data_format_usages_ids": [2],
+					"out_data_format_usages": [
+						{
+							"id": 3,
+							"data_format_id": "bam"
+						}
+					]
+				},
+				{
+					"id": 3,
+					"tool_id": "samtools-indel",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": 4,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 4,
+					"tool_id": "indel_filter",
+					"in_data_format_usages_ids": [4],
+					"out_data_format_usages": [
+						{
+							"id": 5,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 5,
+					"tool_id": "samtools-SNV",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": 6,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 6,
+					"tool_id": "snp_filter",
+					"in_data_format_usages_ids": [6],
+					"out_data_format_usages": [
+						{
+							"id": 7,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 7,
+					"tool_id": "annotate_adapter",
+					"in_data_format_usages_ids": [7],
+					"out_data_format_usages": [
+						{
+							"id": 8,
+							"data_format_id": "ann"
+						}
+					]
+				},
+				{
+					"id": 8,
+					"tool_id": "annotate_transcript_variants",
+					"in_data_format_usages_ids": [8],
+					"out_data_format_usages": [
+						{
+							"id": 9,
+							"data_format_id": "ann"
+						}
+					]
+				}
+			]
+		},
 		{
 			"id": "rna-seq-expression-estimation",
 			"name": "RNA-seq Expression Estimation",
