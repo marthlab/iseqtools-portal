@@ -202,12 +202,18 @@ GraphDrawing.prototype = {
                 if(n.gdatum.type() == 'task') {
                   var rad = settings.nodes[n.type()].radius*0.73;
                   d3.select(this)
-                    .append("use")
+                    .append("image")
                       .attr("xlink:href", app.base_url+"/img/tasks/"+n.gdatum.id+".svg#Layer_1")
                       .attr("x", -rad)
                       .attr("y", -rad)
                       .attr("width", 2*rad)
                       .attr("height", 2*rad)
+                    // .append("use")
+                    //   .attr("xlink:href", app.base_url+"/img/tasks/"+n.gdatum.id+".svg#Layer_1")
+                    //   .attr("x", -rad)
+                    //   .attr("y", -rad)
+                    //   .attr("width", 2*rad)
+                    //   .attr("height", 2*rad)
                 }
               });
                 
