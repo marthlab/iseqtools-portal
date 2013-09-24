@@ -313,6 +313,7 @@
     info_widget: {
       templates: {
         'about': _.template($('#info_about_template').html()),
+        'pegasus': _.template($('#info_pegasus_template').html()),
         'summary': _.template($('#info_summary_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
         'pipeline': _.template($('#info_pipeline_template').html()),

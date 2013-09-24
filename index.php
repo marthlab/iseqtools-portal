@@ -211,6 +211,47 @@ switch ($_SERVER['SERVER_NAME']) {
 
         </script>
 
+        <script type="text/html" id='info_pegasus_template'>
+<h1>Pegasus Workflow Management System</h1>
+            <div class="info_inline">
+            <h3>Developed by:</h3> <a href="/teams/usc">USC</a><br>
+            <h3>Website:</h3> <a href="http://pegasus.isi.edu/">http://pegasus.isi.edu/</a>
+            </div>
+<ul>
+  <li>
+    <b>Pegasus is a workflow planner ("compiler") which can handle everything from single-task workflows to workflows with millions of tasks</b>
+    <ul>
+      <li>Workflows enables parallel computation</li>
+      <li>Pegasus workflows are described in a higher level portable and reusable format</li>
+      <li>Enables execution on standard compute infrastructures (clouds, grids, campus clusters, ...)</li>
+    </ul>
+  </li>
+  <li>
+    <b>Pegasus automatically restructures the workflow to improve performance and data management</b>
+    <ul>
+      <li>Task clustering - combining short tasks into longer jobs</li>
+      <li>Workflow reduction / data reuse - workflows are minimized based on existing data</li>
+      <li>Data cleanup - Pegasus maintains a minimal storage footprint during execution</li>
+    </ul>
+  </li>
+  <li>
+ <b> Pegasus automatically plans and optimizes data placement</b>
+  </li>
+  <li>
+    <b>Pegasus is not just for large-scale workflows. Other reasons for using Pegasus:</b>
+    <ul>
+      <li>Well defined failure recovery - automatic retries in case of failure to increase the overall reliability</li>
+      <li>Monitoring - provenance data</li>
+      <li>Debugging - tools to pinpoint failures</li>
+    </ul>
+  </li>
+</ul>
+
+
+
+
+        </script>
+
         <script type="text/html" id='info_summary_template'>
           <p>
 Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by the National Human Genome Research Institute. Six participant informatics groups are developing powerful and “researcher-friendly” sequence analysis tools. This portal is designed for users and developers to explore the tools and pipelines built by project participants.

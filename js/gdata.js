@@ -95,8 +95,8 @@ function GenericPage(cfg) {
 	_(this).extend(_(cfg).pickStrings('id', 'name'));
 }
 _.extend(GenericPage.prototype, gdata_mixin);
-Summary.prototype.graphable = false;
-Summary.prototype.pageParent = function() { return gdata.summary; };
+GenericPage.prototype.graphable = false;
+GenericPage.prototype.pageParent = function() { return gdata.summary; };
 
 function Summary(cfg) {
 	_(this).extend(_(cfg).pickStrings('name'));
