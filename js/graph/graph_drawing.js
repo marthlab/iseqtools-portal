@@ -569,7 +569,7 @@ GraphDrawing.prototype = {
         return (workflow !== null && workflow === ep.gdatum ? color : grayscale); 
       })
       .attr("filter", function(ep,i){
-        return (workflow !== null && workflow === ep.gdatum ? "url(#glow-"+workflow.id+")" : null); 
+        return (workflow !== null && workflow === ep.gdatum && !isIE ? "url(#glow-"+workflow.id+")" : null); 
       });
   },
   getRect: function() {

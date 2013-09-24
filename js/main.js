@@ -1,5 +1,7 @@
 //(function() {
 
+  var isIE = (document.body.attachEvent && window.ActiveXObject);
+
   _.templateSettings.variable = "t";
 
   var gdata = {
