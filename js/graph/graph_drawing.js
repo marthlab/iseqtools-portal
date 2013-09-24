@@ -231,7 +231,7 @@ GraphDrawing.prototype = {
         fragments = fragments.map(function(word, index) {
             return word + (index == fragments.length-1 ? "" : " "); 
         });
-console.log(fragments);
+
         //split on hyphens
         var fragments = _.flatten(fragments.map(function(fragment) {
           hypenated_fragments = fragment.split("-");
@@ -239,7 +239,7 @@ console.log(fragments);
             return word + (index == hypenated_fragments.length-1 ? "" : "-"); 
           })
         }), true);
-console.log(fragments);
+
         // split on underscores
         fragments = _.flatten(fragments.map(function(fragment) {
           underscored_fragments = fragment.split("_");
@@ -247,7 +247,7 @@ console.log(fragments);
             return word + (index == underscored_fragments.length-1 ? "" : "_"); 
           })
         }), true);
-console.log(fragments);
+
         // split on uppercase letter preceded by lowercase letter
         fragments = _.flatten(fragments.map(function(fragment) {
           var components = [fragment[0] || ""];
@@ -260,7 +260,7 @@ console.log(fragments);
           }
           return components;
         }), true);
-console.log(fragments);
+
         var label_lines = [[]];
         for (var i=0; i<fragments.length; i++) {
           text_elem.text(label_lines[label_lines.length-1].join("") + fragments[i].trim());
@@ -567,12 +567,15 @@ console.log(fragments);
       .selectAll("g.edge").selectAll("path")
       .attr("stroke", function(ep,i){
         var color = ep.gdatum.color();
-        var grayscale = rgbToGrayscale(color);
+        var grayscale = rgbToGrayscale(d3.rgb(color));
         //debugger;
+        console.log(workflow !== null && workflow === ep.gdatum);
+        console.log(color);
+        console.log(grayscale);
         return (workflow !== null && workflow === ep.gdatum ? color : grayscale); 
       })
       .attr("filter", function(ep,i){
-        return (workflow !== null && workflow === ep.gdatum ? "url(#glow-"+workflow.id+")" : ""); 
+        return (workflow !== null && workflow === ep.gdatum ? "url(#glow-"+workflow.id+")" : null); 
       });
   },
   getRect: function() {

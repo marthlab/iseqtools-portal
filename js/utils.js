@@ -72,7 +72,7 @@ function hasClassSVG(obj, has) {
 
 function rgbToGrayscale(rgb) {
   var intensity = Math.round(.2126 * rgb.r + .7152 * rgb.g + .0722 * rgb.b);
-  return d3.rgb('rgb('+intensity+','+intensity+','+intensity+')');
+  return d3.rgb('rgb('+intensity+','+intensity+','+intensity+')').toString();
 }
 
 if (Function.prototype.name === undefined && Object.defineProperty !== undefined) {
