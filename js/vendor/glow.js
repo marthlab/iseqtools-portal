@@ -29,6 +29,7 @@ function glow(url, defs) {
   function my() {
 
     var filter = defs.append("filter")
+        .attr('filterUnits', 'userSpaceOnUse')
         .attr("id", url)
         .attr("x", "-20%")
         .attr("y", "-20%")

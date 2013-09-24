@@ -39,8 +39,6 @@ GraphDrawing.prototype = {
     function edgePathSpline(edge, edge_path) {
 
       var e = edge, s = e.source, t = e.target;
-      // console.log(s.dagre);
-      // console.log(t.dagre);
       
       var s_exit = {
         x: s.dagre.x+s.dagre.width/2,
@@ -568,10 +566,6 @@ GraphDrawing.prototype = {
       .attr("stroke", function(ep,i){
         var color = ep.gdatum.color();
         var grayscale = rgbToGrayscale(d3.rgb(color));
-        //debugger;
-        console.log(workflow !== null && workflow === ep.gdatum);
-        console.log(color);
-        console.log(grayscale);
         return (workflow !== null && workflow === ep.gdatum ? color : grayscale); 
       })
       .attr("filter", function(ep,i){
