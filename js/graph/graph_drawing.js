@@ -579,9 +579,7 @@ GraphDrawing.prototype = {
       });
   },
   getRect: function() {
-    //var bcr = this.svgGroup.node().getBoundingClientRect();
     return this.svg.node().getBBox();
-
   },
   getInnerRect: function(gdatum) {
 
@@ -615,18 +613,12 @@ GraphDrawing.prototype = {
       y_max = Math.max(y_max, path_bbox.y+path_bbox.height);
     })
 
-    // paths are one-dimensional objects, so we need to prevent possibilities of zero width or height
-    if(x_max-x_min === 0) {
-      x_min -= 5;
-      x_max += 5;
+    // paths are one-dimensional objects, so we need to ensure a reasonable minimum height
+    var y_offset = (34-(y_max-y_min))/2;
+    if(y_offset > 0) {
+      y_min -= y_offset;
+      y_max += y_offset;
     }
-    if(y_max-y_min === 0) {
-      y_min -= 5;
-      y_max += 5;
-    }
-
     return {x: x_min, y: y_min, width: x_max-x_min, height: y_max-y_min};
-
-    
   }
 }
