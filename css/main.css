@@ -22,7 +22,7 @@ line-height: 28px;
 #workflows_carousel .carousel-inner .item a {color:#000;}
 #workflows_carousel .carousel-inner .heading {font-weight:400;}
 #workflows_carousel .carousel-control {top:50%; cursor:pointer;}
-#graph {height:auto; display:block; max-height:550px; padding:30px 0 10px; position:relative; overflow-x:auto; overflow-y:hidden;
+#graph {height:auto; display:block; max-height:550px; padding:30px 0 10px; position:relative; overflow:hidden;
   -webkit-transform: scale(1); transform: scale(1);
 }
 #breadcrumbs {position:absolute; z-index:4; line-height:40px;}
