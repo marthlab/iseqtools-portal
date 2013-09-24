@@ -174,6 +174,7 @@ GraphDrawing.prototype = {
           .attr("class", "node")
           .classed("primary", function(n) { return n.type() === 'primary'; })
           .classed("secondary", function(n) { return n.type() === 'secondary'; })
+          .classed("optional", function(n) { return n.gdatum.type() === 'data_format_usage' && n.gdatum.optional; })
 
 
     var old_nodes_elems = nodes_elems
@@ -230,7 +231,7 @@ GraphDrawing.prototype = {
         fragments = fragments.map(function(word, index) {
             return word + (index == fragments.length-1 ? "" : " "); 
         });
-
+console.log(fragments);
         //split on hyphens
         var fragments = _.flatten(fragments.map(function(fragment) {
           hypenated_fragments = fragment.split("-");
@@ -238,7 +239,7 @@ GraphDrawing.prototype = {
             return word + (index == hypenated_fragments.length-1 ? "" : "-"); 
           })
         }), true);
-
+console.log(fragments);
         // split on underscores
         fragments = _.flatten(fragments.map(function(fragment) {
           underscored_fragments = fragment.split("_");
@@ -246,10 +247,10 @@ GraphDrawing.prototype = {
             return word + (index == underscored_fragments.length-1 ? "" : "_"); 
           })
         }), true);
-
+console.log(fragments);
         // split on uppercase letter preceded by lowercase letter
         fragments = _.flatten(fragments.map(function(fragment) {
-          var components = [fragment[0]];
+          var components = [fragment[0] || ""];
           for(var i=1; i<fragment.length; i++) {
             if(fragment[i] !== fragment[i].toLowerCase() && fragment[i-1] !== fragment[i-1].toUpperCase()) {
               components.push(fragment[i]);
@@ -259,7 +260,7 @@ GraphDrawing.prototype = {
           }
           return components;
         }), true);
-
+console.log(fragments);
         var label_lines = [[]];
         for (var i=0; i<fragments.length; i++) {
           text_elem.text(label_lines[label_lines.length-1].join("") + fragments[i].trim());
@@ -567,7 +568,7 @@ GraphDrawing.prototype = {
       .attr("stroke", function(ep,i){
         var color = ep.gdatum.color();
         var grayscale = rgbToGrayscale(color);
-        console.log((workflow !== null && workflow === ep.gdatum ? color : grayscale));
+        //debugger;
         return (workflow !== null && workflow === ep.gdatum ? color : grayscale); 
       })
       .attr("filter", function(ep,i){

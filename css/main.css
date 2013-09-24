@@ -99,6 +99,10 @@ line-height: 28px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.node.optional {
+  stroke-dasharray: 7,7;
+}
+
 /*.node:hover circle, .node:hover text {
   cursor: pointer;
   opacity: 0.4;

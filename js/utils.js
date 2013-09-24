@@ -31,17 +31,17 @@ String.prototype.toTitleCase = function () {
 };
 
 Array.prototype.toEnglishList = function () {
-    var len = this.length;
-    if(len == 0) {
-      return "";
-    } else if(len == 1) {
-      return this[0];
-    } else if(len == 2) {
-      return this[0] + ' and ' + this[1];
-    } else if(len > 2) {
-      this[len-1] = 'and ' + this[len-1];
-      return this.join(", ");
-    }
+  var len = this.length;
+  if(len == 0) {
+    return "";
+  } else if(len == 1) {
+    return this[0];
+  } else if(len == 2) {
+    return this[0] + ' and ' + this[1];
+  } else if(len > 2) {
+    this[len-1] = 'and ' + this[len-1];
+    return this.join(", ");
+  }
 };
 
 function s4() {

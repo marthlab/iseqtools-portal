@@ -218,21 +218,24 @@ Pipeline.prototype.pageParent = function() {
 function DataFormatUsage(cfg) {
 	_(this).extend(_(cfg).pickStrings('id'));
 	this.multiple = cfg.multiple || false;
+	this.optional = cfg.optional || false;
 	this.stream = cfg.stream || false;
 	this.pipeline = cfg.pipeline;
 	this.data_format = _(gdata.data_formats).find(by_id(cfg.data_format_id)) || null;
 	this.description = cfg.description || null;
+	this.label = '';
+	if(this.optional) {
+		this.label = 'optional ';
+	}
 	if(this.description) {
-		this.label = this.description;
+		this.label += this.description;
 		if(this.data_format) {
 			this.label += (' ('+this.data_format.name+')');
 		}
 	} else if(this.data_format) {
-		this.label = this.data_format.name;
+		this.label += this.data_format.name;
 	} else if(this.stream) {
-		this.label = 'stream';
-	} else {
-		this.label = '';
+		this.label += 'stream';
 	}
 }
 _.extend(DataFormatUsage.prototype, gdata_mixin);
@@ -251,3 +254,35 @@ function ToolUsage(cfg) {
 _.extend(ToolUsage.prototype, gdata_mixin);
 ToolUsage.prototype.graphable = true;
 ToolUsage.prototype.pageParent = function() { return this.pipeline; };
+ToolUsage.prototype.inputsAsEnglish = function() {
+	var file_inputs = _.uniq(this.in_data_format_usages.filter(function(dfu){return !dfu.stream}).map(function(dfu){return dfu.label;}));
+	
+	var file_text = '';
+	if(file_inputs.length === 1)
+		file_text = 'a ' + file_inputs[0] + ' file';
+	else if (file_inputs.length > 1)
+		file_text = file_inputs.toEnglishList() + ' files';
+
+	var stream_text = '';
+	if(_.some(this.in_data_format_usages, function(dfu) {return dfu.stream;})) {
+		stream_text = 'streaming input';
+	}
+
+	return stream_text + (stream_text && file_text ? ' and ' : '') + file_text;
+}
+ToolUsage.prototype.outputsAsEnglish = function() {
+	var file_outputs = _.uniq(this.out_data_format_usages.filter(function(dfu){return !dfu.stream}).map(function(dfu){return dfu.label;}));
+	
+	var file_text = '';
+	if(file_outputs.length === 1)
+		file_text = 'a ' + file_outputs[0] + ' file';
+	else if (file_outputs.length > 1)
+		file_text = file_outputs.toEnglishList() + ' files';
+
+	var stream_text = '';
+	if(_.some(this.out_data_format_usages, function(dfu) {return dfu.stream;})) {
+		stream_text = 'streaming output';
+	}
+
+	return stream_text + (stream_text && file_text ? ' and ' : '') + file_text;
+}

@@ -266,8 +266,8 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
             <h3>Developed by:</h3> <a href="<%= t.team.url() %>"><%= t.team.name %></a>
             </div>
           <% } %>
-          <% var filelist = t.in_data_format_usages.map(function(dfu){return dfu.label;}); %>
-          <p>This pipeline accepts the following file<% if(filelist.length > 1){ %>s<% } %> as input: <%= filelist.toEnglishList() %>.</p>
+          <% var filelist = _.uniq(t.in_data_format_usages.map(function(dfu){return dfu.label;})); %>
+          <p>This pipeline accepts the following file(s) as input: <%= filelist.toEnglishList() %>.</p>
           <% if(t.workflow) { %>
           <p>This pipeline implements the <a href="<%= t.workflow.url() %>"><%= t.workflow.name %></a> workflow.</p>
           <% } %>
@@ -311,7 +311,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
             <h3>Developed by:</h3> <a href="<%= t.tool.team.url() %>"><%= t.tool.team.name %></a>
             </div>
           <% } %>
-          <p>In this context, <%= t.tool.name %> consumes <%= t.in_data_format_usages.map(function(dfu){return dfu.label;}).toEnglishList() %> files and produces <%= t.out_data_format_usages.map(function(dfu){return dfu.label;}).toEnglishList() %> files.</p>
+          <p>In this context, <%= t.tool.name %> consumes <%= t.inputsAsEnglish() %> and produces <%= t.outputsAsEnglish() %>.</p>
           <% if(t.tool.parent_tool) { %>
             <div class="info_inline">
             <h3>Parent tool:</h3> <a href="<%= t.tool.parent_tool.url() %>"><%= t.tool.parent_tool.name %></a>

@@ -1165,7 +1165,8 @@
 				},
 				{
 					"id": 2,
-					"description": "resources"
+					"description": "resources",
+					"optional": true
 				}
 			],
 			"tool_usages": [
