@@ -145,6 +145,9 @@ switch ($_SERVER['SERVER_NAME']) {
             <% }); %>
             </ul>
           </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="<%= t.pegasus.url() %>"><%= t.pegasus.name %></a>
+          </li>
           <% _(t.generic_pages).each(function(gp){ %>
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="<%= gp.url() %>"><%= gp.name %></a>
@@ -161,6 +164,7 @@ switch ($_SERVER['SERVER_NAME']) {
           <% _(t.workflows).each(function(wf, i){ %>
             <div class="item"><a href="<%= wf.url() %>"><%= wf.name %></a></div>
           <% }); %>
+            <div class="item"><a href="<%= t.pegasus.url() %>">Manage Your Workflows</a></div>
           </div>
 
           <ol class="carousel-indicators">
@@ -168,6 +172,7 @@ switch ($_SERVER['SERVER_NAME']) {
           <% _(t.workflows).each(function(wf, i){ %>
             <li style="background-color:<%= wf.color() %>; border-color:<%= wf.color() %>" data-target="#workflows_carousel" data-slide-to="<%= i+1 %>" ></li>
           <% }); %>
+            <li style="background-color:green; border-color:green" data-target="#workflows_carousel" data-slide-to="<%= t.workflows.length+1 %>" class=""></li>
           </ol>
 
           <a class="carousel-control left" data-slide="prev">&lsaquo;</a>

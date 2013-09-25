@@ -10,6 +10,8 @@
         return new GenericPage(gp_cfg);
       });
 
+      this.pegasus = new Pegasus(cfg.pegasus);
+
       this.summary = new Summary(cfg.summary);
 
       this.teams = cfg.teams.map(function(team_cfg) {
@@ -81,6 +83,7 @@
           root_tools: gdata.root_tools,
           teams: gdata.teams,
           generic_pages: gdata.generic_pages,
+          pegasus: gdata.pegasus,
           data_types: gdata.data_types
         }));
       },
@@ -99,15 +102,17 @@
       init: function() {
         var featured_workflows = _(gdata.workflows).filter(function(wf){return wf.featured;});
         this.$el = $('#workflows_carousel');
-        this.$el.html(this.template({workflows: featured_workflows}));
+        this.$el.html(this.template({workflows: featured_workflows, pegasus: gdata.pegasus}));
         this.$el.carousel({interval: 3500}).on('slid', (function (e) {
           var index = this._currIndex();
           if(index === 0) {
             this.$el.carousel('pause');
             widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
-          } else if(app.content.type() === "summary"){
+          } else if(index === this._getLength()-1) {
+            widgets.graph_widget.active_drawing_for_display.pegasusAnimation();
+          } else if(app.content === gdata.summary){
             widgets.graph_widget.active_drawing_for_display.highlightWorkflow(featured_workflows[index-1]);
-          }
+          } 
           
         }).bind(this));
         this.$el.carousel('pause');
@@ -133,6 +138,9 @@
       },
       _currIndex: function() {
         return this.$el.find(".carousel-inner > .active").index(".carousel-inner > div");
+      },
+      _getLength: function() {
+        return this.$el.find(".carousel-inner > div").length;
       },
       _hide: function(on_complete) {
         this.$el.carousel('pause');
@@ -254,7 +262,6 @@
               change_container_height: false,
               animate_height: true
             });
-            //debugger;
             this.active_drawing_for_display.render(this.graph, this.old_graph, {
               start_rect: new_start_rect,
               end_rect: new_end_rect,
@@ -437,6 +444,9 @@
       });
       this.get('/', function (req) {
         app._showContent(gdata.summary);
+      });
+      this.get('/pegasus', function (req) {
+        app._showContent(gdata.pegasus);
       });
       this.get('/:generic_page_id', function (req) {
         app._showContent(_(gdata.generic_pages).find(by_id(decodeURIComponent(req.params['generic_page_id']))));

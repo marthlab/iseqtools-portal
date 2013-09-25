@@ -3,12 +3,11 @@
 		{
 			"id": "about",
 			"name": "About"
-		},
-		{
-			"id": "pegasus",
-			"name": "Pegasus"
 		}
 	],
+	"pegasus": {
+		"name": "Pegasus WMS"
+	},
 	"summary": {
 		"name": "Home"
 	},
@@ -1201,7 +1200,7 @@
 			"name": "GATK Functional Annotation",
 			"team_id": "broad",
 			"workflow_id": 5,
-			"data_types_ids": ["short_variants", "functional_features", "annotations"],
+			"data_types_ids": ["short_variants", "functional_features", "annotated_variants"],
 			"initial_data_format_usages": [
 				{
 					"id": 1,

@@ -1,7 +1,4 @@
-body {
-        
-        padding-bottom: 40px;
-      }
+body {padding-bottom: 40px; font-size:12px;}
 
 h1, h2, h3 {
 line-height: 28px;
@@ -61,7 +58,7 @@ line-height: 28px;
 
 
 
-.edge path {stroke-opacity:0; stroke-linecap: round;}
+.edge path {stroke-opacity:0; }
 .node {opacity:0;}
 
 .node.link:hover circle , .node.link:hover text {

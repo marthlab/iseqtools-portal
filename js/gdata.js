@@ -6,7 +6,9 @@ var gdata_mixin = {
 			return app.base_url+"/";
 		} else if(type == "generic_page") {
 			return app.base_url+'/'+encodeURIComponent(this.id);
-		} else if(type == "tool_usage") {
+		} else if(type == "pegasus") {
+			return app.base_url+'/pegasus';
+		}else if(type == "tool_usage") {
 			return app.base_url+'/pipelines/'+encodeURIComponent(this.pipeline.id)+'/tool_usages/'+encodeURIComponent(this.id);
 		} else {
 			return app.base_url+'/'+type+'s/'+encodeURIComponent(this.id);
@@ -97,6 +99,13 @@ function GenericPage(cfg) {
 _.extend(GenericPage.prototype, gdata_mixin);
 GenericPage.prototype.graphable = false;
 GenericPage.prototype.pageParent = function() { return gdata.summary; };
+
+function Pegasus(cfg) {
+	_(this).extend(_(cfg).pickStrings('id', 'name'));
+}
+_.extend(Pegasus.prototype, gdata_mixin);
+Pegasus.prototype.graphable = false;
+Pegasus.prototype.pageParent = function() { return gdata.summary; };
 
 function Summary(cfg) {
 	_(this).extend(_(cfg).pickStrings('name'));

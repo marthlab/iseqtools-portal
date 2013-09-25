@@ -578,6 +578,53 @@ GraphDrawing.prototype = {
         return (workflow !== null && workflow === ep.gdatum && !isIE ? "url(#glow-"+workflow.id+")" : null); 
       });
   },
+  pegasusAnimation: function() {
+    this.highlightAllWorkflows();
+    // this.edgeGroup
+    //   .selectAll("g.edge").selectAll("path")
+    //   .attr("opacity", function(ep,i){
+    //     return 1;
+    //   });
+
+    var paths = this.edgeGroup
+      .selectAll("g.edge").selectAll("path");
+
+    var num_paths = _.reduce(paths, function(sum, arr){ return sum + arr.length;}, 0)
+
+    var num_paths_faded = 0;
+
+
+      paths
+      .transition().duration(400)
+      .style("stroke-opacity", function(ep,i){
+        return 0;
+      })
+      .each('end', function(d, i) {
+        num_paths_faded++;
+        if(num_paths_faded === num_paths ) {
+          console.log("done");
+          paths
+            .style('stroke-dasharray', function(ep,i){
+              var length = this.getTotalLength();
+              return length + ' ' + length;
+            })
+            .style('stroke-dashoffset', function(ep,i){
+              var length = this.getTotalLength();
+              return length;
+            })
+            .style("stroke-opacity", function(ep,i){
+              return 1;
+            })
+            .each(function(){
+              this.getBoundingClientRect();
+            })
+            .transition().duration(1500)
+            .style('stroke-dashoffset', function(ep,i){
+              return 0;
+            })
+        }
+      });
+  },
   getRect: function() {
     return this.svg.node().getBBox();
   },
