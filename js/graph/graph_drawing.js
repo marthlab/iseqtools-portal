@@ -106,23 +106,39 @@ GraphDrawing.prototype = {
             end])
       }
 
+      function strip_moveto(path_string) {
+        var index_L = path_string.indexOf('L');
+        var index_C = path_string.indexOf('C');
+        debugger;
+        var start_index;
+        if(index_L !== -1 && (index_L < index_C || index_C === -1)) {
+          start_index = index_L;
+        } else if (index_C !== -1 && (index_C < index_L || index_L === -1)) {
+          start_index = index_C;
+        } else {
+          throw "path data must contain lineto or curveto subcommand"
+        }
+
+        return path_string.slice(start_index);
+      }
+
       // construct path string
       var path_string = "";
       path_string += line(s_circ_intersect, rank_exit)
 
       if(Math.abs(t.dagre.rank-s.dagre.rank) <= 2) {
-        path_string += straight_curve(rank_exit, rank_exit)
-        path_string += curve(rank_exit, rank_enter)
-        path_string += straight_curve(rank_enter, rank_enter)
+        path_string += strip_moveto(straight_curve(rank_exit, rank_exit))
+        path_string += strip_moveto(curve(rank_exit, rank_enter))
+        path_string += strip_moveto(straight_curve(rank_enter, rank_enter))
       } else {
         var points = [{x: rank_exit.x + settings.graph.rankSep, y: e.dagre.points[0].y},
                     {x: rank_enter.x - settings.graph.rankSep, y: e.dagre.points[1].y}];
-        path_string += curve(rank_exit, points[0])
-        path_string += straight_curve(points[0], points[1])
-        path_string += curve(points[1], rank_enter)
+        path_string += strip_moveto(curve(rank_exit, points[0]))
+        path_string += strip_moveto(straight_curve(points[0], points[1]))
+        path_string += strip_moveto(curve(points[1], rank_enter))
       }
 
-      path_string += line(rank_enter,  t_circ_intersect);
+      path_string += strip_moveto(line(rank_enter,  t_circ_intersect));
 
       return path_string;
     }
@@ -594,36 +610,36 @@ GraphDrawing.prototype = {
     var num_paths_faded = 0;
 
 
-      paths
-      .transition().duration(400)
-      .style("stroke-opacity", function(ep,i){
-        return 0;
-      })
-      .each('end', function(d, i) {
-        num_paths_faded++;
-        if(num_paths_faded === num_paths ) {
-          console.log("done");
-          paths
-            .style('stroke-dasharray', function(ep,i){
-              var length = this.getTotalLength();
-              return length + ' ' + length;
-            })
-            .style('stroke-dashoffset', function(ep,i){
-              var length = this.getTotalLength();
-              return length;
-            })
-            .style("stroke-opacity", function(ep,i){
-              return 1;
-            })
-            .each(function(){
-              this.getBoundingClientRect();
-            })
-            .transition().duration(1500)
-            .style('stroke-dashoffset', function(ep,i){
-              return 0;
-            })
-        }
-      });
+    paths
+    .transition().duration(400)
+    .style("stroke-opacity", function(ep,i){
+      return 0;
+    })
+    .each('end', function(d, i) {
+      num_paths_faded++;
+      if(num_paths_faded === num_paths ) {
+        console.log("done");
+        paths
+          .style('stroke-dasharray', function(ep,i){
+            var length = this.getTotalLength();
+            return length + ' ' + length;
+          })
+          .style('stroke-dashoffset', function(ep,i){
+            var length = this.getTotalLength();
+            return length;
+          })
+          .style("stroke-opacity", function(ep,i){
+            return 1;
+          })
+          .each(function(){
+            this.getBoundingClientRect();
+          })
+          .transition().duration(1500)
+          .style('stroke-dashoffset', function(ep,i){
+            return 0;
+          })
+      }
+    });
   },
   getRect: function() {
     return this.svg.node().getBBox();
