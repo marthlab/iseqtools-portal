@@ -109,7 +109,6 @@ GraphDrawing.prototype = {
       function strip_moveto(path_string) {
         var index_L = path_string.indexOf('L');
         var index_C = path_string.indexOf('C');
-        debugger;
         var start_index;
         if(index_L !== -1 && (index_L < index_C || index_C === -1)) {
           start_index = index_L;
@@ -595,49 +594,54 @@ GraphDrawing.prototype = {
       });
   },
   pegasusAnimation: function() {
+    function draw_group(groups_array, n) {
+      var num_paths_drawn = 0;
+
+      d3.selectAll(groups_array[n])
+        .style('stroke-dasharray', function(ep,i){
+          var length = this.getTotalLength();
+          return length + ' ' + length;
+        })
+        .style('stroke-dashoffset', function(ep,i){
+          var length = this.getTotalLength();
+          return length;
+        })
+        .style("stroke-opacity", function(ep,i){
+          return 1;
+        })
+        .each(function(){
+          this.getBoundingClientRect();
+        })
+        .transition().duration(250).ease('linear')
+        .style('stroke-dashoffset', function(ep,i){
+          return 0;
+        })
+        .each('end', function() {
+          num_paths_drawn++;
+          if(num_paths_drawn === groups_array[n].length && n+1 < groups_array.length) {
+            draw_group(groups_array, n+1);
+          }
+        });
+    }
+
     this.highlightAllWorkflows();
-    // this.edgeGroup
-    //   .selectAll("g.edge").selectAll("path")
-    //   .attr("opacity", function(ep,i){
-    //     return 1;
-    //   });
 
-    var paths = this.edgeGroup
-      .selectAll("g.edge").selectAll("path");
-
-    var num_paths = _.reduce(paths, function(sum, arr){ return sum + arr.length;}, 0)
-
+    var self = this;
+    
+    var all_paths = this.edgeGroup.selectAll("path");
     var num_paths_faded = 0;
 
-
-    paths
+    all_paths
     .transition().duration(400)
     .style("stroke-opacity", function(ep,i){
       return 0;
     })
     .each('end', function(d, i) {
       num_paths_faded++;
-      if(num_paths_faded === num_paths ) {
-        console.log("done");
-        paths
-          .style('stroke-dasharray', function(ep,i){
-            var length = this.getTotalLength();
-            return length + ' ' + length;
-          })
-          .style('stroke-dashoffset', function(ep,i){
-            var length = this.getTotalLength();
-            return length;
-          })
-          .style("stroke-opacity", function(ep,i){
-            return 1;
-          })
-          .each(function(){
-            this.getBoundingClientRect();
-          })
-          .transition().duration(1500)
-          .style('stroke-dashoffset', function(ep,i){
-            return 0;
-          })
+      if(num_paths_faded === all_paths[0].length ) {
+        var paths_grouped_by_rank = _.groupBy(self.edgeGroup.selectAll("path")[0], function(edge_path_elem){ return edge_path_elem.__data__.edge.target.dagre.rank; });
+        var sorted_path_groups = _.sortBy(paths_grouped_by_rank, function(group, rank) { return parseFloat(rank);});
+        draw_group(sorted_path_groups, 0);
       }
     });
   },
