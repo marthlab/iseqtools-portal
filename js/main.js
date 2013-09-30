@@ -103,18 +103,23 @@
         var featured_workflows = _(gdata.workflows).filter(function(wf){return wf.featured;});
         this.$el = $('#workflows_carousel');
         this.$el.html(this.template({workflows: featured_workflows, pegasus: gdata.pegasus}));
-        this.$el.carousel({interval: 3500}).on('slid', (function (e) {
-          var index = this._currIndex();
-          if(index === 0) {
-            this.$el.carousel('pause');
-            widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
-          } else if(index === this._getLength()-1) {
-            widgets.graph_widget.active_drawing_for_display.pegasusAnimation();
-          } else if(app.content === gdata.summary){
-            widgets.graph_widget.active_drawing_for_display.highlightWorkflow(featured_workflows[index-1]);
-          } 
-          
-        }).bind(this));
+        this.$el.carousel({interval: 3500}).on('slid', (function() {
+          app.buffer.add(
+            (function (on_complete) {
+              var index = this._currIndex();
+              if(index === 0) {
+                this.$el.carousel('pause');
+                widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
+                on_complete();
+              } else if(index === this._getLength()-1) {
+                widgets.graph_widget.active_drawing_for_display.pegasusAnimation(on_complete);
+              } else if(app.content === gdata.summary){
+                widgets.graph_widget.active_drawing_for_display.highlightWorkflow(featured_workflows[index-1]);
+                on_complete();
+              } 
+            }).bind(this)
+          );
+        }).bind(this) );
         this.$el.carousel('pause');
         this.$el.children('.carousel-control.left').on('click', (function(e) {
           this.$el.carousel('prev');
@@ -360,26 +365,32 @@
 
   // PRIVATE METHODS
 
+  app.buffer = {
+    commands: [],
+    add: function(fn) {
+      function next() {
+        commands.shift();
+        if (commands.length) commands[0](next);
+      }
+      var commands = this.commands;
+      commands.push(fn);
+      if (commands.length === 1) fn(next);
+    }
+  };
+
   app._showContent = function(item) {
-    if(item !== this.content) { // halt if trying to navigate to current content
-      if(this.is_transitioning) {
-        this.queued_content = item;
-      } else {
+    this.buffer.add((function(on_complete){
+      if(item !== this.content) { // halt if trying to navigate to current content
         this.old_content = this.content;
         this.content = item;
         this.transition_relationship = this.content.visualRelationshipTo(app.old_content);
         this.is_transitioning = true;
-        this._transition((function() {
-          this.is_transitioning = false;
-          if(this.queued_content) {
-            var next = this.queued_content;
-            this.queued_content = null;
-            this._showContent(next);
-          }
-        }).bind(this));
+        this._transition(on_complete);
+      } else {
+        on_complete();
       }
-    }
-  }
+    }).bind(this));
+  };
 
   app._transition = function(onTransitionEnd) {
     

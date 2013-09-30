@@ -593,7 +593,7 @@ GraphDrawing.prototype = {
         return (workflow !== null && workflow === ep.gdatum && !isIE ? "url(#glow-"+workflow.id+")" : null); 
       });
   },
-  pegasusAnimation: function() {
+  pegasusAnimation: function(on_complete) {
     function draw_group(groups_array, n) {
       var num_paths_drawn = 0;
 
@@ -617,9 +617,12 @@ GraphDrawing.prototype = {
           return 0;
         })
         .each('end', function() {
+          d3.select(this).style('stroke-dasharray', null);
           num_paths_drawn++;
           if(num_paths_drawn === groups_array[n].length && n+1 < groups_array.length) {
             draw_group(groups_array, n+1);
+          } else if(n+1 === groups_array.length) {
+            on_complete();
           }
         });
     }
