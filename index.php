@@ -160,7 +160,7 @@ switch ($_SERVER['SERVER_NAME']) {
           
 
           <div class="carousel-inner">
-            <div class="active item heading"><a>Find software for your sequence analysis project</a></div>
+            <div class="active item heading">Find software for your sequence analysis project</div>
           <% _(t.workflows).each(function(wf, i){ %>
             <div class="item"><a href="<%= wf.url() %>"><%= wf.name %></a></div>
           <% }); %>
