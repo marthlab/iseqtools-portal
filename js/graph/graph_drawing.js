@@ -612,7 +612,7 @@ GraphDrawing.prototype = {
         .each(function(){
           this.getBoundingClientRect();
         })
-        .transition().duration(250).ease('linear')
+        .transition().duration(300).ease('linear')
         .style('stroke-dashoffset', function(ep,i){
           return 0;
         })

@@ -747,6 +747,28 @@
 	],
 	"pipelines": [
 		{
+			"id": "gms-somaticvariation",
+			"name": "GMS SomaticVariation",
+			"team_id": "washu",
+			"workflow_id": 5,
+			"data_types_ids": ["alignments", "short_variants", "functional_features", "annotated_variants"],
+			"initial_data_format_usages": [
+				{
+					"id": 1,
+					"data_format_id": "bam",
+					"description": "Experimental"
+				},
+				{
+					"id": 1,
+					"data_format_id": "bam",
+					"description": "Control"
+				}
+			],
+			"tool_usages": [
+
+			]
+		},
+		{
 			"id": "gms-referencealignment",
 			"name": "GMS ReferenceAlignment",
 			"team_id": "washu",
