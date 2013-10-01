@@ -268,9 +268,78 @@
 	],
 	"tools": [
 		{
+			"id": "Pindel",
+			"subtools": [
+				{
+					"id": "Pindel_Somatic_Filter",
+					"name": "Pindel Somatic Filter"
+				},
+				{
+					"id": "Pindel_VAF_Filter",
+					"name": "Pindel VAF Filter"
+				},
+				{
+					"id": "Pindel_Read_Support",
+					"name": "Pindel Read Support"
+				}
+			]
+		},
+		{
+			"id": "SquareDancer"
+		},
+		{
+			"id": "BreakDancer"
+		},
+		{
+			"id": "SomaticSniper"
+		},
+		{
+			"id": "TIGRA-SV"
+		},
+		{
+			"id": "JoinX",
+			"subtools": [
+				{
+					"id": "JoinX_Intersection",
+					"name": "JoinX Intersection"
+				},
+				{
+					"id": "JoinX_Unique_Union",
+					"name": "JoinX Unique Union"
+				}
+			]
+		},
+		{
+			"id": "Strelka"
+		},
+		{
+			"id": "VarScan_tools",
+			"name": "VarScan tools",
+			"subtools": [
+				{
+					"id": "VarScan"
+				},
+				{
+					"id": "VarScan_High_Confidence_Filter",
+					"name": "VarScan High Confidence Filter"
+				},
+				{
+					"id": "VarScan_Indel",
+					"name": "VarScan Indel"
+				},
+				{
+					"id": "VarScan_High_Confidence_Indel_Filter",
+					"name": "VarScan High Confidence Indel Filter"
+				},
+			]
+		},
+		{
 			"id": "GMS",
 			"team_id": "washu",
 			"subtools": [
+				{
+					"id": "LOH"
+				},
 				{
 					"id": "snp_filter"
 				},
@@ -278,12 +347,28 @@
 					"id": "indel_filter"
 				},
 				{
-					"id": "annotate_adapter",
-					"name": "annotate adapter"
+					"id": "annotate_adapter"
 				},
 				{
-					"id": "annotate_transcript_variants",
-					"name": "annotate transcript variants"
+					"id": "annotate_transcript_variants"
+				},
+				{
+					"id": "bam-to-cna"
+				},
+				{
+					"id": "false_positive_filter"
+				},
+				{
+					"id": "false_indel_filter"
+				},
+				{
+					"id": "previously_discovered_variants"
+				},
+				{
+					"id": "tier_variants"
+				},
+				{
+					"id": "annotate_variants"
 				}
 			]
 		},
@@ -429,6 +514,10 @@
 				{
 					"id": "gatk-apply-recalibration",
 					"name": "GATK Apply Recalibration"
+				},
+				{
+					"id": "gatk-somatic-indel-detector",
+					"name": "GATK Somatic Indel Detector"
 				}
 			]
 		},
@@ -759,13 +848,364 @@
 					"description": "Experimental"
 				},
 				{
-					"id": 1,
+					"id": 2,
 					"data_format_id": "bam",
 					"description": "Control"
 				}
 			],
 			"tool_usages": [
-
+				{
+					"id": 1,
+					"tool_id": "SomaticSniper",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 3,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 2,
+					"tool_id": "samtools-SNV",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 4,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 3,
+					"tool_id": "Strelka",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 5,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 4,
+					"tool_id": "VarScan",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 6,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 5,
+					"tool_id": "BreakDancer",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 7,
+							"description": "SV"
+						}
+					]
+				},
+				{
+					"id": 6,
+					"tool_id": "SquareDancer",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 8,
+							"description": "SV"
+						}
+					]
+				},
+				{
+					"id": 7,
+					"tool_id": "VarScan_Indel",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 9,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 8,
+					"tool_id": "gatk-somatic-indel-detector",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 10,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 9,
+					"tool_id": "Pindel",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 11,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 10,
+					"tool_id": "bam-to-cna",
+					"in_data_format_usages_ids": [1,2],
+					"out_data_format_usages": [
+						{
+							"id": 12,
+							"description": "copy number"
+						}
+					]
+				},
+				{
+					"id": 11,
+					"tool_id": "false_positive_filter",
+					"in_data_format_usages_ids": [3],
+					"out_data_format_usages": [
+						{
+							"id": 13,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 12,
+					"tool_id": "snp_filter",
+					"in_data_format_usages_ids": [4],
+					"out_data_format_usages": [
+						{
+							"id": 14,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 13,
+					"tool_id": "VarScan_High_Confidence_Filter",
+					"in_data_format_usages_ids": [6],
+					"out_data_format_usages": [
+						{
+							"id": 15,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 14,
+					"tool_id": "TIGRA-SV",
+					"in_data_format_usages_ids": [7],
+					"out_data_format_usages": [
+						{
+							"id": 16,
+							"description": "SV"
+						}
+					]
+				},
+				{
+					"id": 15,
+					"tool_id": "TIGRA-SV",
+					"in_data_format_usages_ids": [8],
+					"out_data_format_usages": [
+						{
+							"id": 17,
+							"description": "SV"
+						}
+					]
+				},
+				{
+					"id": 16,
+					"tool_id": "VarScan_High_Confidence_Indel_Filter",
+					"in_data_format_usages_ids": [9],
+					"out_data_format_usages": [
+						{
+							"id": 18,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 17,
+					"tool_id": "false_indel_filter",
+					"in_data_format_usages_ids": [10],
+					"out_data_format_usages": [
+						{
+							"id": 19,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 18,
+					"tool_id": "Pindel_Somatic_Filter",
+					"in_data_format_usages_ids": [11],
+					"out_data_format_usages": [
+						{
+							"id": 20,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 19,
+					"tool_id": "JoinX_Intersection",
+					"in_data_format_usages_ids": [13,14],
+					"out_data_format_usages": [
+						{
+							"id": 21,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 20,
+					"tool_id": "false_positive_filter",
+					"in_data_format_usages_ids": [15],
+					"out_data_format_usages": [
+						{
+							"id": 22,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 21,
+					"tool_id": "cat",
+					"in_data_format_usages_ids": [16,17],
+					"out_data_format_usages": [
+						{
+							"id": 23,
+							"description": "SV"
+						}
+					]
+				},
+				{
+					"id": 22,
+					"tool_id": "Pindel_VAF_Filter",
+					"in_data_format_usages_ids": [20],
+					"out_data_format_usages": [
+						{
+							"id": 24,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 23,
+					"tool_id": "Pindel_Read_Support",
+					"in_data_format_usages_ids": [24],
+					"out_data_format_usages": [
+						{
+							"id": 25,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 24,
+					"tool_id": "JoinX_Unique_Union",
+					"in_data_format_usages_ids": [5,21,22],
+					"out_data_format_usages": [
+						{
+							"id": 26,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 25,
+					"tool_id": "LOH",
+					"in_data_format_usages_ids": [26],
+					"out_data_format_usages": [
+						{
+							"id": 27,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 26,
+					"tool_id": "previously_discovered_variants",
+					"in_data_format_usages_ids": [27],
+					"out_data_format_usages": [
+						{
+							"id": 28,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 27,
+					"tool_id": "tier_variants",
+					"in_data_format_usages_ids": [28],
+					"out_data_format_usages": [
+						{
+							"id": 29,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 28,
+					"tool_id": "annotate_variants",
+					"in_data_format_usages_ids": [29],
+					"out_data_format_usages": [
+						{
+							"id": 30,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 29,
+					"tool_id": "JoinX_Unique_Union",
+					"in_data_format_usages_ids": [18,19,25],
+					"out_data_format_usages": [
+						{
+							"id": 31,
+							"data_format_id": "vcf"
+						}
+					]
+				},
+				{
+					"id": 30,
+					"tool_id": "previously_discovered_variants",
+					"in_data_format_usages_ids": [31],
+					"out_data_format_usages": [
+						{
+							"id": 32,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 31,
+					"tool_id": "tier_variants",
+					"in_data_format_usages_ids": [32],
+					"out_data_format_usages": [
+						{
+							"id": 33,
+							"data_format_id": "bed"
+						}
+					]
+				},
+				{
+					"id": 32,
+					"tool_id": "annotate_variants",
+					"in_data_format_usages_ids": [33],
+					"out_data_format_usages": [
+						{
+							"id": 34,
+							"data_format_id": "bed"
+						}
+					]
+				}
 			]
 		},
 		{

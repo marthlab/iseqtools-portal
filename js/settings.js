@@ -17,7 +17,7 @@ settings = {
     },
     secondary: {
       label_max_width: 120,
-      radius: 20
+      radius: 22
     }
   }
 };
