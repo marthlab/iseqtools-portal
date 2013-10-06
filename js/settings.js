@@ -1,7 +1,7 @@
 settings = {
   trans_dur: 1000,
   graph: {
-    nodeSep: 55,
+    nodeSep: 48,
     edgeSep: 20,
     rankSep: 30,
     path_width:3,
@@ -12,7 +12,7 @@ settings = {
   nodes: {
     stroke: "#000",
     primary: {
-      label_max_width: 180,
+      label_max_width: 260,
       radius: 30
     },
     secondary: {
