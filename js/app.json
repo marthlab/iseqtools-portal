@@ -805,30 +805,30 @@
 	],
 	"workflows": [
 		{
-			"id": 1,
+			"id": "map-sequencing-reads",
 			"name": "Map Sequencing Reads",
 			"tasks_ids": ["map"],
 			"featured": true
 		},
 		{
-			"id": 2,
+			"id": "call-genetic-variants",
 			"name": "Call Genetic Variants",
 			"tasks_ids": ["call_structural_variants", "call_short_variants"],
 			"featured": true
 		},
 		{
-			"id": 3,
+			"id": "map-to-call-genetic-variants",
 			"name": "Map -> Call Genetic Variants",
 			"tasks_ids": ["map", "call_short_variants"],
 		},
 		{
-			"id": 4,
+			"id": "call-differentially-expressed-genes",
 			"name": "Call Differentially Expressed Genes",
 			"tasks_ids": ["map", "call_de"],
 			"featured": true
 		},
 		{
-			"id": 5,
+			"id": "annotate-variants",
 			"name": "Annotate Variants",
 			"tasks_ids": ["call_structural_variants", "call_short_variants", "annotate"],
 			"featured": true
@@ -839,7 +839,7 @@
 			"id": "gms-somaticvariation",
 			"name": "GMS SomaticVariation",
 			"team_id": "washu",
-			"workflow_id": 5,
+			"workflow_id": "annotate-variants",
 			"data_types_ids": ["alignments", "short_variants", "structural_variants", "functional_features", "annotated_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1208,7 +1208,7 @@
 			"id": "gms-referencealignment",
 			"name": "GMS ReferenceAlignment",
 			"team_id": "washu",
-			"workflow_id": 5,
+			"workflow_id": "annotate-variants",
 			"data_types_ids": ["alignments", "short_variants", "functional_features", "annotated_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1314,7 +1314,7 @@
 			"id": "rna-seq-expression-estimation",
 			"name": "RNA-seq Expression Estimation",
 			"team_id": "usc",
-			"workflow_id": 4,
+			"workflow_id": "call-differentially-expressed-genes",
 			"data_types_ids": ["reference_genomes", "reads", "alignments", "gene_models", "de_genes"],
 			"initial_data_format_usages": [
 				{
@@ -1657,7 +1657,7 @@
 			"id": "gatk-functional-annotation",
 			"name": "GATK Functional Annotation",
 			"team_id": "broad",
-			"workflow_id": 5,
+			"workflow_id": "annotate-variants",
 			"data_types_ids": ["short_variants", "structural_variants", "functional_features", "annotated_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1700,7 +1700,7 @@
 			"id": "gatk-variant-calling-hc",
 			"name": "GATK Variant Calling (HC)",
 			"team_id": "broad",
-			"workflow_id": 2,
+			"workflow_id": "call-genetic-variants",
 			"data_types_ids": ["alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1726,7 +1726,7 @@
 			"id": "gatk-variant-calling-ug",
 			"name": "GATK Variant Calling (UG)",
 			"team_id": "broad",
-			"workflow_id": 2,
+			"workflow_id": "call-genetic-variants",
 			"data_types_ids": ["alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1803,7 +1803,7 @@
 			"id": "sg-adviser-annotation-interpretation",
 			"name": "SG Adviser Annotation & Interpretation",
 			"team_id": "scripps",
-			"workflow_id": 5,
+			"workflow_id": "annotate-variants",
 			"data_types_ids": ["annotated_variants", "short_variants"],
 			"initial_data_format_usages": [
 				{
@@ -1904,7 +1904,7 @@
 			"id": "gotcloud-snpcall",
 			"name": "gotcloud-snpcall",
 			"team_id": "umich",
-			"workflow_id": 2,
+			"workflow_id": "call-genetic-variants",
 			"data_types_ids": ["alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
@@ -2509,7 +2509,7 @@
 			"id": "gotcloud-align",
 			"name": "gotcloud-align",
 			"team_id": "umich",
-			"workflow_id": 1,
+			"workflow_id": "map-sequencing-reads",
 			"data_types_ids": ["reads", "reference_genomes", "alignments"],
 			"initial_data_format_usages": [
 				{
@@ -2740,7 +2740,7 @@
 			"id": "GenomeSTRiP-Deletion-Calling",
 			"name": "GenomeSTRiP Deletion Calling",
 			"team_id": "harvard",
-			"workflow_id": 2,
+			"workflow_id": "call-genetic-variants",
 			"data_types_ids": ["alignments", "structural_variants"],
 			"initial_data_format_usages": [
 				{
@@ -2836,7 +2836,7 @@
 				}
 			],
 			"team_id": "bc",
-			"workflow_id": 3,
+			"workflow_id": "map-to-call-genetic-variants",
 			"data_types_ids": ["reads", "reference_genomes", "alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
@@ -3208,7 +3208,7 @@
 				}
 			],
 			"team_id": "bc",
-			"workflow_id": 1,
+			"workflow_id": "map-sequencing-reads",
 			"data_types_ids": ["reads", "reference_genomes", "alignments"],
 			"initial_data_format_usages": [
 				{
@@ -3452,7 +3452,7 @@
 			"id": "gkno-call-short-variants",
 			"name": "gkno call-short-variants",
 			"team_id": "bc",
-			"workflow_id": 2,
+			"workflow_id": "call-genetic-variants",
 			"data_types_ids": ["alignments", "short_variants"],
 			"initial_data_format_usages": [
 				{
