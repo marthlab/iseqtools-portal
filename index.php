@@ -1,9 +1,9 @@
 <?php
 
 switch ($_SERVER['SERVER_NAME']) {
-    case '127.0.0.1':
+    case 'localhost':
         $base_route = '';
-        $base_url = 'http://127.0.0.1:8081' . $base_route;
+        $base_url = 'http://localhost:8081' . $base_route;
         break;
     case 'bioinformatics.bc.edu':
         $base_route = '/marthlab/iseqtools-portal';
@@ -267,7 +267,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
           <p><%= t.description %></p>
           <% if(t.pipelines_dedicated.length > 0) { %>
           <div class="info_float">
-            <h2><a href="#" class="tooltipped" data-toggle="tooltip" data-placement="right" title="Pipelines that both consume and produce the same type of data">Utility pipelines</a> for <%= t.name %>:</h2>
+            <h2><a href="#" class="tooltipped" data-toggle="tooltip" data-placement="right" title="Pipelines scoped to one major data type">Utility pipelines</a> for <%= t.name %>:</h2>
             <ul>
             <% _(t.pipelines_dedicated).each(function(pl){ %>
               <li><a href="<%= pl.url() %>"><%= pl.name %></a> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)</li>

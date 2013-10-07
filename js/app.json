@@ -95,22 +95,22 @@
 		{
 			"id": "gene_models",
 			"name": "gene models",
-			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+			"description": ""
 		},
 		{
 			"id": "reference_genomes",
 			"name": "reference genomes",
-			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+			"description": ""
 		},
 		{
 			"id": "reads",
 			"name": "sequencing reads",
-			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+			"description": ""
 		},
 		{
 			"id": "functional_features",
 			"name": "functional features",
-			"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+			"description": ""
 		},
 	],
 	"tasks": [
@@ -122,7 +122,7 @@
 				{
 					"id":"alignments",
 					"name":"alignments",
-					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+					"description": ""
 				}
 			]
 		},
@@ -134,7 +134,7 @@
 				{
 					"id":"structural_variants",
 					"name":"structural variants",
-					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+					"description": ""
 				}
 			]
 		},
@@ -146,7 +146,7 @@
 				{
 					"id":"short_variants",
 					"name":"short variants",
-					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+					"description": ""
 				}
 			]
 		},
@@ -158,7 +158,7 @@
 				{
 					"id":"de_genes",
 					"name":"differentially expressed genes",
-					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+					"description": ""
 				}
 			]
 		},
@@ -170,7 +170,7 @@
 				{
 					"id":"annotated_variants",
 					"name":"annotated variants",
-					"description": "Quisque egestas, nulla vel pulvinar consequat, velit mauris volutpat neque, id faucibus lacus nulla non libero. Duis vel aliquam est, elementum viverra dui. Morbi neque arcu, eleifend vel lorem sit amet, egestas varius dui. Donec sollicitudin dapibus egestas. Aliquam ligula est, scelerisque tincidunt consectetur quis, tincidunt sit amet dolor. Nulla tortor urna, sodales sed velit ac, porttitor sodales felis."
+					"description": ""
 				}
 			]
 		}

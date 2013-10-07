@@ -36,6 +36,21 @@ GraphDrawing.prototype = {
   render: function(graph, old_graph, options) { // options uses "end_rect", "container_width", and "max_height"
     var options = options || {};
 
+    function strip_moveto(path_string) {
+      var index_L = path_string.indexOf('L');
+      var index_C = path_string.indexOf('C');
+      var start_index;
+      if(index_L !== -1 && (index_L < index_C || index_C === -1)) {
+        start_index = index_L;
+      } else if (index_C !== -1 && (index_C < index_L || index_L === -1)) {
+        start_index = index_C;
+      } else {
+        throw "path data must contain lineto or curveto subcommand"
+      }
+
+      return path_string.slice(start_index);
+    }
+
     function edgePathSpline(edge, edge_path) {
 
       var e = edge, s = e.source, t = e.target;
@@ -104,21 +119,6 @@ GraphDrawing.prototype = {
             {x: start.x, y: start.y},
             {x: end.x, y: end.y},
             end])
-      }
-
-      function strip_moveto(path_string) {
-        var index_L = path_string.indexOf('L');
-        var index_C = path_string.indexOf('C');
-        var start_index;
-        if(index_L !== -1 && (index_L < index_C || index_C === -1)) {
-          start_index = index_L;
-        } else if (index_C !== -1 && (index_C < index_L || index_L === -1)) {
-          start_index = index_C;
-        } else {
-          throw "path data must contain lineto or curveto subcommand"
-        }
-
-        return path_string.slice(start_index);
       }
 
       // construct path string
@@ -454,17 +454,17 @@ GraphDrawing.prototype = {
           .interpolate("linear")
           ([point, point]);
         for(var i=0; i<3; i++) {
-          path_string += d3.svg.line(point, point)
+          path_string += strip_moveto(d3.svg.line(point, point)
           .x(function(d) { return d.x; })
           .y(function(d) { return d.y; })
           .interpolate("basis")
-          ([point, point, point, point]);
+          ([point, point, point, point]));
         }
-        path_string += d3.svg.line()
+        path_string += strip_moveto(d3.svg.line()
           .x(function(d) { return d.x; })
           .y(function(d) { return d.y; })
           .interpolate("linear")
-          ([point, point]);
+          ([point, point]));
         return path_string;
       })
       .style("stroke-opacity", 0)

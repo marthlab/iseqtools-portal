@@ -12,7 +12,7 @@ settings = {
   nodes: {
     stroke: "#000",
     primary: {
-      label_max_width: 260,
+      label_max_width: 200,
       radius: 30
     },
     secondary: {
