@@ -1597,7 +1597,8 @@
 				{
 					"id": 2,
 					"data_format_id": "vcf",
-					"description": "known sites"
+					"description": "known sites",
+					"optional": true
 				}
 			],
 			"tool_usages": [
@@ -1761,8 +1762,7 @@
 				},
 				{
 					"id": 2,
-					"description": "resources",
-					"optional": true
+					"description": "resources"
 				}
 			],
 			"tool_usages": [
