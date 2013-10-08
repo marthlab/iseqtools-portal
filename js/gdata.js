@@ -169,7 +169,7 @@ DataFormat.prototype.graphable = true;
 DataFormat.prototype.pageParent = function() { return gdata.summary; };
 
 function Tool(cfg) {
-	_(this).extend(_(cfg).pickStrings('id'));
+	_(this).extend(_(cfg).pickStrings('id', 'external_url'));
 	this.tutorials = cfg.tutorials || [];
 	this.demos = cfg.demos || [];
 	this.name = cfg.name || cfg.id;

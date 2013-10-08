@@ -267,7 +267,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
           <p><%= t.description %></p>
           <% if(t.pipelines_dedicated.length > 0) { %>
           <div class="info_float">
-            <h2><a href="#" class="tooltipped" data-toggle="tooltip" data-placement="right" title="Pipelines scoped to one major data type">Utility pipelines</a> for <%= t.name %>:</h2>
+            <h2><a href="#" class="tooltipped" data-toggle="tooltip" data-placement="right" title="Pipelines that convert, adjust, filter, or merge a particular data type">Utility pipelines</a> for <%= t.name %>:</h2>
             <ul>
             <% _(t.pipelines_dedicated).each(function(pl){ %>
               <li><a href="<%= pl.url() %>"><%= pl.name %></a> (<a href="<%= pl.team.url() %>"><%= pl.team.name %></a>)</li>
@@ -355,6 +355,11 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
           <% if(t.tool.team) { %>
             <div class="info_inline">
             <h3>Developed by:</h3> <a href="<%= t.tool.team.url() %>"><%= t.tool.team.name %></a>
+            </div>
+          <% } %>
+          <% if(t.external_url) { %>
+            <div class="info_inline">
+            <h3>Website:</h3> <a href="<%= t.external_url %>"><%= t.external_url %></a>
             </div>
           <% } %>
           <p>In this context, <%= t.tool.name %> consumes <%= t.inputsAsEnglish() %> and produces <%= t.outputsAsEnglish() %>.</p>
@@ -462,6 +467,11 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
           <% if(t.team) { %>
             <div class="info_inline">
             <h3>Developed by:</h3> <a href="<%= t.team.url() %>"><%= t.team.name %></a>
+            </div>
+          <% } %>
+          <% if(t.external_url) { %>
+            <div class="info_inline">
+            <h3>Website:</h3> <a href="<%= t.external_url %>"><%= t.external_url %></a>
             </div>
           <% } %>
           <% if(t.parent_tool) { %>

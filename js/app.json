@@ -269,6 +269,8 @@
 	"tools": [
 		{
 			"id": "Pindel",
+			"external_url": "http://gmt.genome.wustl.edu/pindel/current/",
+			"team_id": "washu",
 			"subtools": [
 				{
 					"id": "Pindel_Somatic_Filter",
@@ -285,19 +287,28 @@
 			]
 		},
 		{
-			"id": "SquareDancer"
+			"id": "SquareDancer",
+			"team_id": "washu"
 		},
 		{
-			"id": "BreakDancer"
+			"id": "BreakDancer",
+			"external_url": "http://gmt.genome.wustl.edu/breakdancer/current/",
+			"team_id": "washu"
 		},
 		{
-			"id": "SomaticSniper"
+			"id": "SomaticSniper",
+			"external_url": "http://gmt.genome.wustl.edu/somatic-sniper/current/",
+			"team_id": "washu"
 		},
 		{
-			"id": "TIGRA-SV"
+			"id": "TIGRA-SV",
+			"external_url": "http://gmt.genome.wustl.edu/tigra-sv/current/",
+			"team_id": "washu"
 		},
 		{
 			"id": "JoinX",
+			"external_url": "http://gmt.genome.wustl.edu/joinx/current/",
+			"team_id": "washu",
 			"subtools": [
 				{
 					"id": "JoinX_Intersection",
@@ -310,10 +321,13 @@
 			]
 		},
 		{
-			"id": "Strelka"
+			"id": "Strelka",
+			"external_url": "https://sites.google.com/site/strelkasomaticvariantcaller/"
 		},
 		{
 			"id": "VarScan_tools",
+			"external_url": "http://varscan.sourceforge.net/",
+			"team_id": "washu",
 			"name": "VarScan tools",
 			"subtools": [
 				{
@@ -374,6 +388,7 @@
 		},
 		{
 			"id": "picard",
+			"external_url": "http://picard.sourceforge.net/",
 			"subtools": [
 				{
 					"id": "picard-create-sequence-dictionary"
@@ -405,6 +420,7 @@
 		},
 		{
 			"id": "mosaik",
+			"external_url": "https://code.google.com/p/mosaik-aligner/",
 			"team_id": "bc",
 			"subtools": [
 				{
@@ -422,10 +438,13 @@
 			]
 		},
 		{
-			"id": "premo"
+			"id": "premo",
+			"external_url": "https://github.com/pezmaster31/premo",
+			"team_id": "bc"
 		},
 		{
 			"id": "bamtools",
+			"external_url": "https://github.com/pezmaster31/bamtools",
 			"team_id": "bc",
 			"tutorials": [
 				{
@@ -467,6 +486,7 @@
 		},
 		{
 			"id": "gatk",
+			"external_url": "http://gatkforums.broadinstitute.org/",
 			"team_id": "broad",
 			"subtools": [
 				{
@@ -522,10 +542,12 @@
 			]
 		},
 		{
-			"id": "snpEff"
+			"id": "snpEff",
+			"external_url": "http://snpeff.sourceforge.net/",
 		},
 		{
 			"id": "samtools",
+			"external_url": "http://samtools.sourceforge.net/",
 			"subtools": [
 				{
 					"id": "samtools-calmd"
@@ -550,11 +572,18 @@
 				},
 				{
 					"id": "samtools-SNV"
+				},
+				{
+					"id": "bgzip"
+				},
+				{
+					"id": "tabix"
 				}
 			]
 		},
 		{
 			"id": "vcflib",
+			"external_url": "https://github.com/ekg/vcflib",
 			"team_id": "bc",
 			"subtools": [
 				{
@@ -564,15 +593,19 @@
 		},
 		{
 			"id": "ogap",
-			"team_id": "bc"
-		},
-		{
-			"id": "bamleftalign",
+			"external_url": "https://github.com/ekg/ogap",
 			"team_id": "bc"
 		},
 		{
 			"id": "freebayes",
-			"team_id": "bc"
+			"external_url": "https://github.com/ekg/freebayes",
+			"team_id": "bc",
+			"subtools": [
+				{
+					"id": "bamleftalign",
+					"team_id": "bc"
+				}
+			]
 		},
 		{
 			"id": "cat"
@@ -587,13 +620,8 @@
 			"id": "merge-vcf-files"
 		},
 		{
-			"id": "bgzip"
-		},
-		{
-			"id": "tabix"
-		},
-		{
 			"id": "GenomeSTRiP",
+			"external_url": "http://www.broadinstitute.org/software/genomestrip/genome-strip",
 			"team_id": "harvard",
 			"subtools": [
 				{
@@ -610,6 +638,7 @@
 		
 		{
 			"id": "BamUtil",
+			"external_url": "http://genome.sph.umich.edu/wiki/BamUtil",
 			"team_id": "umich",
 			"subtools": [
 				{
@@ -631,14 +660,17 @@
 		},
 		{
 			"id": "qplot",
+			"external_url": "http://genome.sph.umich.edu/wiki/QPLOT",
 			"team_id": "umich"
 		},
 		{
 			"id": "verifyBamID",
+			"external_url": "http://genome.sph.umich.edu/wiki/VerifyBamID",
 			"team_id": "umich"
 		},
 		{
 			"id": "bwa",
+			"external_url": "http://bio-bwa.sourceforge.net/",
 			"subtools": [
 				{
 					"id": "bwa-aln"
@@ -673,6 +705,7 @@
 		},
 		{
 			"id": "thunderVCF",
+			"external_url": "http://genome.sph.umich.edu/wiki/ThunderVCF",
 			"team_id": "umich"
 		},
 		{
@@ -681,6 +714,7 @@
 		},
 		{
 			"id": "glfMultiples",
+			"external_url": "http://genome.sph.umich.edu/wiki/GlfMultiples",
 			"team_id": "umich"
 		},
 		{
@@ -696,6 +730,7 @@
 		},
 		{
 			"id": "vcfCooker",
+			"external_url": "http://genome.sph.umich.edu/wiki/VcfCooker",
 			"team_id": "umich"
 		},
 		{
@@ -703,6 +738,7 @@
 		},
 		{
 			"id": "vcfPaste",
+			"external_url": "https://github.com/statgen/gotcloud/blob/master/scripts/vcfPaste.pl",
 			"team_id": "umich"
 		},
 		{
@@ -718,6 +754,7 @@
 		},
 		{
 			"id": "sg-adviser",
+			"external_url": "http://genomics.scripps.edu/ADVISER/",
 			"name": "SG Adviser",
 			"team_id": "scripps",
 			"subtools": [
@@ -737,6 +774,7 @@
 		},
 		{
 			"id": "Bowtie_2",
+			"external_url": "http://bowtie-bio.sourceforge.net/bowtie2/index.shtml",
 			"name": "Bowtie 2",
 			"subtools": [
 				{
