@@ -81,6 +81,11 @@
           workflows: _.filter(gdata.workflows, function(wf) {return wf.pipelines.length > 0;}),
           pipelines: gdata.pipelines,
           root_tools: gdata.root_tools,
+          root_tool_groups: {
+            "A - G": _.filter(gdata.root_tools, function(rt){var chr = rt.name[0].toLowerCase(); return chr >= "a" && chr <= "g"; }),
+            "H - R": _.filter(gdata.root_tools, function(rt){var chr = rt.name[0].toLowerCase(); return chr >= "h" && chr <= "r"; }),
+            "S - Z": _.filter(gdata.root_tools, function(rt){var chr = rt.name[0].toLowerCase(); return chr >= "s" && chr <= "z"; }),
+          },
           teams: gdata.teams,
           generic_pages: gdata.generic_pages,
           pegasus: gdata.pegasus,

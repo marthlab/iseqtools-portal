@@ -94,22 +94,22 @@
 	"initial_data_types": [
 		{
 			"id": "gene_models",
-			"name": "gene models",
+			"name": "Gene Models",
 			"description": ""
 		},
 		{
 			"id": "reference_genomes",
-			"name": "reference genomes",
+			"name": "Reference Genomes",
 			"description": "Reference genomes are complete (or close to complete) representations of a 'typical' genome within a species.  In the case of the human genome, the genomes of several people were sequenced and a representative genome was constructed from these parts.  So, while the reference genome does not necessarily correspond to any particular individual, it can be used as a reference to which sequencing reads can be compared.  By using the reference genome as a guide, sequencing reads from another individual can be placed on the reference and then these can be used to determine differences between the sample and the reference.  The reference genome is usually stored as a list of chromosomes and contigs in a 'fasta' format file."
 		},
 		{
 			"id": "reads",
-			"name": "sequencing reads",
+			"name": "Sequencing Reads",
 			"description": "Sequencing reads are the raw DNA information resulting from sequencing machines.  These are strings consisting of the four nucleotides found in DNA and are typically of the order of a hundred bases in length.  Where the sequencing machine was unable to identify a particular base, IUPAC codes are used to represent what the base could be.  These sequencing reads are usually stored in a 'fastq' format file and are often accompanied by phred base qualities.  These base qualities give a probability of how likely it is that the measured base was in fact, something else."
 		},
 		{
 			"id": "functional_features",
-			"name": "functional features",
+			"name": "Functional Features",
 			"description": ""
 		},
 	],
@@ -121,7 +121,7 @@
 			"out_data_types": [
 				{
 					"id":"alignments",
-					"name":"alignments",
+					"name":"Alignments",
 					"description": "Alignments are a representation of the sequencing read in the coordinates of the reference genome accompanied by other useful information. Since the sequencing read ultimately derived from a sample distinct from the reference, this alignment may not be a perfect match to the genome sequence.  Thus the alignment consists of many pieces of information; most importantly the actual DNA sequence along with the assigned base qualities (in Phred score) and a string describing any differences with the reference (for example, mismatching bases or small inserted or deleted sequences).  The alignments also contain information about the location of the mate (in paired end sequencing) and many other tags."
 				}
 			]
@@ -133,7 +133,7 @@
 			"out_data_types": [
 				{
 					"id":"structural_variants",
-					"name":"structural variants",
+					"name":"Structural Variants",
 					"description": "Structural variants are large scale differences in the DNA of different samples.  These typically include insertions, deletions, duplications, inversions, translocations among others.  With respect to current sequencing technologies, these are variants that are larger than the typical sequencing read length and so their detection requires techniques making use of such characteristics as read depth and relationship between mates in paired end sequencing."
 				}
 			]
@@ -145,7 +145,7 @@
 			"out_data_types": [
 				{
 					"id":"short_variants",
-					"name":"short variants",
+					"name":"Short Variants",
 					"description": "Short variants are generally variants whose length is less than typical sequencing read lengths.  These include single nucleotide polymorphisms (SNPs), multi nucleotide polymorphisms (MNPs) and short insertions and deletions (INDELs).  In contrast to structural variants, these short variants can usually be detected by comparing individual reads at a locus."
 				}
 			]
@@ -157,7 +157,7 @@
 			"out_data_types": [
 				{
 					"id":"de_genes",
-					"name":"differential gene expression",
+					"name":"Differential Gene Expression",
 					"description": ""
 				}
 			]
@@ -169,7 +169,7 @@
 			"out_data_types": [
 				{
 					"id":"annotated_variants",
-					"name":"annotated variants",
+					"name":"Annotated Variants",
 					"description": "Annotated variants are variants whose context has been identified.  For example, a SNP is a simple variant and it may have no impact on the biology of the host organism or it may be devastating.  Annotation attempts to identify gene regions and reading frames and hence the context of any variants contained.  When the reading frame and codons have been identified, the effect of the SNP (synonymous, non-synonymous, loss of function etc) can be determined.  This information is stored with the variant (typically in the 'vcf' format) and these variants are then said to have been annotated. "
 				}
 			]
@@ -486,14 +486,17 @@
 		},
 		{
 			"id": "gatk",
+			"name": "GATK",
 			"external_url": "http://gatkforums.broadinstitute.org/",
 			"team_id": "broad",
 			"subtools": [
 				{
-					"id": "gatk-count-covariates"
+					"id": "gatk-count-covariates",
+					"name": "GATK Count Covariates"
 				},
 				{
-					"id": "gatk-recalibrate-bq"
+					"id": "gatk-recalibrate-bq",
+					"name": "GATK Recalibrate BQ"
 				},
 				{
 					"id": "gatk-realigner-target-creator",

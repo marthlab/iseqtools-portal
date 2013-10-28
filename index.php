@@ -114,17 +114,24 @@ switch ($_SERVER['SERVER_NAME']) {
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
             <ul class="dropdown-menu">
-            <% _(t.root_tools).each(function(tool){ %>
-              <% var has_subtools = tool.subtools.length > 0 %>
-              <li class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="<%= tool.url() %>"><%= tool.name %></a>
-                <% if(has_subtools) { %>
+            <% _(t.root_tool_groups).each(function(root_tools, group_name){ %>
+              <li class="dropdown-submenu">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= group_name %></a>
                 <ul class="dropdown-menu">
-                <% _(tool.subtools).each(function(subtool){ %>
-                  <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= subtool.url() %>"><%= subtool.name %></a></li>
+                <% _(root_tools).each(function(tool){ %>
+                  <% var has_subtools = tool.subtools.length > 0 %>
+                  <li class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="<%= tool.url() %>"><%= tool.name %></a>
+                    <% if(has_subtools) { %>
+                    <ul class="dropdown-menu">
+                    <% _(tool.subtools).each(function(subtool){ %>
+                      <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= subtool.url() %>"><%= subtool.name %></a></li>
+                    <% }); %>
+                    </ul>
+                    <% } %>
+                  </li>
                 <% }); %>
                 </ul>
-                <% } %>
               </li>
             <% }); %>
             </ul>
@@ -182,7 +189,7 @@ switch ($_SERVER['SERVER_NAME']) {
         <script type="text/html" id='breadcrumbs_template'>
             <% var crumbs = t.crumbs.reverse(); %>
             <% _.each(crumbs, function(item, i){ %>
-              <% var item_name = _(["pipeline", "tool", "tool_usage"]).contains(item.type()) ? item.name : item.name.toTitleCase() %>
+              <% var item_name = item.name %>
               <% if(i === crumbs.length-1) { %>
               <span><%= item_name %></span>
               <% } else { %>
