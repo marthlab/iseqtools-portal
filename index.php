@@ -9,6 +9,10 @@ switch ($_SERVER['SERVER_NAME']) {
         $base_route = '/marthlab/iseqtools-portal';
         $base_url = 'http://bioinformatics.bc.edu' . $base_route;
         break;
+    case 'iseqtools.org':
+        $base_route = '';
+        $base_url = 'iseqtools.org' . $base_route;
+        break;
 }
 
 ?>
