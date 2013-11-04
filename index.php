@@ -11,7 +11,7 @@ switch ($_SERVER['SERVER_NAME']) {
         break;
     case 'iseqtools.org':
         $base_route = '';
-        $base_url = 'iseqtools.org' . $base_route;
+        $base_url = 'http://iseqtools.org' . $base_route;
         break;
 }
 
