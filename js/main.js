@@ -1,10 +1,52 @@
-//(function() {
+$(document).ready(function(){
 
-  var isIE = (document.body.attachEvent && window.ActiveXObject);
+  $.reject({  
+    reject : {  
+        msie5: true, msie6: true, msie7: true, msie8: true
+    },
+    closeESC: false,
+    close: false,
+    imagePath: './img/browsers/',
+    paragraph1: 'Your browser is out of date, and is not compatible with '+  
+                'our website. A list of the most popular web browsers can be '+  
+                'found below.',  
+    paragraph2: 'Just click on the icons to get to the download page.',  
+    browserInfo: {
+        firefox: {  
+            text: 'Firefox', 
+            url: 'http://www.mozilla.com/firefox/'
+        },  
+        safari: {  
+            text: 'Safari',  
+            url: 'http://www.apple.com/safari/download/'  
+        },  
+        opera: {  
+            text: 'Opera',  
+            url: 'http://www.opera.com/download/',
+            allow: { all: false} 
+        },  
+        chrome: {  
+            text: 'Chrome ',  
+            url: 'http://www.google.com/chrome/'  
+        },  
+        msie: {  
+            text: 'Internet Explorer',  
+            url: 'http://www.microsoft.com/windows/Internet-explorer/',
+            allow: { all: false}  
+        },  
+        gcf: {  
+            text: 'Google Chrome Frame',  
+            url: 'http://code.google.com/chrome/chromeframe/',
+            allow: { all: false, msie: false }  
+        }  
+    }
+  });
+
+  isIE = (document.body.attachEvent && window.ActiveXObject);
 
   _.templateSettings.variable = "t";
 
-  var gdata = {
+  gdata = {
     init: function(cfg) {
       this.generic_pages = cfg.generic_pages.map(function(gp_cfg) {
         return new GenericPage(gp_cfg);
@@ -72,7 +114,7 @@
     }
   }
 
-  var widgets = {
+  widgets = {
     main_nav_widget: {
       template: _.template($('#main_nav_template').html()),
       init: function() {
@@ -472,3 +514,4 @@
 
   app.router.start();
 
+});

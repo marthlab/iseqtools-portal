@@ -88,6 +88,7 @@ switch ($_SERVER['SERVER_NAME']) {
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="<?php echo $base_url; ?>/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+        <script src="<?php echo $base_url; ?>/js/vendor/jquery.reject.min.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/jquery.svg.min.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/jquery.qtip.min.js"></script>
         <script src="<?php echo $base_url; ?>/js/vendor/davis.min.js"></script>
