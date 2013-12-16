@@ -425,7 +425,10 @@ $(document).ready(function(){
     }
   };
 
-  app._showContent = function(item) {
+  app._showContent = function(item, req) {
+    ga('send', 'pageview', {
+      'page': req
+    });
     this.buffer.add((function(on_complete){
       if(item !== this.content) { // halt if trying to navigate to current content
         this.old_content = this.content;
@@ -494,20 +497,20 @@ $(document).ready(function(){
     this.scope(app.base_route, function () {
       this.get('/pipelines/:pipeline_id/tool_usages/:tu_id', function (req) {
         var tu = _(_(gdata.pipelines).find(by_id(decodeURIComponent(req.params['pipeline_id']))).tool_usages).find(by_id(decodeURIComponent(req.params['tu_id'])));
-        app._showContent(tu);
+        app._showContent(tu, req);
       });
       this.get('/:type/:id', function (req) {
         var item = _(gdata[req.params['type']]).find(by_id(decodeURIComponent(req.params['id'])));
-        app._showContent(item);
+        app._showContent(item, req);
       });
       this.get('/', function (req) {
-        app._showContent(gdata.summary);
+        app._showContent(gdata.summary, req);
       });
       this.get('/pegasus', function (req) {
-        app._showContent(gdata.pegasus);
+        app._showContent(gdata.pegasus, req);
       });
       this.get('/:generic_page_id', function (req) {
-        app._showContent(_(gdata.generic_pages).find(by_id(decodeURIComponent(req.params['generic_page_id']))));
+        app._showContent(_(gdata.generic_pages).find(by_id(decodeURIComponent(req.params['generic_page_id']))), req);
       });
     });
   });
