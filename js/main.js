@@ -148,22 +148,25 @@ $(document).ready(function(){
       template: _.template($('#workflows_carousel_template').html()),
       init: function() {
         var featured_workflows = _(gdata.workflows).filter(function(wf){return wf.featured;});
+        var first_run = true;
         this.$el = $('#workflows_carousel');
         this.$el.html(this.template({workflows: featured_workflows, pegasus: gdata.pegasus}));
         this.$el.carousel({interval: 3500}).on('slid', (function() {
           app.buffer.add(
             (function (on_complete) {
               var index = this._currIndex();
+
               if(index === 0) {
-                this.$el.carousel('pause');
+                first_run = false;
                 widgets.graph_widget.active_drawing_for_display.highlightAllWorkflows();
                 on_complete();
-              } else if(index === this._getLength()-1) {
+              } else if(index === this._getLength()-1) {                
                 widgets.graph_widget.active_drawing_for_display.pegasusAnimation(on_complete);
               } else if(app.content === gdata.summary){
                 widgets.graph_widget.active_drawing_for_display.highlightWorkflow(featured_workflows[index-1]);
                 on_complete();
-              } 
+              }
+              if (!first_run) this.$el.carousel('pause'); 
             }).bind(this)
           );
         }).bind(this) );
