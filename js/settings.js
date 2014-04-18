@@ -4,8 +4,8 @@ settings = {
     nodeSep: 48,
     edgeSep: 20,
     rankSep: 34,
-    path_width:3,
-    path_gap: 0.5,
+    path_width:5,
+    path_gap: 0.6,
     edge_curvature: 0.47,
     render_duration: 2000
   },
