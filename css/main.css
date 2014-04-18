@@ -5,7 +5,10 @@ line-height: 28px;
 }
 
 #navbar {position:static;}
-#navbar .navbar-inner {padding:10px 0; background:#000;}
+#navbar .navbar-inner {padding:10px 0; background:#000; }
+.navbar-inverse .nav > li > a { color: #d0d0d0; font-size: 14px;}
+.navbar .nav li.dropdown > a .caret {border-top-color: #d0d0d0 !important; border-bottom-color: #d0d0d0 !important;}
+.navbar .nav li.dropdown > a:hover .caret {border-top-color: white !important; border-bottom-color: white !important;}
 #logo {margin:0; padding:0; background: url(../img/logo.gif); text-indent:-5000px; width:137px; height:40px;}
 #nhgri {float:right;}
 #main {}
