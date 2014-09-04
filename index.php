@@ -209,7 +209,7 @@ switch ($_SERVER['SERVER_NAME']) {
 <p>
   Genomic analysis consists of complex problems, and involves various data types and numerous fast-changing tools.
   This site organizes genomic analysis information around identified genomic workflows comprising nuclear genomic tasks such as read mapping or structural variant calling.
-  These tasks operate on as input, and produce as output, genomic data such as sequencing reads, alignments, or annotated variants.
+  The inputs to and outputs from these tasks consist of genomic data such as sequencing reads, alignments, or annotated variants.
   Multiple software pipelines produced by GS-IT participants may be available as disparate implementations of the same workflow.
   
   The <b>visual GS-IT network explorer</b> is organized around the above-introduced concepts, in four semantic “zoom levels” corresponding to increased detail and decreased generality.
