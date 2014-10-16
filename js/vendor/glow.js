@@ -17,10 +17,14 @@ function grayscale(url, defs) {
   return my;
 }
 
-function glow(url, defs) {
+function glow(url, defs, options) {
   var stdDeviation = 2,
       rgb = "#000",
       colorMatrix = "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0";
+
+  var height = options && options.height ? options.height : null;
+  var width  = options && options.width  ? options.width : null;
+
 
   if (!arguments.length) {
     url = "glow";
@@ -31,10 +35,10 @@ function glow(url, defs) {
     var filter = defs.append("filter")
         .attr('filterUnits', 'userSpaceOnUse')
         .attr("id", url)
-        .attr("x", "-20%")
-        .attr("y", "-20%")
-        .attr("width", "140%")
-        .attr("height", "140%")
+        .attr("x", width ? "0"  : "-20%")
+        .attr("y", height ? "0" : "-20%")
+        .attr("width", width ?   width  : "140%")
+        .attr("height", height ? height : "140%")
       .call(function() {
         this.append("feGaussianBlur")
             .attr("stdDeviation", stdDeviation)

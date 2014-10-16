@@ -8,10 +8,14 @@ function GraphDrawing(options) {
   this.edgeGroup = this.svgGroup.append("g").attr("id", "edgeGroup");
   this.nodeGroup = this.svgGroup.append("g").attr("id", "nodeGroup");
 
-  //this.svg.call(grayscale("grayscale", this.defs));
-  _.each(gdata.workflows, function(wf) {
-    this.svg.call(glow("glow-"+wf.id, this.defs).rgb(wf.color()).stdDeviation(4));
-  }, this);
+  // We only need one definition for making the path "glow". (No need to create one
+  // for each workflow.) We pass in the width and the height (with 10% padding) to 
+  // deal with browser differences in the way the size of the svg with the viewbox 
+  // is treated.
+  var glowOptions = {width: this.container_width + (this.container_width * .1), 
+                     height: this.max_height + (this.max_height * .1)};
+  this.svg.call(glow("glow-path", this.defs, glowOptions).stdDeviation(4));
+
 }
 GraphDrawing.prototype = {
   padRectangle: function(rect, hpf, vpf) {
@@ -590,7 +594,7 @@ GraphDrawing.prototype = {
         return (workflow !== null && workflow === ep.gdatum ? color : grayscale); 
       })
       .attr("filter", function(ep,i){
-        return (workflow !== null && workflow === ep.gdatum && !isIE ? "url(#glow-"+workflow.id+")" : null); 
+        return (workflow !== null && workflow === ep.gdatum && !isIE ? "url(#glow-path)" : null); 
       });
   },
   pegasusAnimation: function(on_complete) {
