@@ -2,12 +2,16 @@
 
 switch ($_SERVER['SERVER_NAME']) {
     case 'localhost':
-        $base_route = '';
-        $base_url = 'http://localhost:8081' . $base_route;
+        $base_route = '/iseqtools';
+        $base_url = 'http://localhost' . $base_route;
         break;
     case 'bioinformatics.bc.edu':
         $base_route = '/marthlab/iseqtools-portal';
         $base_url = 'http://bioinformatics.bc.edu' . $base_route;
+        break;
+    case 'akai2.genetics.utah.edu':
+        $base_route = '/iseqtools';
+        $base_url = 'http://akai2.genetics.utah.edu' . $base_route;
         break;
     case 'iseqtools.org':
         $base_route = '';
