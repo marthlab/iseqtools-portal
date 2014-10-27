@@ -24,23 +24,23 @@
 			]
 		},
 		{
-			"id": "bc",
-			"name": "Boston College",
+			"id": "uofu",
+			"name": "University of Utah",
 			"project_title": "Robust software tools for variant identification and functional assessment",
 			"project_url": "http://gkno.me",
 			"group_url": "http://bioinformatics.bc.edu/marthlab",
-			"institution_urls": ["http://bc.edu"],
+			"institution_urls": ["http://www.genetics.utah.edu/"],
 			"principal_investigators": [
-				["Gabor Marth", "marth@bc.edu"]
+				["Gabor Marth", "gmarth@genetics.utah.edu"]
 			]
 		},
 		{
 			"id": "umich",
 			"name": "University of Michigan",
 			"project_title": "Robust software tools for variant identification and functional assessment",
-			"project_url": "http://genome.sph.umich.edu/wiki/GotCloud",
+			"project_url": "http://gotcloud.org",
 			"group_url": "http://www.sph.umich.edu/csg/abecasis/",
-			"institution_urls": ["http://www.umich.edu"],
+			"institution_urls": ["http://genome.sph.umich.edu"],
 			"principal_investigators": [
 				["Goncalo Abecasis", "goncalo@umich.edu"]
 			]
