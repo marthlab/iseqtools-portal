@@ -553,7 +553,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
         //     });
         //     return json;
         // })();
-        var app = { base_route: window.location.pathname};
+        var app = { base_route: window.location.pathname.slice(0,window.location.pathname.length-1)};
         </script>
 
         <script src="js/utils.js"></script>
