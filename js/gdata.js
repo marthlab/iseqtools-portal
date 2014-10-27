@@ -3,16 +3,28 @@ var gdata_mixin = {
 	url: function() { 
 		var type = this.type();
 		if(type == "summary") {
-			return app.base_url+"/";
+			return "/";
 		} else if(type == "generic_page") {
-			return app.base_url+'/'+encodeURIComponent(this.id);
+			return '/'+encodeURIComponent(this.id);
 		} else if(type == "pegasus") {
-			return app.base_url+'/pegasus';
+			return '/pegasus';
 		}else if(type == "tool_usage") {
-			return app.base_url+'/pipelines/'+encodeURIComponent(this.pipeline.id)+'/tool_usages/'+encodeURIComponent(this.id);
+			return '/pipelines/'+encodeURIComponent(this.pipeline.id)+'/tool_usages/'+encodeURIComponent(this.id);
 		} else {
-			return app.base_url+'/'+type+'s/'+encodeURIComponent(this.id);
+			return '/'+type+'s/'+encodeURIComponent(this.id);
 		}
+		// var type = this.type();
+		// if(type == "summary") {
+		// 	return app.base_url+"/";
+		// } else if(type == "generic_page") {
+		// 	return app.base_url+'/'+encodeURIComponent(this.id);
+		// } else if(type == "pegasus") {
+		// 	return app.base_url+'/pegasus';
+		// }else if(type == "tool_usage") {
+		// 	return app.base_url+'/pipelines/'+encodeURIComponent(this.pipeline.id)+'/tool_usages/'+encodeURIComponent(this.id);
+		// } else {
+		// 	return app.base_url+'/'+type+'s/'+encodeURIComponent(this.id);
+		// }
 	},
 	color: function() {
 		var type = this.type();

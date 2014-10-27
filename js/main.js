@@ -1,4 +1,4 @@
-$(document).ready(function(){
+window.mainRunner = function() {
 
   $.reject({  
     reject : {  
@@ -520,4 +520,4 @@ $(document).ready(function(){
 
   app.router.start();
 
-});
+}

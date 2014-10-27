@@ -111,7 +111,7 @@
 			"id": "functional_features",
 			"name": "Functional Features",
 			"description": ""
-		},
+		}
 	],
 	"tasks": [
 		{
@@ -344,7 +344,7 @@
 				{
 					"id": "VarScan_High_Confidence_Indel_Filter",
 					"name": "VarScan High Confidence Indel Filter"
-				},
+				}
 			]
 		},
 		{
@@ -506,7 +506,7 @@
 		},
 		{
 			"id": "snpEff",
-			"external_url": "http://snpeff.sourceforge.net/",
+			"external_url": "http://snpeff.sourceforge.net/"
 		},
 		{
 			"id": "samtools",
@@ -723,15 +723,15 @@
 			"subtools": [
 				{
 					"id": "sg-adviser-privacy",
-					"name": "SG Adviser Privacy Tool",
+					"name": "SG Adviser Privacy Tool"
 				},
 				{
 					"id": "sg-adviser-annotation",
-					"name": "SG Adviser Annotation",
+					"name": "SG Adviser Annotation"
 				},
 				{
 					"id": "sg-adviser-ui",
-					"name": "SG Adviser UI",
+					"name": "SG Adviser UI"
 				}
 			]
 		},
@@ -820,7 +820,7 @@
 		{
 			"id": "map-to-call-genetic-variants",
 			"name": "Map -> Call Genetic Variants",
-			"tasks_ids": ["map", "call_short_variants"],
+			"tasks_ids": ["map", "call_short_variants"]
 		},
 		{
 			"id": "call-differentially-expressed-genes",
@@ -1401,7 +1401,7 @@
 						{
 							"id": 10,
 							"data_format_id": "sam",
-							"description": "Bowtie2_transcriptome",
+							"description": "Bowtie2_transcriptome"
 						}
 					]
 				},
@@ -1638,7 +1638,7 @@
 					"id": 1,
 					"data_format_id": "bam",
 					"description": "original alignments"
-				},
+				}
 			],
 			"tool_usages": [
 				{
@@ -1708,7 +1708,7 @@
 				{
 					"id": 1,
 					"data_format_id": "bam"
-				},
+				}
 			],
 			"tool_usages": [
 				{
@@ -1734,7 +1734,7 @@
 				{
 					"id": 1,
 					"data_format_id": "bam"
-				},
+				}
 			],
 			"tool_usages": [
 				{
@@ -1883,7 +1883,7 @@
 					"out_data_format_usages": [
 						{
 							"id": 2,
-							"description": "intervals",
+							"description": "intervals"
 						}
 					]
 				},
