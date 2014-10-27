@@ -532,7 +532,9 @@ GraphDrawing.prototype = {
     edges_paths
       .each(function(edge_path) {
         var edge_path_elem = this;
-        this.onclick = function() { if(hasClassSVG(edge_path_elem, 'link')) { app.requestResource(edge_path.gdatum.url()); } };
+        this.onclick = function() { if(hasClassSVG(edge_path_elem, 'link')) { 
+          app.requestResource(edge_path.gdatum.url()); } 
+        };
         this.onmouseover = function() {
           $(edge_path_elem).qtip('api') && $(edge_path_elem).qtip('api').show();
           edges_paths.classed("hover", function(ep) {

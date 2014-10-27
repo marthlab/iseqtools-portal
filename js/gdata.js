@@ -1,17 +1,30 @@
 var gdata_mixin = {
 	type: function() { return this.constructor.name.toUnderscore(); },
 	url: function() { 
+		// var type = this.type();
+		// if(type == "summary") {
+		// 	return app.base_route+"/";
+		// } else if(type == "generic_page") {
+		// 	return app.base_route+'/'+encodeURIComponent(this.id);
+		// } else if(type == "pegasus") {
+		// 	return app.base_route+'/pegasus';
+		// }else if(type == "tool_usage") {
+		// 	return app.base_route+'/pipelines/'+encodeURIComponent(this.pipeline.id)+'/tool_usages/'+encodeURIComponent(this.id);
+		// } else {
+		// 	return app.base_route+'/'+type+'s/'+encodeURIComponent(this.id);
+		// }
+
 		var type = this.type();
 		if(type == "summary") {
 			return app.base_route+"/";
 		} else if(type == "generic_page") {
-			return app.base_route+'/'+encodeURIComponent(this.id);
+			return app.base_route+'/?'+encodeURIComponent(this.id);
 		} else if(type == "pegasus") {
-			return app.base_route+'/pegasus';
+			return app.base_route+'/?pegasus';
 		}else if(type == "tool_usage") {
-			return app.base_route+'/pipelines/'+encodeURIComponent(this.pipeline.id)+'/tool_usages/'+encodeURIComponent(this.id);
+			return app.base_route+'/?pipelines='+encodeURIComponent(this.pipeline.id)+'&tool_usages='+encodeURIComponent(this.id);
 		} else {
-			return app.base_route+'/'+type+'s/'+encodeURIComponent(this.id);
+			return app.base_route+'/?'+type+'s='+encodeURIComponent(this.id);
 		}
 	},
 	color: function() {

@@ -491,9 +491,15 @@ window.mainRunner = function() {
 
 
 
-  //initialize router
+  //initialize router  
   Davis.extend(Davis.hashRouting());
   app.router = Davis(function () {
+    this.bind('lookupRoute', function(request) {
+      if (request.queryString != undefined) {
+        var path = request.queryString.replace(/=|&/g,'/');
+        request.path += path;
+      }
+    });
     this.configure(function(){
       this.generateRequestOnPageLoad = true;
     });
@@ -517,7 +523,7 @@ window.mainRunner = function() {
       });
     });
   });
-
   app.router.start();
+  
 
 }
