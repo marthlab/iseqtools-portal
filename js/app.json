@@ -1937,8 +1937,7 @@
 				]
 			}
 		},
-
-			{
+		{
 			"id": "gatk-base-recalibration",
 			"name": "GATK Base Recalibration",
 			"team_id": "broad",
