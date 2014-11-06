@@ -3,6 +3,10 @@
 		{
 			"id": "about",
 			"name": "About"
+		},
+		{
+			"id": "news",
+			"name": "News"
 		}
 	],
 	"pegasus": {
