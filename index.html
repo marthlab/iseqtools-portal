@@ -84,52 +84,57 @@
 
         <script type="text/html" id='main_nav_template'>
           <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown">Workflows <b class="caret"></b></a>
+            <a class="dropdown-toggle" data-toggle="dropdown">Analysis <b class="caret"></b></a>
             <ul class="dropdown-menu">
-            <% _(t.workflows).each(function(wf){ %>
-              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= wf.url() %>"><%= wf.name %></a></li>
-            <% }); %>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown">Pipelines <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <% _(t.pipelines).each(function(pl){ %>
-              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= pl.url() %>"><%= pl.name %></a></li>
-            <% }); %>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <% _(t.root_tool_groups).each(function(root_tools, group_name){ %>
               <li class="dropdown-submenu">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= group_name %></a>
+                <a class="dropdown-toggle" data-toggle="dropdown">Workflows <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                <% _(root_tools).each(function(tool){ %>
-                  <% var has_subtools = tool.subtools.length > 0 %>
-                  <li class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="<%= tool.url() %>"><%= tool.name %></a>
-                    <% if(has_subtools) { %>
+                <% _(t.workflows).each(function(wf){ %>
+                  <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= wf.url() %>"><%= wf.name %></a></li>
+                <% }); %>
+                </ul>
+              </li>
+              <li class="dropdown-submenu">
+                <a class="dropdown-toggle" data-toggle="dropdown">Pipelines <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                <% _(t.pipelines).each(function(pl){ %>
+                  <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= pl.url() %>"><%= pl.name %></a></li>
+                <% }); %>
+                </ul>
+              </li>
+              <li class="dropdown-submenu">
+                <a class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                <% _(t.root_tool_groups).each(function(root_tools, group_name){ %>
+                  <li class="dropdown-submenu">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= group_name %></a>
                     <ul class="dropdown-menu">
-                    <% _(tool.subtools).each(function(subtool){ %>
-                      <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= subtool.url() %>"><%= subtool.name %></a></li>
+                    <% _(root_tools).each(function(tool){ %>
+                      <% var has_subtools = tool.subtools.length > 0 %>
+                      <li class="<%= has_subtools ? 'dropdown-submenu' : '' %>">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="<%= tool.url() %>"><%= tool.name %></a>
+                        <% if(has_subtools) { %>
+                        <ul class="dropdown-menu">
+                        <% _(tool.subtools).each(function(subtool){ %>
+                          <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= subtool.url() %>"><%= subtool.name %></a></li>
+                        <% }); %>
+                        </ul>
+                        <% } %>
+                      </li>
                     <% }); %>
                     </ul>
-                    <% } %>
                   </li>
                 <% }); %>
                 </ul>
               </li>
-            <% }); %>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown">Data Types <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-            <% _(t.data_types).each(function(dt){ %>
-              <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= dt.url() %>"><%= dt.name.toTitleCase() %></a></li>
-            <% }); %>
+              <li class="dropdown-submenu">
+                <a class="dropdown-toggle" data-toggle="dropdown">Data Types <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                <% _(t.data_types).each(function(dt){ %>
+                  <li><a class="dropdown-toggle" data-toggle="dropdown" href="<%= dt.url() %>"><%= dt.name.toTitleCase() %></a></li>
+                <% }); %>
+                </ul>
+              </li>
             </ul>
           </li>
           <li class="dropdown">
@@ -147,6 +152,7 @@
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="<%= gp.url() %>"><%= gp.name %></a>
           </li>
+
           <% }); %>
           
         </script>
@@ -185,6 +191,21 @@
               <% } %>
             <% }); %>
              
+        </script>
+        <script type="text/html" id='info_media_template'>
+            <h2>ASHG Conference</h2>
+            <h4 style="margin-top: -3px;">October 2014</h4>
+            <h4 style="margin-top:  -10px;">Meeting of the American Society of Human Genetics</h4>
+            <ul>
+               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_0_Introduction.pptx">Introduction</a></li>
+               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_1_WashU.pptx">Wash U</a></li>
+               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_2_Harvard.pptx">Harvard</a></li>
+               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_3_Utah.pptx">Utah</a></li>
+               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_4_Michigan.pptx">Michigan</a></li>
+               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_5_USC.pptx">USC</a></li>
+               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_6_Scripps.pptx">Scripps</a></li>
+            </ul>
+
         </script>
 
         <script type="text/html" id='info_about_template'>

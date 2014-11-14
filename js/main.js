@@ -375,6 +375,7 @@ window.mainRunner = function() {
     info_widget: {
       templates: {
         'about': _.template($('#info_about_template').html()),
+        'media': _.template($('#info_media_template').html()),
         'pegasus': _.template($('#info_pegasus_template').html()),
         'summary': _.template($('#info_summary_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),

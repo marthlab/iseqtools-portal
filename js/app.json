@@ -3,6 +3,10 @@
 		{
 			"id": "about",
 			"name": "About"
+		},
+		{
+			"id": "media",
+			"name": "Media"
 		}
 	],
 	"pegasus": {
@@ -72,7 +76,7 @@
 			"name": "University of Southern California",
 			"project_title": "Robust and portable workflow-based tools for mRNA and genome resequencing",
 			"project_url": "https://code.google.com/p/rseqflow/",
-			"institution_urls": ["http://genomics.isi.edu"],
+			"institution_urls": ["http://www.usc.edu"],
 			"principal_investigators": [
 				["Ting Chen", "tingchen@usc.edu"],
 				["Ewa Deelman", "deelman@isi.edu"],
