@@ -317,7 +317,7 @@ function displayBlogCard(value) {
 
   html += '<div id="blog_snippet">' + value.contentSnippet + '</div>';
 
-  html += '<div><a href="#' + value.postID + '" class="blog_read_more" data-post-id="' + value.postID + '" id="' + value.id + '">Read More</a></div>';
+  html += '<button class="blog_read_more" data-post-id="' + value.postID + '" id="' + value.id + '">Read More</button>';
   html += '<hr>';
 
   html += '<div class="blog_info">';

@@ -1049,7 +1049,9 @@ h1#blog_title {
   float: none;
   font-size: 18px;
   padding: 8px 20px;
-  width: 100px;
+  width: 200px;
+  height: 50px;
+  background-color: white;
   color: #ED4B1F;
   letter-spacing: 0.5px;
   border: 1px solid #ED4B1F;
