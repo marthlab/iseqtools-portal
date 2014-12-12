@@ -375,7 +375,7 @@ window.mainRunner = function() {
     info_widget: {
       templates: {
         'about': _.template($('#info_about_template').html()),
-        'media': _.template($('#info_media_template').html()),
+        'blog': _.template($('#info_blog_template').html()),
         'pegasus': _.template($('#info_pegasus_template').html()),
         'summary': _.template($('#info_summary_template').html()),
         'workflow': _.template($('#info_workflow_template').html()),
@@ -440,6 +440,10 @@ window.mainRunner = function() {
         this.transition_relationship = this.content.visualRelationshipTo(app.old_content);
         this.is_transitioning = true;
         this._transition(on_complete);
+        if (item.id == 'blog') {
+          parseRSS('http://iseqtools.blogspot.com/feeds/posts/default?alt=rss&nocache=' + (new Date).getTime(), '#blog_recent_entries', 'ul');
+          styleTwitterTimeline(); 
+        }
       } else {
         on_complete();
       }
@@ -520,11 +524,15 @@ window.mainRunner = function() {
         app._showContent(gdata.pegasus, req);
       });
       this.get('/:generic_page_id', function (req) {
-        app._showContent(_(gdata.generic_pages).find(by_id(decodeURIComponent(req.params['generic_page_id']))), req);
+        app._showContent(_(gdata.generic_pages).find(by_id(decodeURIComponent(req.params['generic_page_id']))), req);        
       });
     });
   });
   app.router.start();
   
+  
+
 
 }
+
+

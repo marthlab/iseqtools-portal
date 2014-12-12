@@ -5,8 +5,8 @@
 			"name": "About"
 		},
 		{
-			"id": "media",
-			"name": "Media"
+			"id": "blog",
+			"name": "Blog"
 		}
 	],
 	"pegasus": {
@@ -25,7 +25,9 @@
 			"institution_urls": ["http://www.broadinstitute.org"],
 			"principal_investigators": [
 				["Mark DePristo", "depristo@broadinstitute.org"]
-			]
+			],
+			"logo": "img/teams/logo_broad.jpg",
+			"logo_height" : "30px"
 		},
 		{
 			"id": "uofu",
@@ -36,7 +38,9 @@
 			"institution_urls": ["http://www.genetics.utah.edu/"],
 			"principal_investigators": [
 				["Gabor Marth", "gmarth@genetics.utah.edu"]
-			]
+			],
+			"logo": "img/teams/logo_uu.png",
+			"logo_height" : "60px"
 		},
 		{
 			"id": "umich",
@@ -47,7 +51,9 @@
 			"institution_urls": ["http://genome.sph.umich.edu"],
 			"principal_investigators": [
 				["Goncalo Abecasis", "goncalo@umich.edu"]
-			]
+			],
+			"logo": "img/teams/logo_umich.png",
+			"logo_height" : "60px"
 		},
 		{
 			"id": "washu",
@@ -58,7 +64,9 @@
 			"institution_urls": ["http://wustl.edu/"],
 			"principal_investigators": [
 				["Li Ding", "lding@wustl.edu"]
-			]
+			],
+			"logo": "img/teams/logo_washu.png",
+			"logo_height" : "40px"
 		},
 		{
 			"id": "scripps",
@@ -69,7 +77,9 @@
 			"institution_urls": ["http://www.scripps.edu"],
 			"principal_investigators": [
 				["Ali Torkamani", "atorkama@scripps.edu"]
-			]
+			],
+			"logo": "img/teams/logo_scripps.jpeg",
+			"logo_height" : "70px"
 		},
 		{
 			"id": "usc",
@@ -81,7 +91,9 @@
 				["Ting Chen", "tingchen@usc.edu"],
 				["Ewa Deelman", "deelman@isi.edu"],
 				["James Knowles", "knowles@keck.usc.edu"]
-			]
+			],
+			"logo": "img/teams/logo_usc.jpeg",
+			"logo_height" : "30px"
 		},
 		{
 			"id": "harvard",
@@ -92,7 +104,9 @@
 			"institution_urls": ["http://hms.harvard.edu", "http://www.broadinstitute.org/mpg"],
 			"principal_investigators": [
 				["Steven McCarroll", "mccarroll@genetics.med.harvard.edu"]
-			]
+			],
+			"logo": "img/teams/logo_harvardms.jpeg",
+			"logo_height" : "30px"
 		}
 	],
 	"initial_data_types": [

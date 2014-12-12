@@ -12,6 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link href='http://fonts.googleapis.com/css?family=Quicksand:300,400' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
         <link href="css/bootstrap.css" rel="stylesheet">
         <link href="css/bootstrap-responsive.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
@@ -192,19 +193,75 @@
             <% }); %>
              
         </script>
-        <script type="text/html" id='info_media_template'>
-            <h2>ASHG Conference</h2>
-            <h4 style="margin-top: -3px;">October 2014</h4>
-            <h4 style="margin-top:  -10px;">Meeting of the American Society of Human Genetics</h4>
-            <ul>
-               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_0_Introduction.pptx">Introduction</a></li>
-               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_1_WashU.pptx">Wash U</a></li>
-               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_2_Harvard.pptx">Harvard</a></li>
-               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_3_Utah.pptx">Utah</a></li>
-               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_4_Michigan.pptx">Michigan</a></li>
-               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_5_USC.pptx">USC</a></li>
-               <li><a href="http://akai2.genetics.utah.edu/iseqtools/presentations/_6_Scripps.pptx">Scripps</a></li>
-            </ul>
+        <script type="text/html" id='info_blog_template'>      
+            <div class="container-fluid">    
+              <div class="row-fluid" style="margin-top: 10px">
+
+                <div class="span8" style="margin-bottom: 20px;">
+
+                    <div id="blog_entry" class="featured" >
+                      <h1 id="blog_title"></h1>
+
+                      <div class="blog_info">
+                      </div>
+
+                      <hr>
+                      <div class="blog_border" style="background-color:#ED4B1F;"></div>
+
+                      <div id="blog_content">
+                      </div>
+                    </div>
+
+                    <div id="blog_cards"  >
+                    </div>
+
+       
+
+                </div>
+
+                <div class="span4" style="margin-top: -10px">
+                  <div class="row-fluid">
+
+                    <div class="span12 featured" style="margin-bottom: 20px;">
+                      <h3 style="margin-top: 0px">Categories</h3>
+                      <ul  id="blog_tags" class="nav nav-pills">
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="row-fluid">
+
+                    <div class="span12 featured" style="margin-bottom: 20px;">
+                      
+                      <ul class="nav nav-tabs">
+                        <li class="active" ><a href="#blog_recent_entries" data-toggle="tab">Recent Posts</a></li>
+                        <li>                <a href="#blog_archives" data-toggle="tab">Archives</a></li>
+                      </ul>
+                      <div class="tab-content">
+                          <div id="blog_recent_entries" class="tab-pane active">
+                          </div>
+                          <div id="blog_archives" class="tab-pane">                             
+                          </div>
+                      </div>
+
+
+                    </div>
+                  </div>
+
+                  <div class="row-fluid">
+                    <div class="span12 featured">
+                    
+                      <a class="twitter-timeline span12" href="https://twitter.com/iSeqTools" data-widget-id="542394669687001090"
+                       data-chrome="nofooter noborders transparent">
+                       Tweets by @iSeqTools
+                      </a>
+                      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+                      </script>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
         </script>
 
@@ -539,7 +596,7 @@ Welcome to the Genome Sequencing Informatics Tools (GS-IT) Program, funded by th
         <script type="text/html" id='teams_template'>
           <% _(t.teams).each(function(team, i){ %>
             <%= i % 4 == 0 ? '<div class="row">' : '' %>
-            <div class="span3 team"><a href="<%= team.url() %>"><%= team.name %></a></div>
+            <div class="span3 team"> <a href="<%= team.url() %>"><img src="<%= team.logo %>" style="height:<%= team.logo_height %>"/></a></div>
             <%= i % 4 == 3 ? '</div>' : '' %>
           <% }); %>
         </script>
