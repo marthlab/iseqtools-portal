@@ -133,6 +133,8 @@ function Team(cfg) {
 	this.principal_investigators = _(cfg.principal_investigators).map(function(pi_cfg) {
 		return {name: pi_cfg[0], email: pi_cfg[1]};
 	});
+	this.logo = cfg.logo;
+	this.logo_height = cfg.logo_height;
 }
 _.extend(Team.prototype, gdata_mixin);
 Team.prototype.graphable = false;

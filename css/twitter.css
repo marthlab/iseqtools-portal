@@ -1,0 +1,18 @@
+.timeline-header h1.summary a.customisable-highlight{
+  font-family: Lato, sans-serif !important;
+  font-size: 18px;
+  color: #515e6c;
+}
+
+.no-tweets-pane {
+  display: none;
+}
+
+.timeline-header a.follow-button 
+ {
+  display: none !important;
+}
+
+.var-chromeless .timeline-header {
+	padding-top: 0px;
+}
